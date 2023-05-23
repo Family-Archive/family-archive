@@ -1,0 +1,20 @@
+.navbar {
+    width: 100vw;
+    position: fixed;
+    padding: 1rem;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.12);
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    img {
+        height: 100%;
+    }
+
+    .right {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+}

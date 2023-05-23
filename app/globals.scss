@@ -1,0 +1,23 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+button {
+    border: 3px solid black;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 0.5rem;
+    height: fit-content;
+}
+
+button:hover {
+    cursor: pointer;
+    background: black;
+    color: white;
+}
