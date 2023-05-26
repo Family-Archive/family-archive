@@ -25,9 +25,14 @@ export const ModalProvider = ({ children }) => {
     setmodals(modals.slice(0, -1))
   }
 
+  const clearModalStack = () => {
+    setmodals([])
+  }
+
   const functions = {
     addModal: addModal,
-    popModal: popModal
+    popModal: popModal,
+    clearModalStack: clearModalStack
   }
 
   return (

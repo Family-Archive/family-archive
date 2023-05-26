@@ -1,9 +1,14 @@
-import NavBar from 'components/NavBar/NavBar'
+import NavBar from '@/components/NavBar/NavBar'
 
-export default function Home() {
+const Home = async () => {
   return (
     <main>
       <NavBar />
+      <div className='page'>
+        <h1>Homepage</h1>
+      </div>
     </main>
   )
 }
+
+export default Home
