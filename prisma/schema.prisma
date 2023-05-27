@@ -62,6 +62,6 @@ model Record {
   description   String?
   userCreated   User     @relation(fields: [userCreatedId], references: [id])
   userCreatedId String
-  createdAt     DateTime
+  createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
