@@ -1,25 +1,20 @@
+import fs from 'fs'
+import path from 'path'
+
 export async function GET(request) {
-    // Some logic here to dynamically fetch record types and return their data
-    // What's most relational-databasey would probably be to have a record_type table containing data for shared fields (type, name, etc)
-    // And then a record_type_fields table that has an entry for each field that a record type contains
+    // Some logic to dynamically fetch record types
+    // This is an example: it iterates through all the record types defined in api/record/[type]/(types)
+    // and adds them to an array to return so we can display them on the page
 
-    // Then this could be replaced by a select query
+    const pathName = path.join(process.cwd(), "app/api/record/\[type\]/(types)")
+    let types = []
+    const files = fs.readdirSync(pathName)
+    for (let filename of files) {
+        const typeStructure = require(`/app/api/record/[type]/(types)/${filename}`)
+        let type = await typeStructure.GET()
+        type = await type.json()
+        types.push(type)
+    }
 
-    // For now I'm just going to hardcode this as a mockup
-    return Response.json([
-        {
-            'type': 'basic',
-            'name': 'Basic Record',
-            'fields': [
-                {
-                    'name': 'Name',
-                    'type': 'text'
-                },
-                {
-                    'name': 'Description',
-                    'type': 'textarea'
-                }
-            ]
-        }
-    ])
+    return Response.json(types)
 }

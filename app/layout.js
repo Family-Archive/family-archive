@@ -5,7 +5,6 @@ import { Inter } from 'next/font/google'
 
 import AuthContext from './(contexts)/AuthContext'
 import { ModalProvider } from './(contexts)/ModalContext'
-import NavBar from '@/components/NavBar/NavBar'
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
