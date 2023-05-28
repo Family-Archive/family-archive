@@ -13,7 +13,7 @@ const DashboardLayout = async ({ children }) => {
 
     return (
         <main>
-            {session ? <NavBar /> : ''}
+            <NavBar />
             <div className='page'>
                 {children}
             </div>

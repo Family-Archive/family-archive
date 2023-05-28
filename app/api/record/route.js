@@ -6,13 +6,13 @@ export async function GET(request) {
     // This is an example: it iterates through all the record types defined in api/record/[type]/(types)
     // and adds them to an array to return so we can display them on the page
 
-    const pathName = path.join(process.cwd(), "app/api/record/\[type\]/(types)")
+    const pathName = path.join(process.cwd(), "lib/classes/record/types")
     let types = []
     const files = fs.readdirSync(pathName)
     for (let filename of files) {
-        const typeStructure = require(`/app/api/record/[type]/(types)/${filename}`)
-        let type = await typeStructure.GET()
-        type = await type.json()
+        const RecordType = require(`/lib/classes/record/types/${filename}`)
+        const recordType = new RecordType()
+        let type = await recordType.getStructure()
         types.push(type)
     }
 
