@@ -2,6 +2,7 @@ import './globals.scss'
 
 import { headers } from 'next/headers'
 import { Inter } from 'next/font/google'
+import NavBar from '../components/NavBar/NavBar'
 
 import AuthContext from './(contexts)/AuthContext'
 
@@ -29,6 +30,7 @@ const RootLayout = async ({ children }) => {
     <html lang="en">
       <body className={inter.className}>
         <AuthContext session={session}>
+          <NavBar />
           {children}
         </AuthContext>
       </body>
