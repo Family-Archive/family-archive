@@ -59,7 +59,6 @@ model File {
   id        String   @id @default(cuid())
   hash      String
   name      String
-  extension String?
   mimeType  String
   size      BigInt
   createdAt DateTime @default(now())

@@ -31,19 +31,18 @@ export default function FileUploader() {
     }
 
     return (
-        <div style={{ "padding-top": "6em" }}>
+        <div style={{ "paddingTop": "6em" }}>
             <div>FileUploader</div>
             <div>
-                {isFilePicked ? selectedFiles.map(file => {
+                {isFilePicked ? selectedFiles.map((file, index) => {
                     return (
 
-                        <div>
+                        <div key={index}>
                             <p>Filename: {file.name}</p>
                             <p>Filetype: {file.type}</p>
                             <p>Size in bytes: {file.size}</p>
-                            <p>
-                                {file.lastModified}
-                            </p>
+                            <p>Last modified: {file.lastModified}</p>
+                            <hr></hr>
                         </div>
                     )
                 }) : (
