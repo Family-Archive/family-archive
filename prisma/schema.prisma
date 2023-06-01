@@ -45,6 +45,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  record        Record[]
 }
 
 model VerificationToken {
@@ -53,4 +54,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Record {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  userCreated   User     @relation(fields: [userCreatedId], references: [id])
+  userCreatedId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

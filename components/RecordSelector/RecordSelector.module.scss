@@ -1,0 +1,10 @@
+.RecordSelector {
+    display: grid;
+    width: 100%;
+
+    .recordType {
+        padding: 1rem;
+        border-radius: 1rem;
+        border: 3px solid black;
+    }
+}
