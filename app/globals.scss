@@ -8,7 +8,8 @@ body {
     min-height: 100vh;
 }
 
-button {
+button,
+.button {
     border: 3px solid black;
     padding: 0.5rem;
     background: white;
@@ -16,8 +17,36 @@ button {
     height: fit-content;
 }
 
-button:hover {
+button:hover,
+.button:hover {
     cursor: pointer;
     background: black;
     color: white;
+}
+
+.page {
+    padding: 7rem 2rem 2rem 2rem;
+}
+
+.column {
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+input,
+textarea {
+    border-radius: 0.5rem;
+    border: 2px solid black;
+    padding: 0.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.25rem;
 }
