@@ -12,7 +12,7 @@ export default function FileUploader() {
             formData.append('file', file);
         });
 
-        const response = await fetch('/api/files', {
+        const response = await fetch('/api/file', {
             method: 'POST',
             body: formData
         });
