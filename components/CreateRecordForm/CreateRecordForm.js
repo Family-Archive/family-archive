@@ -41,8 +41,8 @@ const CreateRecordForm = (props) => {
                 }
 
                 return <formitem key={index}>
-                    <label htmlFor={field.name}>{field.name}</label>
-                    <Element id={field.name} name={field.name} type={field.type} />
+                    {field.showLabel === false ? "" : <label htmlFor={field.name}>{field.name}</label>}
+                    <Element id={field.name} name={field.name} type={field.type}>{field.content}</Element>
                 </formitem>
             })}
             <input type="submit" className="button" value="Add Record" />

@@ -1,6 +1,4 @@
-import React from 'react'
-
-export default function PersonSelector() {
+function PersonSelector() {
     return (
         <>
             <div>PersonSelectorComponent</div>
@@ -8,3 +6,5 @@ export default function PersonSelector() {
         </>
     )
 }
+
+module.exports = PersonSelector
