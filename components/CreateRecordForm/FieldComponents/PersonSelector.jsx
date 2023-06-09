@@ -1,10 +1,10 @@
-import React from 'react'
-
-export default function PersonSelector() {
+function PersonSelector() {
     return (
         <>
             <div>PersonSelectorComponent</div>
-            <input type="text"></input>
+            <input type="text" name="PersonSelector" id="PersonSelector"></input>
         </>
     )
 }
+
+module.exports = PersonSelector
