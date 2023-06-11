@@ -70,6 +70,7 @@ model Record {
   id            String        @id @default(cuid())
   name          String
   description   String?
+  type          String
   userCreated   User          @relation(fields: [userCreatedId], references: [id])
   userCreatedId String
   createdAt     DateTime      @default(now())
