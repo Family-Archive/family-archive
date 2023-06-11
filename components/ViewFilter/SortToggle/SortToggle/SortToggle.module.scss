@@ -1,0 +1,18 @@
+.SortToggle {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5rem;
+
+    .arrow {
+        opacity: 0;
+        transition: transform 0.2s ease;
+
+        &.visible {
+            opacity: 1;
+        }
+
+        &.flipped {
+            transform: rotate(180deg);
+        }
+    }
+}

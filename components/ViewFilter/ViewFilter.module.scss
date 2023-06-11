@@ -1,0 +1,15 @@
+.ViewFilter {
+    height: 100%;
+    background: $accent-bg-color;
+    border: $accent-border;
+    padding: 1rem;
+    border-radius: 1rem;
+    min-width: 25rem;
+
+    .sectionHead {
+        font-family: 'Arbutus Slab';
+        font-size: 1.25rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+}
