@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 * {
     box-sizing: border-box;
 }
@@ -8,24 +10,45 @@ body {
     min-height: 100vh;
 }
 
+h1,
+h2,
+h3 {
+    font-family: 'Arbutus Slab';
+    line-height: 2rem;
+}
+
 button,
 .button {
-    border: 3px solid black;
-    padding: 0.5rem;
-    background: white;
+    padding: 0.75rem;
+    background: $accent-color;
+    color: white;
     border-radius: 0.5rem;
     height: fit-content;
+    font-family: 'Inter';
+    border: none;
+}
+
+button.secondary,
+.button.secondary {
+    background: $accent-secondary-color;
+    color: white;
 }
 
 button:hover,
 .button:hover {
     cursor: pointer;
-    background: black;
-    color: white;
+    filter: brightness(0.85);
 }
 
 .page {
-    padding: 7rem 2rem 2rem 2rem;
+    padding: 2rem 2rem 2rem 27rem;
+    min-height: 100vh;
+}
+
+.title {
+    font-size: 3rem;
+    margin: 0;
+    margin-bottom: 3rem;
 }
 
 .column {
