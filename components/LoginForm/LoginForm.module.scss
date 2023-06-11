@@ -3,10 +3,12 @@
     flex-direction: column;
     width: 20rem;
     padding: 2rem;
-    box-shadow: 5px 5px 20px #0000001a;
     border-radius: 1rem;
+    background: $accent-bg-color;
+    border: $accent-border;
 
     button {
+        margin-top: 2rem;
         width: 100%;
     }
 }

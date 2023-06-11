@@ -15,13 +15,24 @@ const NavBar = () => {
 
     return (
         <nav className={styles.navbar}>
-            <Link href='/'><img src='/logo1.svg' /></Link>
-            {
-                session ? <section className={styles.right}>
-                    <button onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}>+ Add Record</button>
-                    <button onClick={signOut}>Log Out</button>
-                </section> : <Link href="/auth/login"><button>Log In</button></Link>
-            }
+            <section className={styles.top}>
+                <section className={styles.header}>
+                    <Link href='/'><img src='/logo.svg' /></Link>
+                    {session ?
+                        <button onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}>+ Add Record</button>
+                        : <Link href="/auth/login"><button>Log In</button></Link>
+                    }
+                </section>
+
+                <section className={styles.navLinks}>
+                    <Link className={styles.button} href='/records/all'><span className="material-icons">inventory</span>All records</Link>
+                    <button><span className="material-icons">watch_later</span>Timeline</button>
+                    <button><span className="material-icons">public</span>Map</button>
+                    <button><span className="material-icons">account_tree</span>Family tree</button>
+                </section>
+            </section>
+
+            {session ? <a className="secondary" href="#" onClick={signOut}>Log Out</a> : ""}
         </nav>
     )
 }
