@@ -2,6 +2,11 @@ import lib from '../../lib/lib'
 import ViewFilter from '../ViewFilter/ViewFilter'
 import styles from './AllRecords.module.scss'
 
+/**
+ * Hit the API endpoint to get a list of records
+ * @param {searchParams} params: The searchParams object from the page this component is hosted on
+ * @returns The JSON response containing the records
+ */
 const fetchRecords = async (params) => {
     let queryString = lib.buildQueryString(params)
     let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records${queryString}`, { next: { tags: ['records'] } })
