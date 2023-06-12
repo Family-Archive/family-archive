@@ -1,4 +1,5 @@
 import styles from './CreateRecordForm.module.scss'
+import PersonSelector from '../PersonSelector/PersonSelector'
 
 const CreateRecordForm = (props) => {
     return (
@@ -13,10 +14,11 @@ const CreateRecordForm = (props) => {
                         Element = "input"
                 }
                 return <formitem>
-                    <label for={field.name}>{field.name}</label>
+                    <label htmlFor={field.name}>{field.name}</label>
                     <Element id={field.name} name={field.name} type={field.type} />
                 </formitem>
             })}
+            <PersonSelector />
             <input type="submit" className="button" value="Add Record" />
         </form>
     )
