@@ -1,5 +1,5 @@
 .navbar {
-    width: 23rem;
+    width: 20rem;
     position: fixed;
     padding: 1rem;
     height: calc(100vh - 3rem);
@@ -8,8 +8,14 @@
     justify-content: space-between;
     margin: 1.5rem;
     border-radius: 1rem;
-    background: $accent-bg-color;
+    background: white;
     border: $accent-border;
+
+    .addRecord {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
     img {
         height: 2.5rem;
@@ -29,7 +35,7 @@
 
             button,
             .button {
-                background: $accent-bg-color;
+                background: white;
                 border: $accent-border;
                 border-radius: 0;
                 border-left-width: 0px;

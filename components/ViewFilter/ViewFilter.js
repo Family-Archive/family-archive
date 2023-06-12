@@ -9,15 +9,16 @@ import FilterSetting from './FilterSetting/FilterSetting'
 const ViewFilter = (props) => {
     const router = useRouter();
     const pathname = usePathname()
+    const filterJSON = props.params.filters ? JSON.parse(props.params.filters) : {}
 
     const [sortSettings, setsortSettings] = useState({
-        option: "",
-        direction: ""
+        option: props.params.sort ? props.params.sort : "",
+        direction: props.params.dir ? props.params.dir : ""
     })
 
     const [filters, setfilters] = useState({
-        "name": [],
-        "age": []
+        "name": filterJSON.name ? filterJSON.name : [],
+        "type": filterJSON.age ? filterJSON.age : [],
     })
 
     const updateSortSettings = (settings) => {
@@ -33,8 +34,15 @@ const ViewFilter = (props) => {
         setfilters({ ...filters, [name]: entryArray })
     }
 
+    const removeFilter = (name, entry) => {
+        let currFilterEntries = filters[name]
+        currFilterEntries = currFilterEntries.filter(item => item !== entry)
+        setfilters({ ...filters, [name]: currFilterEntries })
+    }
+
     useEffect(() => {
-        router.replace(`${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}`);
+        const filterString = JSON.stringify(filters)
+        router.replace(`${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}`);
         router.refresh()
     }, [sortSettings, filters])
 
@@ -49,7 +57,13 @@ const ViewFilter = (props) => {
             <section className={styles.filterOptions}>
                 <span className={styles.sectionHead}>Filter by</span>
                 {Object.keys(filters).map(filter => {
-                    return <FilterSetting name={filter} key={filter} entries={filters[filter]} addFilter={addFilter} />
+                    return <FilterSetting
+                        name={filter}
+                        key={filter}
+                        entries={filters[filter]}
+                        addFilter={addFilter}
+                        removeFilter={removeFilter}
+                    />
                 })}
             </section>
         </div>

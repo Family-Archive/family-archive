@@ -19,7 +19,7 @@ const NavBar = () => {
                 <section className={styles.header}>
                     <Link href='/'><img src='/logo.svg' /></Link>
                     {session ?
-                        <button onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}>+ Add Record</button>
+                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
                         : <Link href="/auth/login"><button>Log In</button></Link>
                     }
                 </section>

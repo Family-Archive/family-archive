@@ -22,6 +22,10 @@
 
             .recordName {
                 font-size: 1.5rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 12rem;
             }
 
             .recordType {
