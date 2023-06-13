@@ -67,13 +67,22 @@ model File {
 }
 
 model Record {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String
   description   String?
-  userCreated   User     @relation(fields: [userCreatedId], references: [id])
+  userCreated   User          @relation(fields: [userCreatedId], references: [id])
   userCreatedId String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  RecordField   RecordField[]
+}
+
+model RecordField {
+  id       String @id @default(cuid())
+  name     String
+  value    String
+  record   Record @relation(fields: [recordId], references: [id])
+  recordId String
 }
 
 model Person {
