@@ -16,7 +16,7 @@ const ModalContainer = (props) => {
         >
             {modals.map(modal =>
                 <div
-                    className={styles.modal}
+                    className={`${styles.modal} ${modal.styles}`}
                     key={modal.id}
                 >
                     <button className={styles.close} onClick={modalFunctions.popModal}>X</button>

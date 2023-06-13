@@ -84,3 +84,40 @@ model RecordField {
   record   Record @relation(fields: [recordId], references: [id])
   recordId String
 }
+
+model Person {
+  id                    String                 @id @default(cuid())
+  fullName              String
+  shortName             String
+  otherNames            Json?
+  born                  DateTime?
+  died                  DateTime?
+  pronouns              PronounSet             @relation(fields: [pronounsId], references: [id])
+  pronounsId            String
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  parents               Person[]               @relation("ChildParents")
+  children              Person[]               @relation("ChildParents")
+  indirectRelationships IndirectRelationship[]
+}
+
+model PronounSet {
+  id         String   @id @default(cuid())
+  Person     Person[]
+  subject    String
+  object     String
+  possessive String
+}
+
+model IndirectRelationship {
+  id                 String           @id @default(cuid())
+  relationshipType   RelationshipType @relation(fields: [relationshipTypeId], references: [id])
+  relationshipTypeId String
+  people             Person[]
+}
+
+model RelationshipType {
+  id                   String                 @id @default(cuid())
+  name                 String
+  indirectRelationship IndirectRelationship[]
+}

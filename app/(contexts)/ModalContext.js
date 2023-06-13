@@ -11,11 +11,12 @@ export const ModalContext = createContext()
 export const ModalProvider = ({ children }) => {
   const [modals, setmodals] = useState([])
 
-  const addModal = (title, children) => {
+  const addModal = (title, children, styles = '') => {
     const id = Math.floor(Math.random() * 90000) + 10000
     const modal = {
       id: id,
       title: title,
+      styles: styles,
       content: children
     }
     setmodals([...modals, modal])
