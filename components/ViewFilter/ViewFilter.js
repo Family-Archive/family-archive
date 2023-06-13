@@ -28,6 +28,7 @@ const ViewFilter = (props) => {
         "name": filterJSON.name ? filterJSON.name : [],
         "type": filterJSON.age ? filterJSON.age : [],
     })
+    const [hasLoaded, sethasLoaded] = useState(false)
 
     /**
      * Update the sort settings state
@@ -64,7 +65,13 @@ const ViewFilter = (props) => {
 
     // Watch the sort and filter settings for changes; when a change occurs, convert this into a query string and add it to the URL
     // Then call router.refresh, which re-fetches the data using the new URL string
+    // We overwrite the page parameter here because changing these options should reset back to page 1
     useEffect(() => {
+        if (!hasLoaded) {
+            sethasLoaded(true)
+            return
+        }
+
         const filterString = JSON.stringify(filters)
         router.replace(`${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}`);
         router.refresh()

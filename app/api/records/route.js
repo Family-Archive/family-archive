@@ -7,6 +7,10 @@ export async function GET(request) {
     const sortField = params.get('sort') ? params.get('sort') : 'name'
     const direction = params.get('dir') ? params.get('dir') : 'asc'
 
+    const page = params.get('page') ? params.get('page') : '1'
+    const take = page * 20
+    const skip = take - 20
+
     // Build a WHERE object from the filters passed
     // Note how separate filters are conjoined, but different values of the same filter are disjoined
     let where = {}
@@ -23,8 +27,8 @@ export async function GET(request) {
     }
 
     const result = await prisma.Record.findMany({
-        skip: 0,
-        take: 20,
+        skip: skip,
+        take: take,
         orderBy: {
             [sortField]: direction
         },

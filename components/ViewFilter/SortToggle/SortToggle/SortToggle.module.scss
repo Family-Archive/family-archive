@@ -4,12 +4,7 @@
     margin-right: 0.5rem;
 
     .arrow {
-        opacity: 0;
-        transition: transform 0.2s cubic-bezier(0.85, 0, 0.15, 1);
-
-        &.visible {
-            opacity: 1;
-        }
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
         &.flipped {
             transform: rotate(180deg);

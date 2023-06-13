@@ -1,5 +1,6 @@
 import lib from '../../lib/lib'
 import ViewFilter from '../ViewFilter/ViewFilter'
+import PageSelector from '../PageSelector/PageSelector'
 import styles from './AllRecords.module.scss'
 
 /**
@@ -33,7 +34,11 @@ const AllRecords = async (props) => {
                     </div>
                 })}
             </section>
-            <ViewFilter params={props.params} />
+
+            <section className={styles.viewOptions}>
+                <ViewFilter params={props.params} />
+                <PageSelector page={props.params.page} />
+            </section>
         </div>
     )
 }

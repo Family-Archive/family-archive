@@ -48,11 +48,14 @@
                 display: flex;
                 gap: 1rem;
                 align-items: center;
-            }
 
-            button:last-child,
-            .button:last-child {
-                border-bottom-width: 0.15rem;
+                &:last-child {
+                    border-bottom-width: 0.15rem;
+                }
+
+                &:hover {
+                    color: $accent-color;
+                }
             }
         }
     }

@@ -13,6 +13,8 @@ const SortToggle = (props) => {
     }
 
     return (
+
+
         <button
             onClick={() => props.updateSortSettings(getSortSettings())}
             className={`${styles.SortToggle} secondary`}
@@ -22,8 +24,7 @@ const SortToggle = (props) => {
                 className={`
                     material-icons
                     ${styles.arrow}
-                    ${props.settings.option == props.option.toLowerCase() ? styles.visible : ""}
-                    ${props.settings.direction === 'asc' ? styles.flipped : ''}
+                    ${props.settings.direction === 'asc' && props.settings.option == props.option.toLowerCase() ? styles.flipped : ''}
                 `}
             >
                 arrow_drop_down
