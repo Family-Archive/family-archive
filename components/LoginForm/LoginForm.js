@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react"
 const LoginForm = (props) => {
     return (
         <section className={styles.container}>
-            <img src='/logo1.svg' />
+            <img src='/logo.svg' />
             <section className={styles.providers}>
                 {Object.values(props.providers).map((provider) => (
                     <div key={provider.name}>

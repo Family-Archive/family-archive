@@ -11,21 +11,33 @@ export const ModalContext = createContext()
 export const ModalProvider = ({ children }) => {
   const [modals, setmodals] = useState([])
 
+  /**
+   * Add a new modal to the webpage
+   * @param {string} title: The title to show at the top of the modal 
+   * @param {jsx} children: The jsx to render as the body of the modal
+   * @param {*} styles: Styles to apply to the modal
+   */
   const addModal = (title, children, styles = '') => {
     const id = Math.floor(Math.random() * 90000) + 10000
     const modal = {
       id: id,
       title: title,
-      styles: styles,
-      content: children
+      content: children,
+      styles: styles
     }
     setmodals([...modals, modal])
   }
 
+  /**
+   * Remove the top modal from the stack
+   */
   const popModal = () => {
     setmodals(modals.slice(0, -1))
   }
 
+  /**
+   * Close all modals
+   */
   const clearModalStack = () => {
     setmodals([])
   }

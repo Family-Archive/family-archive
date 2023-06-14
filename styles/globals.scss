@@ -1,0 +1,81 @@
+@import 'variables.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: $accent-bg-color;
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Zilla Slab';
+    line-height: 2rem;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+button,
+.button {
+    padding: 0.75rem;
+    background: $accent-color;
+    color: white;
+    border-radius: 0.5rem;
+    height: fit-content;
+    font-family: 'Inter';
+    border: none;
+}
+
+button.secondary,
+.button.secondary {
+    background: $accent-secondary-color;
+    color: white;
+}
+
+button:hover,
+.button:hover {
+    cursor: pointer;
+    filter: brightness(0.85);
+}
+
+.page {
+    padding: 2rem 2rem 2rem 24rem;
+    min-height: 100vh;
+}
+
+.title {
+    font-size: 3rem;
+    margin: 0;
+    margin-bottom: 3rem;
+}
+
+.column {
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+input,
+textarea {
+    border-radius: 0.5rem;
+    border: 0.15rem solid $accent-secondary-color;
+    padding: 0.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.25rem;
+}

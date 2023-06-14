@@ -1,0 +1,40 @@
+.AllRecords {
+    display: flex;
+    gap: 1rem;
+
+    .recordsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(18%, 1fr));
+        gap: 1rem;
+        flex-grow: 1;
+
+        .record {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .image {
+                width: 100%;
+                height: 6rem;
+                background: gray;
+                border-radius: 1rem;
+            }
+
+            .recordName {
+                font-size: 1.5rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 12rem;
+            }
+
+            .recordType {
+                text-transform: capitalize;
+            }
+
+            .recordDate {
+                font-weight: bold;
+            }
+        }
+    }
+}

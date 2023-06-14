@@ -1,0 +1,18 @@
+.ViewFilter {
+    background: white;
+    border: $accent-border;
+    padding: 1rem;
+    border-radius: 1rem;
+    min-width: 25rem;
+
+    .sectionHead {
+        font-family: 'Zilla Slab';
+        font-size: 1.25rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .filterOptions {
+        margin-top: 1rem;
+    }
+}

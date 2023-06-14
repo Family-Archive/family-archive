@@ -1,0 +1,22 @@
+.PageSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    input {
+        text-align: center;
+        appearance: textfield;
+        width: 3rem;
+    }
+
+    button {
+        padding: 0.25rem;
+        border-radius: 99rem;
+
+        &.large {
+            padding: 0.5rem;
+        }
+    }
+}

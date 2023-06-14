@@ -1,8 +1,7 @@
-import './globals.scss'
+import '../styles/globals.scss'
 
 import { headers } from 'next/headers'
 import { Inter } from 'next/font/google'
-import NavBar from '../components/NavBar/NavBar'
 
 import AuthContext from './(contexts)/AuthContext'
 import { ModalProvider } from './(contexts)/ModalContext'
@@ -28,6 +27,10 @@ const RootLayout = async ({ children }) => {
 
   return (
     <html lang="en">
+      <head>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+      </head>
+
       <body className={inter.className}>
         <AuthContext session={session}>
           <ModalProvider>

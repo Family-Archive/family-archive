@@ -5,7 +5,7 @@ const Home = async () => {
     <main>
       <NavBar />
       <div className='page'>
-        <h1>Homepage</h1>
+        <h1 className='title'>Homepage</h1>
       </div>
     </main>
   )

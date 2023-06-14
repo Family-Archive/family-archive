@@ -7,7 +7,7 @@ const createRecordType = async ({ params }) => {
     return (
         <div>
             <div className="column">
-                <h1>Add {recordTypeData.name}</h1>
+                <h1 className='title'>Add {recordTypeData.name}</h1>
                 <CreateRecordForm recordTypeData={recordTypeData} />
             </div>
         </div>

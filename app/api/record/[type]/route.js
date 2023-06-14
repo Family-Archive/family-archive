@@ -1,5 +1,6 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
+import { revalidateTag } from 'next/cache'
 
 // This is just a quick idea of the kind of dynamic loading we can do
 // Different record types are defined in /lib/classes/record/types
@@ -14,6 +15,8 @@ export async function GET(request, { params }) {
 
 export async function POST(request, { params }) {
     // Session is included here and passed, because NextAuth can't get the session in the dynamic file
+    const tag = request.nextUrl.searchParams.get('records')
+    revalidateTag(tag)
 
     const session = await getServerSession(authOptions);
     const RecordType = require(`/lib/classes/record/types/${params.type}.js`)

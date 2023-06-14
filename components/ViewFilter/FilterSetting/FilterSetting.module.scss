@@ -1,0 +1,31 @@
+.FilterSetting {
+    padding: 0.75rem;
+    border: 0.15rem solid $accent-secondary-color;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+
+    .filterHead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .filterName {
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+
+        button,
+        .button {
+            padding: 0.2rem;
+        }
+    }
+
+    .entry {
+        display: flex;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background: $accent-border-color;
+        margin-top: 0.5rem;
+        justify-content: space-between;
+    }
+}
