@@ -15,16 +15,15 @@ export const ModalProvider = ({ children }) => {
    * Add a new modal to the webpage
    * @param {string} title: The title to show at the top of the modal 
    * @param {jsx} children: The jsx to render as the body of the modal
-   * @param {int} width: The min-width for the modal in pixels
+   * @param {*} styles: Styles to apply to the modal
    */
-  const addModal = (title, children, width) => {
-    width = width ? width : 0
+  const addModal = (title, children, styles = '') => {
     const id = Math.floor(Math.random() * 90000) + 10000
     const modal = {
       id: id,
       title: title,
       content: children,
-      width: width
+      styles: styles
     }
     setmodals([...modals, modal])
   }
