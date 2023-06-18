@@ -5,7 +5,7 @@ import styles from './PersonSelector.module.scss'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
-export default function PersonSelector() {
+function PersonSelector() {
     // The value of the text field used to enter people.
     const [input, setInput] = useState('')
 
@@ -279,3 +279,5 @@ export default function PersonSelector() {
         </formitem>
     )
 }
+
+module.exports = PersonSelector

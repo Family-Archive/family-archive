@@ -1,4 +1,4 @@
-// import React, { useState } from 'react'
+"use client"
 
 function TestInput() {
     // const [test, setTest] = useState(false)
