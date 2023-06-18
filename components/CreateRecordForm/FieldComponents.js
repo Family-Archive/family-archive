@@ -2,6 +2,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { lazy } from 'react'
 
 const pathName = path.join(process.cwd(), "components/FieldComponents")
 let components = {}
@@ -16,7 +17,10 @@ for (let directoryName of directories) {
         // There should be exactly one .jsx file in this directory.
         const files = fs.readdirSync(currentPath)
         const componentFile = files.find(fileName => fileName.includes('.jsx'))
-        const FieldComponent = require(`/components/FieldComponents/${directoryName}/${componentFile}`)
+        const { default: FieldComponent } = await import(`/components/FieldComponents/${directoryName}/${componentFile}`)
+        // const FieldComponent = await importComponent(`/components/FieldComponents/${directoryName}/${componentFile}`)
+        console.log('Imported field component')
+        console.log(FieldComponent)
         components[componentFile.split('.')[0]] = FieldComponent
     }
 }

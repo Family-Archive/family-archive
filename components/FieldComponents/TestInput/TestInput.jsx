@@ -1,6 +1,6 @@
 "use client"
 
-function TestInput() {
+export default function TestInput() {
     // const [test, setTest] = useState(false)
 
     return (
@@ -9,5 +9,3 @@ function TestInput() {
         </div>
     )
 }
-
-module.exports = TestInput

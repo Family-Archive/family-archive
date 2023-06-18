@@ -1,11 +1,11 @@
 "use client"
 
-import React, { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import styles from './PersonSelector.module.scss'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
-function PersonSelector() {
+export default function PersonSelector() {
     // The value of the text field used to enter people.
     const [input, setInput] = useState('')
 
@@ -279,5 +279,3 @@ function PersonSelector() {
         </formitem>
     )
 }
-
-module.exports = PersonSelector
