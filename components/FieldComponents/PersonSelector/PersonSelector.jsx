@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styles from './PersonSelector.module.scss'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
-import AddPersonForm from '../AddPersonForm/AddPersonForm'
+import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
 export default function PersonSelector() {
     // The value of the text field used to enter people.

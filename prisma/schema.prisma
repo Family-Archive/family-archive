@@ -64,6 +64,8 @@ model File {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  record    Record   @relation(fields: [recordId], references: [id])
+  recordId  String
 }
 
 model Record {
@@ -75,6 +77,7 @@ model Record {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   RecordField   RecordField[]
+  file          File[]
 }
 
 model RecordField {

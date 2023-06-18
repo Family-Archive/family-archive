@@ -1,5 +1,5 @@
 import styles from './CreateRecordForm.module.scss'
-import PersonSelector from '../PersonSelector/PersonSelector'
+// import PersonSelector from '../FieldComponents/PersonSelector/PersonSelector'
 import fieldComponents from './FieldComponents.js'
 
 const CreateRecordForm = (props) => {
@@ -43,10 +43,9 @@ const CreateRecordForm = (props) => {
 
                 return <formitem key={index}>
                     {field.showLabel === false ? "" : <label htmlFor={field.name}>{field.name}</label>}
-                    <Element id={field.name} name={field.name} type={field.type}>{field.content}</Element>
+                    <Element id={field.name} name={field.name} type={field.type} options={field.options}>{field.content}</Element>
                 </formitem>
             })}
-            <PersonSelector />
             <input type="submit" className="button" value="Add Record" />
         </form>
     )
