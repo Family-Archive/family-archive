@@ -23,15 +23,6 @@ const ModalContainer = (props) => {
                     <button className={styles.close} onClick={modalFunctions.popModal}>X</button>
                     <h1>{modal.title}</h1>
                     {modal.content}
-                    <style jsx>{`
-                    .test {
-                        opacity: 1;
-                    }
-                    #modal${modal.id} {
-                        opacity: 1;
-                        min-width: ${modal.width}px;
-                    }
-                `}</style>
                 </div>
             )}
         </div>

@@ -2,6 +2,7 @@ import lib from '../../lib/lib'
 import ViewFilter from '../ViewFilter/ViewFilter'
 import PageSelector from '../PageSelector/PageSelector'
 import styles from './AllRecords.module.scss'
+import { cookies } from 'next/dist/client/components/headers'
 
 /**
  * Hit the API endpoint to get a list of records
@@ -10,7 +11,14 @@ import styles from './AllRecords.module.scss'
  */
 const fetchRecords = async (params) => {
     let queryString = lib.buildQueryString(params)
-    let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records${queryString}`, { next: { tags: ['records'] } })
+    let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records${queryString}`,
+        {
+            next: { tags: ['records'] },
+            headers: {
+                Cookie: lib.cookieObjectToString(cookies().getAll())
+            }
+        }
+    )
     if (!records.ok) {
         throw new Error('Failed to fetch data')
     }
