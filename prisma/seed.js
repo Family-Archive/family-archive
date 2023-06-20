@@ -2,11 +2,18 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 async function main() {
+    const family = await prisma.family.create({
+        data: {
+            name: "Default"
+        }
+    })
+
     await prisma.pronounSet.create({
         data: {
             subject: 'he',
             object: 'him',
-            possessive: 'his'
+            possessive: 'his',
+            familyId: family.id
         }
     })
 
@@ -14,7 +21,8 @@ async function main() {
         data: {
             subject: 'she',
             object: 'her',
-            possessive: 'hers'
+            possessive: 'hers',
+            familyId: family.id
         }
     })
 
@@ -22,7 +30,8 @@ async function main() {
         data: {
             subject: 'they',
             object: 'them',
-            possessive: 'theirs'
+            possessive: 'theirs',
+            familyId: family.id
         }
     })
 }

@@ -1,6 +1,10 @@
 import { prisma } from "../../db/prisma"
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
+import lib from "../../../lib/lib"
 
 export async function GET(request) {
+    const session = await getServerSession(authOptions);
     const params = request.nextUrl.searchParams
 
     // Pull out sort and direction params and set those explicitly
@@ -25,6 +29,8 @@ export async function GET(request) {
             where.AND.push({ OR: orBlock })
         }
     }
+
+    where = lib.limitQueryByFamily(where, session)
 
     const result = await prisma.Record.findMany({
         skip: skip,
