@@ -1,16 +1,20 @@
 "use client"
 import styles from './SelectorInput.module.scss'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const SelectorInput = (props) => {
     const [value, setvalue] = useState(props.default)
     const [showMenu, setshowMenu] = useState(false)
 
-    const updateValue = (valueToSet) => {
+    const updateValue = (valueToSet, settable = true) => {
         setshowMenu(!showMenu)
-        setvalue(valueToSet)
-        props.onChange(valueToSet)
+        if (settable !== false) {
+            setvalue(valueToSet)
+        }
+        if (value != valueToSet) {
+            props.onChange(valueToSet)
+        }
     }
 
     return (
@@ -38,13 +42,13 @@ const SelectorInput = (props) => {
                         if (option.value !== value) {
                             return <button
                                 key={option.value}
-                                onClick={() => updateValue(option.value)}
-                            >
-                                {option.name}
-                            </button>
+                                onClick={() => updateValue(option.value, option?.settable)}
+                                dangerouslySetInnerHTML={{ __html: option.name }}
+                            />
                         }
                     })}
                 </div>
+
             </div>
         </div>
     )

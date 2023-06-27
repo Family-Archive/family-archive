@@ -1,7 +1,11 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
+import { headers } from 'next/headers';
 
 export async function POST(request) {
+    const headersList = headers()
+    const referer = headersList.get('referer')
+
     const session = await getServerSession(authOptions);
     let requestData = await request.formData()
     requestData = Object.fromEntries(requestData)
@@ -17,5 +21,5 @@ export async function POST(request) {
         }
     })
 
-    return Response.json(prismaRequest)
+    return Response.redirect(new URL(referer))
 }

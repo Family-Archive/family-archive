@@ -1,7 +1,7 @@
 "use client"
 import styles from './NavBar.module.scss'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useSession } from "next-auth/react"
 import { signOut } from "next-auth/react"
 import Link from 'next/link'
@@ -19,7 +19,7 @@ const NavBar = () => {
     let familySelectOptions
     if (session) {
         familySelectOptions = session.user.families.map(family => { return { value: family.id, name: `${family.name} family` } })
-        familySelectOptions.unshift({ value: 'addFamily', name: 'Add new family' })
+        familySelectOptions.unshift({ value: 'addFamily', name: '<span class="material-icons">add_circle</span>  Add new family', settable: false })
     }
 
     return (
@@ -44,7 +44,7 @@ const NavBar = () => {
             <section className={styles.bottom}>
 
                 {session ? <SelectorInput
-                    default={familyContext.family}
+                    default={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
                     options={familySelectOptions}
                     onChange={(valueToSet) => {
                         if (valueToSet === "addFamily") {

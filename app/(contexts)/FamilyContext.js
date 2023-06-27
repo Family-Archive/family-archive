@@ -9,32 +9,29 @@ export const FamilyProvider = ({ children }) => {
     const { data: session } = useSession()
     const [family, setfamily] = useState(null)
 
-    // When we initialize the component, set the initial family value to the family state if it's set (idk just in case)
-    // If not, set it to the default family value from the database
-    let currFamily = null
-    if (family) {
-        currFamily = family
-    } else if (session) {
-        currFamily = session.user.defaultFamily.id
-    }
-
-    const updateFamily = async (familyId) => {
-        localStorage.setItem('currFamily', familyId)
+    const updateFamily = (familyId) => {
         setfamily(familyId)
+        document.cookie = `familyId=${familyId}; SameSite=Strict; Path=/;`
+        location.reload(true)
     }
 
-    // Once the client is loaded, set the family to whatever's stored in localStorage, if exists
-    // TODO: Make sure this works with loading ie records that there isn't a race condition here, that the correct family's records are loaded
+    // When the session is initialized, set the current family to what's in the cookie if one is set
+    // Otherwise, set it to the defaultfamily value and set the cookie
     useEffect(() => {
-        const currFamily = localStorage.getItem('currFamily')
-        if (currFamily) {
-            setfamily(currFamily)
+        if (!family) {
+            if (document.cookie.includes('familyId')) {
+                const currFamily = document.cookie.split('familyId=')[1].split(';')[0]
+                setfamily(currFamily)
+            } else if (session) {
+                const currFamily = session.user.defaultFamily.id
+                document.cookie = `familyId=${currFamily}; SameSite=Strict; Path=/;`
+                setfamily(currFamily)
+            }
         }
-    }, [])
-
+    }, [session])
 
     return (
-        <FamilyContext.Provider value={{ family: currFamily, setFamily: updateFamily }}>
+        <FamilyContext.Provider value={{ family: family, setFamily: updateFamily }}>
             {children}
         </FamilyContext.Provider>
     )
