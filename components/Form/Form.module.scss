@@ -1,4 +1,4 @@
-.CreateRecordForm {
+.form {
     display: flex;
     flex-direction: row;
 
@@ -13,6 +13,11 @@
     }
 
     .formArea {
-        flex: 1
+        flex: 1;
+    }
+
+    .genericIcon {
+        font-size: 155px;
+        color: #333;
     }
 }

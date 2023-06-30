@@ -1,57 +1,57 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
+import styles from './FileUploader.module.scss'
 
-export default function FileUploader() {
-    const [selectedFiles, setSelectedFiles] = useState([]);
-    const [isFilePicked, setIsFilePicked] = useState(false);
+export default function FileUploader({
+    files,
+    isFilePicked,
+    fileChangeHandler,
+    removeFile,
+    dragOver,
+    dragEnter,
+    dragLeave,
+    drop,
+    hovered,
+    error,
+    allowMultiple
+}) {
+    // Reference to the file input element
+    const fileInputRef = useRef(null)
 
-    const handleSubmission = async () => {
-        const formData = new FormData();
-        selectedFiles.forEach((file) => {
-            formData.append('file', file);
-        });
-
-        const response = await fetch('/api/file', {
-            method: 'POST',
-            body: formData
-        });
-        const jsonResponse = await response.json();
-        console.log(jsonResponse);
-    }
-
-    const changeHandler = (event) => {
-        let files = [];
-        for (let i = 0; i < event.target.files.length; i++) {
-            files.push(event.target.files[i]);
-        }
-        setSelectedFiles(files);
-        console.log(files);
-        setIsFilePicked(true);
+    // When the file drop area is clicked, manually
+    // open the file selector.
+    const dropPadClicked = (event) => {
+        fileInputRef.current.click()
     }
 
     return (
-        <div style={{ "paddingTop": "6em" }}>
-            <div>FileUploader</div>
-            <div>
-                {isFilePicked ? selectedFiles.map((file, index) => {
-                    return (
-
-                        <div key={index}>
-                            <p>Filename: {file.name}</p>
-                            <p>Filetype: {file.type}</p>
-                            <p>Size in bytes: {file.size}</p>
-                            <p>Last modified: {file.lastModified}</p>
-                            <hr></hr>
-                        </div>
-                    )
-                }) : (
-                    <p>Select a file to show details</p>
-                )}
-
+        <div className={styles.FileUploader}>
+            <div
+                className={`${styles.dropPad} ${hovered ? styles.hover : ''}`}
+                onClick={dropPadClicked}
+                onDragOver={dragOver}
+                onDragEnter={dragEnter}
+                onDragLeave={dragLeave}
+                onDrop={drop}
+            >
+                {console.log(files)}
+                {isFilePicked ?
+                    files.map((file, index) => {
+                        { console.log(file) }
+                        return (
+                            <div key={index} className={styles.filePreview}>
+                                {file.icon ? file.icon : <span className={`material-icons ${styles.genericIcon}`}></span>}
+                                <div className={styles.fileName}>{file.file.name}</div>
+                                <span className={`material-icons ${styles.removeButton}`} data-index={index} onClick={removeFile}>cancel</span>
+                            </div>
+                        )
+                    }) : ''
+                }
+                {error ? <div className={styles.error}>{error}</div> : ''}
+                <div className={styles.dropPadMessage}>{allowMultiple ? 'Click or drag to add files' : 'Click or drag to add a file'}</div>
             </div>
-            <input type="file" onChange={changeHandler} multiple></input>
-            <input type="submit" value="Submit" onClick={handleSubmission}></input>
+            <input type="file" ref={fileInputRef} onChange={fileChangeHandler} multiple={allowMultiple}></input>
         </div>
     )
 }

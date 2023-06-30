@@ -64,18 +64,21 @@ model File {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  record    Record   @relation(fields: [recordId], references: [id])
+  recordId  String
 }
 
 model Record {
   id            String        @id @default(cuid())
   name          String
   description   String?
-  type          String
+  type          String        @default("basic")
   userCreated   User          @relation(fields: [userCreatedId], references: [id])
   userCreatedId String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   RecordField   RecordField[]
+  files         File[]
 }
 
 model RecordField {

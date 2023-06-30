@@ -21,7 +21,26 @@ export async function POST(request, { params }) {
     const session = await getServerSession(authOptions);
     const RecordType = require(`/lib/classes/record/types/${params.type}.js`)
     const recordType = new RecordType()
-    await recordType.insert(request, { params }, session)
 
-    return Response.redirect(new URL('/', request.url))
+    let newRecord
+
+    try {
+        newRecord = await recordType.insert(request, { params }, session)
+    } catch (error) {
+        return Response.json({
+            'status': 'error',
+            'message': error.message
+        }, {
+            status: 500
+        })
+    }
+
+    return Response.json({
+        'status': 'success',
+        data: {
+            record: newRecord
+        }
+    }, {
+        status: 201
+    })
 }

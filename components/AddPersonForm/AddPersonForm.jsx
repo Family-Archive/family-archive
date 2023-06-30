@@ -1,7 +1,9 @@
+"use client"
+
 import React, { useState, useEffect } from 'react'
 import styles from './AddPersonForm.module.scss'
 
-export default function AddPersonForm({ name, afterNewPersonSubmission }) {
+export default function AddPersonForm({ name, afterSubmission }) {
     const [fields, setFields] = useState({
         fullName: name,
         shortName: name.split(' ')[0],
@@ -63,7 +65,7 @@ export default function AddPersonForm({ name, afterNewPersonSubmission }) {
         const json = await response.json()
 
         if (json.status === 'success') {
-            afterNewPersonSubmission()
+            afterSubmission(json.data.people[0].id)
             return
         }
 
