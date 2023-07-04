@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import styles from './Form.module.scss'
 import FileUploader from '../FileUploader/FileUploader'
-import fieldComponents from './AllFieldComponents'
+import fieldComponents from './FieldComponentsGenerated'
 import { useRouter } from 'next/navigation'
 
 export default function Form({ fields, method, action, submitMessage, acceptedFileTypes, allowMultipleFiles }) {
