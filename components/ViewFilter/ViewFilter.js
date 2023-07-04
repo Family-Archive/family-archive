@@ -26,7 +26,7 @@ const ViewFilter = (props) => {
     })
     const [filters, setfilters] = useState({
         "name": filterJSON.name ? filterJSON.name : [],
-        "age": filterJSON.age ? filterJSON.age : [],
+        "type": filterJSON.age ? filterJSON.age : [],
     })
     const [hasLoaded, sethasLoaded] = useState(false)
 

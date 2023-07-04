@@ -7,11 +7,20 @@ import { signOut } from "next-auth/react"
 import Link from 'next/link'
 
 import { ModalContext } from '@/app/(contexts)/ModalContext'
+import { FamilyContext } from '@/app/(contexts)/FamilyContext'
 import RecordSelector from '../RecordSelector/RecordSelector'
+import SelectorInput from '../SelectorInput/SelectorInput'
 
 const NavBar = () => {
     const { data: session, status } = useSession()
     const modalFunctions = useContext(ModalContext)
+    const familyContext = useContext(FamilyContext)
+
+    let familySelectOptions
+    if (session) {
+        familySelectOptions = session.user.families.map(family => { return { value: family.id, name: `${family.name} family` } })
+        familySelectOptions.unshift({ value: 'addFamily', name: '<span class="material-icons">add_circle</span>  Add new family', settable: false })
+    }
 
     return (
         <nav className={styles.navbar}>
@@ -32,7 +41,32 @@ const NavBar = () => {
                 </section>
             </section>
 
-            {session ? <a className="secondary" href="#" onClick={signOut}>Log Out</a> : ""}
+            <section className={styles.bottom}>
+
+                {session ? <SelectorInput
+                    default={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
+                    options={familySelectOptions}
+                    onChange={(valueToSet) => {
+                        if (valueToSet === "addFamily") {
+                            modalFunctions.addModal(
+                                "Add new family",
+                                <form action='/api/family' method='POST'>
+                                    <div>
+                                        <label htmlFor="name">Family Name</label>
+                                        <input type='text' id='name' name='name' />
+                                    </div>
+                                    <input type='submit' value="Add family" className="button primary" />
+                                </form>
+                            )
+                            return
+                        }
+                        familyContext.setFamily(valueToSet)
+                    }}
+                /> : ""}
+
+                {session ? <a className="secondary" href="#" onClick={signOut}>Log Out</a> : ""}
+
+            </section>
         </nav>
     )
 }
