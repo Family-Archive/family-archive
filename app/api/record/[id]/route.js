@@ -18,5 +18,11 @@ export async function GET(request, { params }) {
         }
     })
 
-    return Response.json({ status: "success", data: { record: record, files: files } })
+    const extraFields = await prisma.RecordField.findMany({
+        where: {
+            recordId: params.id
+        }
+    })
+
+    return Response.json({ status: "success", data: { record: record, files: files, fields: extraFields } })
 }

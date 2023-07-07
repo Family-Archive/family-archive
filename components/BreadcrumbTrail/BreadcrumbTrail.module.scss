@@ -2,4 +2,12 @@
     padding: 0.5rem 1rem;
     background: $accent-border-color;
     border-radius: 99rem;
+    display: flex;
+    gap: 0.75rem;
+
+    span:not(:last-child):after {
+        content: "🞂";
+        display: inline-block;
+        margin-left: 0.75rem;
+    }
 }

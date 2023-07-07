@@ -3,9 +3,33 @@
         display: flex;
         gap: 1rem;
         align-items: center;
+        margin-bottom: 1rem;
 
         .type {
             text-transform: capitalize;
+        }
+    }
+
+    .mainContent {
+        display: flex;
+        gap: 1rem;
+
+        .otherInfo {
+            margin-right: 1rem;
+            padding: 1rem;
+            border: $accent-border;
+            background: white;
+            border-radius: 1rem;
+            width: 25rem;
+            flex-shrink: 0;
+
+            h2 {
+                margin: 0 0 2rem 0;
+            }
+
+            p {
+                margin: 0.5rem 0 1rem 0;
+            }
         }
     }
 }
