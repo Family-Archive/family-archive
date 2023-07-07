@@ -20,7 +20,7 @@ const ModalContainer = (props) => {
                     key={modal.id}
                     id={`modal${modal.id}`}
                 >
-                    <button className={styles.close} onClick={modalFunctions.popModal}>X</button>
+                    <button className={`${styles.close} secondary`} onClick={modalFunctions.popModal}>X</button>
                     <h1>{modal.title}</h1>
                     {modal.content}
                 </div>

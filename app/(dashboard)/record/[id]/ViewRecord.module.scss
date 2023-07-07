@@ -1,0 +1,11 @@
+.ViewRecord {
+    .infoBar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        .type {
+            text-transform: capitalize;
+        }
+    }
+}

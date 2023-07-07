@@ -86,7 +86,7 @@ model File {
 model Record {
   id            String        @id @default(cuid())
   name          String
-  description   String?
+  description   String?       @db.Text
   type          String        @default("basic")
   userCreated   User          @relation(fields: [userCreatedId], references: [id])
   userCreatedId String

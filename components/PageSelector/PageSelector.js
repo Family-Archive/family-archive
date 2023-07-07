@@ -17,6 +17,11 @@ const PageSelector = () => {
             return
         }
 
+        if (page <= 0 || isNaN(page)) {
+            setpage(1)
+            return
+        }
+
         const urlParams = new URLSearchParams(window.location.search)
         let queryString = "?"
         for (let [key, value] of urlParams) {
@@ -31,9 +36,16 @@ const PageSelector = () => {
 
     return (
         <div className={styles.PageSelector}>
-            <button className="material-icons secondary" onClick={() => setpage(1)}>keyboard_double_arrow_left</button>
-            <button className={`material-icons secondary ${styles.large}`} onClick={() => setpage(page - 1)}>keyboard_arrow_left</button>
-            <input className={styles.pageNumber} type="number" value={page} onChange={(e) => setpage(parseInt(e.target.value))} />
+            <button className="material-icons secondary" disabled={page >= 2 ? "" : "disabled"} onClick={() => setpage(1)}>keyboard_double_arrow_left</button>
+            <button className={`material-icons secondary ${styles.large}`} disabled={page >= 2 ? "" : "disabled"} onClick={() => setpage(page - 1)}>keyboard_arrow_left</button>
+
+            <input
+                className={styles.pageNumber}
+                type="number"
+                value={page}
+                onChange={(e) => setpage(parseInt(e.target.value))}
+            />
+
             <button className={`material-icons secondary ${styles.large}`} onClick={() => setpage(page + 1)}>keyboard_arrow_right</button>
             <button className="material-icons secondary" onClick={() => setpage(999)}>keyboard_double_arrow_right</button>
         </div>
