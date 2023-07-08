@@ -12,7 +12,45 @@
 
     .mainContent {
         display: flex;
-        gap: 1rem;
+        justify-content: space-between;
+        gap: 10rem;
+
+        p {
+            margin: 0.25rem 0 1rem 0;
+        }
+
+        .content {
+            display: flex;
+            gap: 2rem;
+
+            p {
+                margin-bottom: 2rem;
+            }
+
+            .file {
+                img {
+                    object-fit: contain;
+                    box-shadow: inset 0px 0px 50px #0000000a;
+                }
+            }
+
+            .icon {
+                font-size: 3rem;
+                margin-left: -1rem;
+            }
+
+            .people {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+
+                .person {
+                    border-radius: 99rem;
+                    background: $accent-border-color;
+                    color: black;
+                }
+            }
+        }
 
         .otherInfo {
             margin-right: 1rem;
@@ -22,13 +60,12 @@
             border-radius: 1rem;
             width: 25rem;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
 
             h2 {
-                margin: 0 0 2rem 0;
-            }
-
-            p {
-                margin: 0.5rem 0 1rem 0;
+                margin: 0 0 1rem 0;
             }
         }
     }
