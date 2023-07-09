@@ -1,0 +1,22 @@
+.FileSelector {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .file {
+        display: flex;
+        gap: 1rem;
+        background: $accent-border-color;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        color: black;
+        align-items: center;
+
+        img {
+            width: 2rem;
+            height: 2rem;
+        }
+    }
+}

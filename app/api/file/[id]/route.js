@@ -6,6 +6,8 @@ import lib from '../../../../lib/lib'
 
 export async function GET(request, { params }) {
 
+    const searchParams = request.nextUrl.searchParams
+
     // TODO: Fix security; right now this just checks if you're logged in, but not whether you belong to a family that owns this image
     // Logged-in users can view any files if they have the ID
     const session = await getServerSession(authOptions);
@@ -21,7 +23,8 @@ export async function GET(request, { params }) {
 
     return new Response(file, {
         headers: {
-            "Content-Type": fileRecord.mimeType
+            "Content-Type": fileRecord.mimeType,
+            "Content-Disposition": searchParams.get('download') === "true" ? `attachment; filename="${fileRecord.name}"` : "inline"
         }
     })
 }

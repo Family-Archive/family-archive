@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
+import FileViewer from '@/components/FileViewer/FileViewer'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -44,7 +45,8 @@ const ViewRecord = async ({ params, searchParams }) => {
 
                 <div className={styles.content}>
                     <div className={styles.file}>
-                        <Image src={`/api/file/${recordData.data.files[0].id}`} width={500} height={500} />
+                        {/* <Image src={`/api/file/${recordData.data.files[0].id}`} width={500} height={500} /> */}
+                        <FileViewer files={recordData.data.files} />
                     </div>
                     <div className={styles.info}>
                         <strong>Description</strong>

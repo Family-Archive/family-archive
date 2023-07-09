@@ -9,7 +9,7 @@ const CreateRecordForm = (props) => {
             action={`/api/record/type/${props.recordTypeData.type}`}
             fields={props.recordTypeData.fields}
             acceptedFileTypes={acceptedFileTypes}
-            allowMultipleFiles={false}
+            allowMultipleFiles={true}
         />
     )
 }
