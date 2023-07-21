@@ -79,7 +79,7 @@ model File {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  record    Record   @relation(fields: [recordId], references: [id])
+  record    Record   @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId  String
 }
 
@@ -102,7 +102,7 @@ model RecordField {
   id       String @id @default(cuid())
   name     String
   value    String
-  record   Record @relation(fields: [recordId], references: [id])
+  record   Record @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId String
 }
 

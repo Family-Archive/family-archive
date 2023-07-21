@@ -26,3 +26,14 @@ export async function GET(request, { params }) {
 
     return Response.json({ status: "success", data: { record: record, files: files, fields: extraFields } })
 }
+
+export async function DELETE(request, { params }) {
+    const session = await getServerSession(authOptions);
+
+    let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
+    const record = await prisma.record.deleteMany({
+        where: where
+    })
+
+    return Response.json({ status: "success", data: { message: "Record deleted" } })
+}

@@ -40,12 +40,21 @@ button,
     height: fit-content;
     font-family: 'Inter';
     border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 button.secondary,
 .button.secondary {
     background: $accent-secondary-color;
     color: white;
+}
+
+button.tertiary,
+.button.tertiary {
+    background: $accent-border-color;
+    color: black;
 }
 
 button:hover,
@@ -60,9 +69,21 @@ button:disabled,
     filter: saturate(0) brightness(3.5);
 }
 
+button.delete,
+.button.delete {
+    background-color: #ffacac;
+    color: black;
+}
+
 .page {
     padding: 2rem 2rem 2rem 26rem;
     min-height: 100vh;
+
+    .topBar {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+    }
 }
 
 .title {

@@ -1,6 +1,6 @@
 .FileSelector {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1rem;
 
@@ -10,13 +10,14 @@
         background: $accent-border-color;
         padding: 0.5rem;
         border-radius: 0.5rem;
-        width: 100%;
+        width: max-content;
         color: black;
         align-items: center;
 
         img {
             width: 2rem;
             height: 2rem;
+            object-fit: cover;
         }
     }
 }

@@ -1,11 +1,11 @@
 import { cookies } from 'next/dist/client/components/headers'
 import lib from '../../../../lib/lib'
 import { prisma } from "../../../db/prisma"
-import Image from 'next/image'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import FileViewer from '@/components/FileViewer/FileViewer'
+import DeleteRecordButton from './DeleteRecordButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -23,7 +23,7 @@ const ViewRecord = async ({ params, searchParams }) => {
     // Fetch people connected to record by reading the custom "Person" field
     let people = []
     for (let field of recordData.data.fields) {
-        if (field.name === "Person") {
+        if (field.name === "Person" && field.value) {
             for (let id of JSON.parse(field.value)) {
                 const person = await prisma.person.findFirst({
                     where: { id: id }
@@ -35,7 +35,13 @@ const ViewRecord = async ({ params, searchParams }) => {
 
     return (
         <div className={styles.ViewRecord}>
-            <h1 className='title'>{record.name}</h1>
+            <div className="topBar">
+                <h1 className='title'>{record.name}</h1>
+                <div className='pageOptions'>
+                    <DeleteRecordButton id={record.id} />
+                </div>
+            </div>
+
             <div className={styles.infoBar}>
                 <span className={styles.type}>{record.type}</span>
                 <BreadcrumbTrail name={record.name} />
@@ -49,6 +55,17 @@ const ViewRecord = async ({ params, searchParams }) => {
                         <FileViewer files={recordData.data.files} />
                     </div>
                     <div className={styles.info}>
+                        {people.length > 0 ?
+                            <div className={styles.people}>
+                                <span className={`${styles.icon} material-icons`}>boy</span>
+                                {people.map(person => {
+                                    return <button className={styles.person}>
+                                        {person.fullName}
+                                    </button>
+                                })}
+                            </div>
+                            : ""}
+
                         <strong>Description</strong>
                         <p>{record.description}</p>
 
@@ -58,15 +75,6 @@ const ViewRecord = async ({ params, searchParams }) => {
                                 <p>{field.value}</p>
                             </div>
                         })}
-
-                        <div className={styles.people}>
-                            <span className={`${styles.icon} material-icons`}>boy</span>
-                            {people.map(person => {
-                                return <button className={styles.person}>
-                                    {person.fullName}
-                                </button>
-                            })}
-                        </div>
                     </div>
                 </div>
 
