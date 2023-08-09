@@ -1,5 +1,6 @@
 import { prisma } from '@/app/db/prisma'
 import { NextResponse } from 'next/server'
+import lib from '@/lib/lib'
 
 export async function GET(request) {
     const people = await prisma.Person.findMany()
@@ -26,12 +27,17 @@ export async function POST(request) {
         })
     }
 
+    const currentFamilyId = await lib.getCurrentFamilyId()
+
     const newPerson = await prisma.Person.create({
         data: {
             fullName: parameters.fullName,
             shortName: parameters.shortName,
             pronouns: {
                 connect: { id: parameters.pronouns }
+            },
+            family: {
+                connect: { id: currentFamilyId }
             }
         }
     })
