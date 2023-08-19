@@ -8,7 +8,7 @@ import { revalidateTag } from 'next/cache'
 // it hits this page which dynamically includes the matching file from the types directory
 
 export async function GET(request, { params }) {
-    const RecordType = require(`/lib/classes/record/types/${params.type}.js`)
+    const RecordType = require(`/recordtypes/${params.type}/record.js`)
     const recordType = new RecordType()
     return Response.json(recordType.getStructure())
 }
@@ -19,7 +19,7 @@ export async function POST(request, { params }) {
     revalidateTag(tag)
 
     const session = await getServerSession(authOptions);
-    const RecordType = require(`/lib/classes/record/types/${params.type}.js`)
+    const RecordType = require(`/recordtypes/${params.type}/record.js`)
     const recordType = new RecordType()
 
     let newRecord

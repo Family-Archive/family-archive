@@ -56,7 +56,7 @@ model User {
   records         Record[]
   families        Family[]
   defaultFamily   Family    @relation("defaultFamily", fields: [defaultFamilyId], references: [id])
-  defaultFamilyId String    
+  defaultFamilyId String
 }
 
 model Family {
@@ -68,7 +68,7 @@ model Family {
   pronounSets           PronounSet[]
   indirectRelationships IndirectRelationship[]
   relationshipTypes     RelationshipType[]
-  defaultUsers          User[]                  @relation("defaultFamily")
+  defaultUsers          User[]                 @relation("defaultFamily")
 }
 
 model File {
@@ -149,4 +149,11 @@ model RelationshipType {
   indirectRelationships IndirectRelationship[]
   family                Family                 @relation(fields: [familyId], references: [id])
   familyId              String
+}
+
+model Setting {
+  id      String @id @default(cuid())
+  context String @default("general")
+  name    String
+  value   String
 }
