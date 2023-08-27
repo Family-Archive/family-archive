@@ -39,6 +39,7 @@ const NavBar = () => {
                     <button><span className="material-icons">watch_later</span>Timeline</button>
                     <button><span className="material-icons">public</span>Map</button>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
+                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                 </section>
             </section>
 

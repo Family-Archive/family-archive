@@ -16,7 +16,7 @@ const fetchRecord = async (params) => {
     return await record.json()
 }
 
-const ViewRecord = async ({ params, searchParams }) => {
+const ViewRecord = async ({ params }) => {
     const recordData = await fetchRecord(params);
     const record = recordData.data.record
 
@@ -52,7 +52,7 @@ const ViewRecord = async ({ params, searchParams }) => {
                 <div className={styles.content}>
                     <div className={styles.file}>
                         {/* <Image src={`/api/file/${recordData.data.files[0].id}`} width={500} height={500} /> */}
-                        <FileViewer files={recordData.data.files} />
+                        {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
                         {people.length > 0 ?
@@ -70,10 +70,12 @@ const ViewRecord = async ({ params, searchParams }) => {
                         <p>{record.description}</p>
 
                         {recordData.data.fields.map(field => {
-                            return <div key={field.id}>
-                                <strong>{field.name}</strong>
-                                <p>{field.value}</p>
-                            </div>
+                            if (field.value) {
+                                return <div key={field.id}>
+                                    <strong>{field.name}</strong>
+                                    <p>{field.value}</p>
+                                </div>
+                            }
                         })}
                     </div>
                 </div>

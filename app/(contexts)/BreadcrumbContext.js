@@ -23,7 +23,8 @@ export const BreadcrumbProvider = ({ children }) => {
 
     // List of paths that should reset the trail
     const resetPaths = [
-        '/records/all'
+        '/records/all',
+        '/collection'
     ]
 
     const updateTrail = (pathname) => {
@@ -44,7 +45,7 @@ export const BreadcrumbProvider = ({ children }) => {
         for (const [index, node] of trail.entries()) {
             if (node.path === pathname) {
                 let tempTrail = trail
-                tempTrail = tempTrail.slice(0, index)
+                tempTrail = tempTrail.slice(0, index + 1)
                 settrail(tempTrail)
                 return
             }

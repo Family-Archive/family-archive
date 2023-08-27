@@ -16,9 +16,10 @@ const ModalContainer = (props) => {
         >
             {modals.map(modal =>
                 <div
-                    className={`${styles.modal} ${modal.styles}`}
+                    className={styles.modal}
                     key={modal.id}
                     id={`modal${modal.id}`}
+                    style={modal.styles ? modal.styles : {}}
                 >
                     <button className={`${styles.close} tertiary`} onClick={modalFunctions.popModal}><span className="material-icons">close</span></button>
                     <h1>{modal.title}</h1>

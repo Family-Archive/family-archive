@@ -69,6 +69,7 @@ model Family {
   indirectRelationships IndirectRelationship[]
   relationshipTypes     RelationshipType[]
   defaultUsers          User[]                  @relation("defaultFamily")
+  collections           Collection[]
 }
 
 model File {
@@ -96,6 +97,8 @@ model Record {
   files         File[]
   family        Family        @relation(fields: [familyId], references: [id])
   familyId      String
+  collection    Collection?    @relation(fields: [collectionId], references: [id])
+  collectionId  String?
 }
 
 model RecordField {
@@ -149,4 +152,15 @@ model RelationshipType {
   indirectRelationships IndirectRelationship[]
   family                Family                 @relation(fields: [familyId], references: [id])
   familyId              String
+}
+
+model Collection {
+  id            String          @id @default(cuid())
+  name          String
+  family        Family          @relation(fields: [familyId], references: [id])
+  familyId      String
+  Record   Record[]
+  children      Collection[]    @relation("collectionHierarchy")
+  parent        Collection?     @relation("collectionHierarchy", fields: [parentId], references: [id])
+  parentId      String?
 }
