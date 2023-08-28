@@ -27,6 +27,20 @@ export async function GET(request, { params }) {
     return Response.json({ status: "success", data: { record: record, files: files, fields: extraFields } })
 }
 
+export async function PUT(request, { params }) {
+    const session = await getServerSession(authOptions)
+
+    let data = await request.formData()
+    data = Object.fromEntries(data)
+
+    const record = await prisma.record.update({
+        where: { id: params.id },
+        data: data
+    })
+
+    return Response.json({ status: "success", data: { record: record } })
+}
+
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
 

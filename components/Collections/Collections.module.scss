@@ -39,10 +39,10 @@
         &:hover {
             background: $accent-border-color;
             transform: scale(1.05);
+            z-index: 2;
 
             .collection {
                 position: relative;
-                z-index: 2;
                 width: max-content;
                 background: $accent-border-color;
 

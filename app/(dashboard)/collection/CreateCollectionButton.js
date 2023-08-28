@@ -26,8 +26,7 @@ const CreateCollectionButton = (props) => {
                         <input type='submit' value='Add' className="button" />
                         <button className="tertiary" onClick={modalFunctions.popModal}>Cancel</button>
                     </formitem>
-                </form>,
-                { minWidth: "20vw" }
+                </form>
             )}
         >
             <span className="material-icons">library_add</span>

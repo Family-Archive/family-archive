@@ -15,6 +15,11 @@ export async function GET(request, { params }) {
         where: where
     })
 
+    where = lib.limitQueryByFamily({ collectionId: params.id }, request.cookies, session)
+    const records = await prisma.record.findMany({
+        where: where
+    })
+
     collections[0]['children'] = childCollections
-    return Response.json({ status: "success", data: { collections: collections } })
+    return Response.json({ status: "success", data: { collections: collections, records: records } })
 }

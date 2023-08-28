@@ -6,6 +6,8 @@ import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import FileViewer from '@/components/FileViewer/FileViewer'
 import DeleteRecordButton from './DeleteRecordButton'
+import Dropdown from '@/components/Dropdown/Dropdown'
+import MoveToCollectionButton from './MoveToCollectionButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -25,10 +27,12 @@ const ViewRecord = async ({ params }) => {
     for (let field of recordData.data.fields) {
         if (field.name === "Person" && field.value) {
             for (let id of JSON.parse(field.value)) {
-                const person = await prisma.person.findFirst({
-                    where: { id: id }
-                })
-                people.push(person)
+                if (id) {
+                    const person = await prisma.person.findFirst({
+                        where: { id: id }
+                    })
+                    people.push(person)
+                }
             }
         }
     }
@@ -38,7 +42,14 @@ const ViewRecord = async ({ params }) => {
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
                 <div className='pageOptions'>
-                    <DeleteRecordButton id={record.id} />
+                    <button><span class="material-icons">edit</span>Edit record</button>
+                    <Dropdown
+                        title="Options"
+                        options={[
+                            <MoveToCollectionButton id={record.id} />,
+                            <DeleteRecordButton id={record.id} />
+                        ]}
+                    />
                 </div>
             </div>
 
