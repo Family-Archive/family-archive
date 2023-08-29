@@ -97,8 +97,7 @@ model Record {
   files         File[]
   family        Family        @relation(fields: [familyId], references: [id])
   familyId      String
-  collection    Collection?    @relation(fields: [collectionId], references: [id])
-  collectionId  String?
+  collection    Collection[]
 }
 
 model RecordField {
@@ -159,7 +158,7 @@ model Collection {
   name          String
   family        Family          @relation(fields: [familyId], references: [id])
   familyId      String
-  Record   Record[]
+  Record        Record[]
   children      Collection[]    @relation("collectionHierarchy")
   parent        Collection?     @relation("collectionHierarchy", fields: [parentId], references: [id])
   parentId      String?

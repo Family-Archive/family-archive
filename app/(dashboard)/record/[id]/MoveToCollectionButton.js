@@ -21,7 +21,7 @@ const MoveToCollectionButton = (props) => {
                             onClick={() => {
                                 const formData = new FormData()
                                 const collectionId = document.querySelector('#collectionParentId').value
-                                formData.append('collectionId', collectionId)
+                                formData.append('collection', JSON.stringify({ value: collectionId, connect: true, name: "collection" }))
                                 fetch(`/api/record/${props.id}`, {
                                     method: "PUT",
                                     body: formData

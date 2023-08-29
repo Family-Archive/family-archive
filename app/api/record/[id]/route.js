@@ -30,8 +30,24 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions)
 
-    let data = await request.formData()
-    data = Object.fromEntries(data)
+    let formData = await request.formData()
+    formData = Object.fromEntries(formData)
+
+    let data = {}
+    let update = {}
+    for (let key of Object.keys(formData)) {
+        try {
+            const keyJSON = JSON.parse(formData[key])
+            if (keyJSON["connect"]) {
+                data[keyJSON["name"]] = { connect: { id: keyJSON["value"] } }
+            }
+        } catch {
+            data[key] = formData[key]
+        }
+    }
+
+    console.log(data)
+    console.log(update)
 
     const record = await prisma.record.update({
         where: { id: params.id },

@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
         where: where
     })
 
-    where = lib.limitQueryByFamily({ collectionId: params.id }, request.cookies, session)
+    where = lib.limitQueryByFamily({ collection: { some: { id: params.id } } }, request.cookies, session)
     const records = await prisma.record.findMany({
         where: where
     })

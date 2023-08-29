@@ -21,7 +21,7 @@ const collection = async ({ params, searchParams }) => {
             <h1 className='title'>{thisCollection.name}</h1>
             <BreadcrumbTrail /><br />
             <Collections collections={children} />
-            {children.length > 0 && records.length > 0 ? <><br /><hr /><br /></> : ""}
+            {children.length > 0 && records.length > 0 ? <><br /><br /></> : ""}
             {records.length > 0 ? <AllRecords params={searchParams} records={records} showOptions={false} /> : ""}
         </>
     )
