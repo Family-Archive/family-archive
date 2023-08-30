@@ -34,7 +34,6 @@ export async function PUT(request, { params }) {
     formData = Object.fromEntries(formData)
 
     let data = {}
-    let update = {}
     for (let key of Object.keys(formData)) {
         try {
             const keyJSON = JSON.parse(formData[key])
@@ -45,9 +44,6 @@ export async function PUT(request, { params }) {
             data[key] = formData[key]
         }
     }
-
-    console.log(data)
-    console.log(update)
 
     const record = await prisma.record.update({
         where: { id: params.id },

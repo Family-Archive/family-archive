@@ -11,7 +11,6 @@ const Dropdown = (props) => {
             <button className={`${styles.title} tertiary`} onClick={() => setactive(!active)}><span class="material-icons">expand_more</span>{props.title}</button>
             <div className={styles.options} >
                 {props.options.map((option, index) => {
-                    console.log(option)
                     return (
                         <div className={styles.option} key={index}>
                             {option}
