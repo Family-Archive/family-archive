@@ -1,7 +1,8 @@
 import Form from '../Form/Form'
 
 const CreateRecordForm = (props) => {
-    const acceptedFileTypes = ['*']
+    const recordTypeOptions = props.recordTypeData.config.options
+    const acceptedFileTypes = recordTypeOptions.acceptedFileTypes
 
     return (
         <Form
@@ -9,7 +10,7 @@ const CreateRecordForm = (props) => {
             action={`/api/record/type/${props.recordTypeData.type}`}
             fields={props.recordTypeData.fields}
             acceptedFileTypes={acceptedFileTypes}
-            allowMultipleFiles={true}
+            allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
         />
     )
 }

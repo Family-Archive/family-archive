@@ -56,7 +56,7 @@ model User {
   records         Record[]
   families        Family[]
   defaultFamily   Family    @relation("defaultFamily", fields: [defaultFamilyId], references: [id])
-  defaultFamilyId String    
+  defaultFamilyId String
 }
 
 model Family {
@@ -162,4 +162,11 @@ model Collection {
   children      Collection[]    @relation("collectionHierarchy")
   parent        Collection?     @relation("collectionHierarchy", fields: [parentId], references: [id])
   parentId      String?
+}
+
+model Setting {
+  id      String @id @default(cuid())
+  context String @default("general")
+  name    String
+  value   String
 }
