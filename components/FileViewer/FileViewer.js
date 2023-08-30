@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import lib from '@/lib/lib'
+import lib from '@/lib/client/lib'
 
 import styles from './FileViewer.module.scss'
 import FileSelector from './FileSelector/FileSelector'
