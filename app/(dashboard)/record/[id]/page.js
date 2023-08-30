@@ -6,6 +6,8 @@ import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import FileViewer from '@/components/FileViewer/FileViewer'
 import DeleteRecordButton from './DeleteRecordButton'
+import Dropdown from '@/components/Dropdown/Dropdown'
+import MoveToCollectionButton from './MoveToCollectionButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -16,7 +18,7 @@ const fetchRecord = async (params) => {
     return await record.json()
 }
 
-const ViewRecord = async ({ params, searchParams }) => {
+const ViewRecord = async ({ params }) => {
     const recordData = await fetchRecord(params);
     const record = recordData.data.record
 
@@ -25,10 +27,12 @@ const ViewRecord = async ({ params, searchParams }) => {
     for (let field of recordData.data.fields) {
         if (field.name === "Person" && field.value) {
             for (let id of JSON.parse(field.value)) {
-                const person = await prisma.person.findFirst({
-                    where: { id: id }
-                })
-                people.push(person)
+                if (id) {
+                    const person = await prisma.person.findFirst({
+                        where: { id: id }
+                    })
+                    people.push(person)
+                }
             }
         }
     }
@@ -38,7 +42,14 @@ const ViewRecord = async ({ params, searchParams }) => {
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
                 <div className='pageOptions'>
-                    <DeleteRecordButton id={record.id} />
+                    <button><span class="material-icons">edit</span>Edit record</button>
+                    <Dropdown
+                        title="Options"
+                        options={[
+                            <MoveToCollectionButton id={record.id} />,
+                            <DeleteRecordButton id={record.id} />
+                        ]}
+                    />
                 </div>
             </div>
 
@@ -52,7 +63,7 @@ const ViewRecord = async ({ params, searchParams }) => {
                 <div className={styles.content}>
                     <div className={styles.file}>
                         {/* <Image src={`/api/file/${recordData.data.files[0].id}`} width={500} height={500} /> */}
-                        <FileViewer files={recordData.data.files} />
+                        {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
                         {people.length > 0 ?
@@ -70,10 +81,12 @@ const ViewRecord = async ({ params, searchParams }) => {
                         <p>{record.description}</p>
 
                         {recordData.data.fields.map(field => {
-                            return <div key={field.id}>
-                                <strong>{field.name}</strong>
-                                <p>{field.value}</p>
-                            </div>
+                            if (field.value) {
+                                return <div key={field.id}>
+                                    <strong>{field.name}</strong>
+                                    <p>{field.value}</p>
+                                </div>
+                            }
                         })}
                     </div>
                 </div>

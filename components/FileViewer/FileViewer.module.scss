@@ -1,5 +1,6 @@
 .FileViewer {
-    max-width: 30rem;
+    display: flex;
+    gap: 1rem;
 
     .fileviewContainer {
         position: relative;
@@ -14,6 +15,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 3;
 
             img {
                 height: auto;

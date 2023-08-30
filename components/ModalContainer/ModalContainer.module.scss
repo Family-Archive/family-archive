@@ -11,6 +11,7 @@
     pointer-events: none;
     transition: opacity 0.2s ease;
     backdrop-filter: grayscale(100%);
+    z-index: 9;
 
     &.active {
         opacity: 1;

@@ -30,7 +30,7 @@ const DeleteButton = (props) => {
         </>
       )}
     >
-      <span className="material-icons">delete_forever</span>
+      {/* <span className="material-icons">delete_forever</span> */}
       Delete record
     </button>
   )

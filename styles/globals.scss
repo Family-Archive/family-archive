@@ -31,6 +31,12 @@ p {
     line-height: 1.75rem;
 }
 
+hr {
+    border: none;
+    background: $accent-border-color;
+    height: 2px;
+}
+
 button,
 .button {
     padding: 0.75rem;
@@ -83,6 +89,12 @@ button.delete,
         display: flex;
         justify-content: space-between;
         gap: 2rem;
+    }
+
+    .pageOptions {
+        float: right;
+        display: flex;
+        gap: 1rem;
     }
 }
 

@@ -29,12 +29,17 @@ const fetchRecords = async (params) => {
 }
 
 const AllRecords = async (props) => {
-    const records = await fetchRecords(props.params)
+    // If passed record list is empty, then use the fetchRecords method
+
+    let recordList = props.records
+    if (recordList.length === 0) {
+        recordList = await fetchRecords(props.params)
+    }
 
     return (
         <div className={styles.AllRecords}>
             <section className={styles.recordsGrid}>
-                {records.map(record => {
+                {recordList.map(record => {
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
                         <div className={styles.image} />
                         <span className={styles.recordName}>{record.name}</span>
@@ -45,10 +50,12 @@ const AllRecords = async (props) => {
                 })}
             </section>
 
-            <section className={styles.viewOptions}>
-                <ViewFilter params={props.params} />
-                <PageSelector page={props.params.page} />
-            </section>
+            {props.showOptions ?
+                <section className={styles.viewOptions}>
+                    <ViewFilter params={props.params} />
+                    <PageSelector page={props.params.page} />
+                </section>
+                : ""}
         </div>
     )
 }
