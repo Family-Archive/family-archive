@@ -1,16 +1,20 @@
 import Form from '../Form/Form'
 
 const CreateRecordForm = (props) => {
+    const recordType = props.recordTypeClass
+    const recordTypeData = recordType.getStructure()
     const recordTypeOptions = props.recordTypeData.config.options
     const acceptedFileTypes = recordTypeOptions.acceptedFileTypes
 
     return (
         <Form
             method="POST"
-            action={`/api/record/${props.recordTypeData.type}`}
-            fields={props.recordTypeData.fields}
+            action={`/api/record/${recordTypeData.type}`}
+            fields={recordTypeData.fields}
             acceptedFileTypes={acceptedFileTypes}
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
+            formInit={ }
+        // afterFileIsUploaded={props.recordTypeClass}
         />
     )
 }

@@ -1,0 +1,14 @@
+{
+    "name": "File",
+    "type": "file",
+    "description": "A record that features a file of any type.",
+    "version": "1.0.0",
+    "settings": {},
+    "options": {
+        "disableFileUploads": false,
+        "allowMultipleFiles": false,
+        "acceptedFileTypes": [
+            "*"
+        ]
+    }
+}
