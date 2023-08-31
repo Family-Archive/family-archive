@@ -1,0 +1,58 @@
+.FileViewer {
+    display: flex;
+    gap: 1rem;
+
+    .fileviewContainer {
+        position: relative;
+
+        &.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+
+            img {
+                height: auto;
+                width: auto;
+                max-height: 100vh;
+            }
+        }
+
+        .zoom {
+            position: absolute;
+            bottom: 0.25rem;
+            right: 0.25rem;
+            font-size: 4rem;
+            color: white;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+
+        .fileview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            object-fit: contain;
+            box-shadow: inset 0px 0px 50px #0000000a;
+            width: 30rem;
+            height: 30rem;
+            text-align: center;
+        }
+    }
+
+
+    .download {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}

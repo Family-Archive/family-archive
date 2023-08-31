@@ -35,14 +35,20 @@
 
 .selectedPeopleContainer {
     margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .selectedPerson {
     padding: 6px 16px 6px 6px;
     border-radius: 20px;
-    background-color: #e6e6e6;
-    border: 1px solid #999;
+    background-color: $accent-border-color;
     margin-right: 6px;
+    width: max-content;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
 }
 
 .removePerson {

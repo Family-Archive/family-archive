@@ -4,7 +4,7 @@ const allRecords = async ({ searchParams }) => {
     return (
         <>
             <h1 className='title'>All Records</h1>
-            <AllRecords params={searchParams} />
+            <AllRecords params={searchParams} records={[]} showOptions={true} />
         </>
     )
 }

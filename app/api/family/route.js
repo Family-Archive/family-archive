@@ -21,5 +21,7 @@ export async function POST(request) {
         }
     })
 
+    // TODO: add error handling here
+
     return Response.redirect(new URL(referer))
 }

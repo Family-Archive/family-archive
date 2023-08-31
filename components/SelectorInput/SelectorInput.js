@@ -1,11 +1,24 @@
 "use client"
 import styles from './SelectorInput.module.scss'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const SelectorInput = (props) => {
     const [value, setvalue] = useState(props.default)
     const [showMenu, setshowMenu] = useState(false)
+
+    const myRef = useRef();
+
+    const handleClickOutside = e => {
+        if (!myRef.current.contains(e.target)) {
+            setshowMenu(false)
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    });
 
     const updateValue = (valueToSet, settable = true) => {
         setshowMenu(!showMenu)
@@ -18,7 +31,7 @@ const SelectorInput = (props) => {
     }
 
     return (
-        <div className={styles.SelectorInput}>
+        <div className={styles.SelectorInput} ref={myRef}>
             <div className={styles.options}>
 
                 {props.options.map(option => {

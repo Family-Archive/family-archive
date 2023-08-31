@@ -1,0 +1,28 @@
+.CollectionSelector {
+    padding: 0.5rem;
+    border: 2px solid $accent-secondary-color;
+    border-radius: 0.5rem;
+
+    .formControl {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+
+        .collectionSearch {
+            border: 2px solid $accent-border-color;
+        }
+    }
+
+    .singleCollection {
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 0.25rem;
+
+        &.active {
+            background: $accent-color;
+            color: white;
+        }
+    }
+}

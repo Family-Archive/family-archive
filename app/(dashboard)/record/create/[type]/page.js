@@ -1,7 +1,7 @@
 import CreateRecordForm from "@/components/CreateRecordForm/CreateRecordForm"
 
 const createRecordType = async ({ params }) => {
-    let recordTypeData = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.type}`)
+    let recordTypeData = await fetch(`${process.env.NEXTAUTH_URL}/api/record/type/${params.type}`)
     recordTypeData = await recordTypeData.json()
 
     return (

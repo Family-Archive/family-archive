@@ -1,5 +1,9 @@
 @import 'variables.scss';
 
+html {
+    font-size: 14px;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -23,6 +27,16 @@ a {
     text-decoration: none;
 }
 
+p {
+    line-height: 1.75rem;
+}
+
+hr {
+    border: none;
+    background: $accent-border-color;
+    height: 2px;
+}
+
 button,
 .button {
     padding: 0.75rem;
@@ -32,6 +46,9 @@ button,
     height: fit-content;
     font-family: 'Inter';
     border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 button.secondary,
@@ -40,21 +57,52 @@ button.secondary,
     color: white;
 }
 
+button.tertiary,
+.button.tertiary {
+    background: $accent-border-color;
+    color: black;
+}
+
 button:hover,
 .button:hover {
     cursor: pointer;
     filter: brightness(0.85);
 }
 
+button:disabled,
+.button.disabled {
+    pointer-events: none;
+    filter: saturate(0) brightness(3.5);
+}
+
+button.delete,
+.button.delete {
+    background-color: #ffacac;
+    color: black;
+}
+
 .page {
-    padding: 2rem 2rem 2rem 24rem;
+    padding: 2rem 2rem 2rem 26rem;
     min-height: 100vh;
+
+    .topBar {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .pageOptions {
+        float: right;
+        display: flex;
+        gap: 1rem;
+    }
 }
 
 .title {
     font-size: 3rem;
     margin: 0;
     margin-bottom: 3rem;
+    font-weight: normal;
 }
 
 .column {

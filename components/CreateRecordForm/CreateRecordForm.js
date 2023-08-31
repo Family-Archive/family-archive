@@ -7,7 +7,7 @@ const CreateRecordForm = (props) => {
     return (
         <Form
             method="POST"
-            action={`/api/record/${props.recordTypeData.type}`}
+            action={`/api/record/type/${props.recordTypeData.type}`}
             fields={props.recordTypeData.fields}
             acceptedFileTypes={acceptedFileTypes}
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
