@@ -13,8 +13,8 @@ const CreateRecordForm = (props) => {
             fields={recordTypeData.fields}
             acceptedFileTypes={acceptedFileTypes}
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
-            formInit={ }
-        // afterFileIsUploaded={props.recordTypeClass}
+            requireFileUploadFirst={recordTypeOptions.requireFileUploadFirst}
+            recordType={recordType.name}
         />
     )
 }

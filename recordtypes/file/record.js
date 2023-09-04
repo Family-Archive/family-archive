@@ -5,12 +5,7 @@ class File extends Record {
         super(
             'File',
             'file',
-            [
-                {
-                    'name': 'Who is featured in this file?',
-                    'type': 'PersonSelector'
-                }
-            ]
+            []
         )
     }
 }

@@ -5,8 +5,9 @@
     "version": "1.0.0",
     "settings": {},
     "options": {
+        "requireFileUploadFirst": true,
         "disableFileUploads": false,
-        "allowMultipleFiles": false,
+        "allowMultipleFiles": true,
         "acceptedFileTypes": [
             "*"
         ]
