@@ -68,7 +68,7 @@ model Family {
   pronounSets           PronounSet[]
   indirectRelationships IndirectRelationship[]
   relationshipTypes     RelationshipType[]
-  defaultUsers          User[]                  @relation("defaultFamily")
+  defaultUsers          User[]                 @relation("defaultFamily")
   collections           Collection[]
 }
 
@@ -85,19 +85,19 @@ model File {
 }
 
 model Record {
-  id            String        @id @default(cuid())
-  name          String
-  description   String?       @db.Text
-  type          String        @default("basic")
-  userCreated   User          @relation(fields: [userCreatedId], references: [id])
-  userCreatedId String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  RecordField   RecordField[]
-  files         File[]
-  family        Family        @relation(fields: [familyId], references: [id])
-  familyId      String
-  collection    Collection[]
+  id                   String                 @id @default(cuid())
+  name                 String
+  description          String?                @db.Text
+  type                 String                 @default("basic")
+  userCreated          User                   @relation(fields: [userCreatedId], references: [id])
+  userCreatedId        String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  RecordField          RecordField[]
+  files                File[]
+  family               Family                 @relation(fields: [familyId], references: [id])
+  familyId             String
+  collections          Collection[]
 }
 
 model RecordField {
@@ -154,14 +154,14 @@ model RelationshipType {
 }
 
 model Collection {
-  id            String          @id @default(cuid())
-  name          String
-  family        Family          @relation(fields: [familyId], references: [id])
-  familyId      String
-  Record        Record[]
-  children      Collection[]    @relation("collectionHierarchy")
-  parent        Collection?     @relation("collectionHierarchy", fields: [parentId], references: [id])
-  parentId      String?
+  id                   String                 @id @default(cuid())
+  name                 String
+  family               Family                 @relation(fields: [familyId], references: [id])
+  familyId             String
+  children             Collection[]           @relation("collectionHierarchy")
+  parent               Collection?            @relation("collectionHierarchy", fields: [parentId], references: [id])
+  parentId             String?
+  records              Record[]
 }
 
 model Setting {

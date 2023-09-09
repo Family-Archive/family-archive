@@ -8,7 +8,7 @@ const Dropdown = (props) => {
 
     return (
         <div className={`${styles.Dropdown} ${active ? styles.active : ''}`}>
-            <button className={`${styles.title} tertiary`} onClick={() => setactive(!active)}><span class="material-icons">expand_more</span>{props.title}</button>
+            <button className={`${styles.title} tertiary`} onClick={() => setactive(!active)}><span className="material-icons">expand_more</span>{props.title}</button>
             <div className={styles.options} >
                 {props.options.map((option, index) => {
                     return (

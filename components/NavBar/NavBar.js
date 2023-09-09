@@ -20,7 +20,7 @@ const NavBar = () => {
     let familySelectOptions
     if (session) {
         familySelectOptions = session.user.families.map(family => { return { value: family.id, name: `${family.name} family` } })
-        familySelectOptions.unshift({ value: 'addFamily', name: '<span class="material-icons">add_circle</span>  Add new family', settable: false })
+        familySelectOptions.unshift({ value: 'addFamily', name: '<span className="material-icons">add_circle</span>  Add new family', settable: false })
     }
 
     return (

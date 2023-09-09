@@ -7,29 +7,32 @@ import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import CollectionSelector from '@/components/CollectionSelector/CollectionSelector'
 
-const MoveToCollectionButton = (props) => {
+const RemoveFromCollectionButton = (props) => {
     const modalFunctions = useContext(ModalContext)
 
     return (
         <button
             onClick={() => modalFunctions.addModal(
-                "Add to collection",
+                "Remove from collection",
                 <>
-                    <CollectionSelector /><br />
+                    <CollectionSelector recordId={props.id} /><br />
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {
                                 const formData = new FormData()
                                 const collectionId = document.querySelector('#collectionParentId').value
-                                formData.append('collections', JSON.stringify({ value: collectionId, connect: true, name: "collections" }))
+                                formData.append('collections', JSON.stringify({
+                                    value: collectionId,
+                                    disconnect: true,
+                                    name: "collections",
+                                }))
                                 fetch(`/api/record/${props.id}`, {
                                     method: "PUT",
                                     body: formData
                                 })
                                     .then(response => response.json())
-                                    .then(data => { window.location = `/collection/${collectionId}` })
-                            }
-                            }
+                                    .then(data => { window.location.reload() })
+                            }}
                         >
                             Ok
                         </button>
@@ -38,9 +41,9 @@ const MoveToCollectionButton = (props) => {
                 </>
             )}
         >
-            Add to collection...
+            Remove from collection...
         </button>
     )
 }
 
-export default MoveToCollectionButton
+export default RemoveFromCollectionButton

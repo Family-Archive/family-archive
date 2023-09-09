@@ -8,6 +8,7 @@ import FileViewer from '@/components/FileViewer/FileViewer'
 import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
+import RemoveFromCollectionButton from './RemoveFromCollection'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -42,11 +43,12 @@ const ViewRecord = async ({ params }) => {
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
                 <div className='pageOptions'>
-                    <button><span class="material-icons">edit</span>Edit record</button>
+                    <button><span className="material-icons">edit</span>Edit record</button>
                     <Dropdown
                         title="Options"
                         options={[
                             <MoveToCollectionButton id={record.id} />,
+                            <RemoveFromCollectionButton id={record.id} />,
                             <DeleteRecordButton id={record.id} />
                         ]}
                     />

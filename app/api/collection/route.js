@@ -10,11 +10,21 @@ export async function GET(request) {
     const session = await getServerSession(authOptions)
 
     const name = request.nextUrl.searchParams.get('name')
+    const recordId = request.nextUrl.searchParams.get('recordId')
+
     let where
     if (name) {
         where = {
             name: {
                 contains: name
+            }
+        }
+    } else if (recordId) {
+        where = {
+            records: {
+                some: {
+                    id: recordId
+                }
             }
         }
     } else {

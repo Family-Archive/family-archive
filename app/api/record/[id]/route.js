@@ -33,12 +33,32 @@ export async function PUT(request, { params }) {
     let formData = await request.formData()
     formData = Object.fromEntries(formData)
 
+    // Parse the form data and turn it into a Prisma update where the key is the column and the value is the new value
+
     let data = {}
     for (let key of Object.keys(formData)) {
+        // First, try parsing the value as JSON. If that doesn't work, we assume this is just a standard key->value pair as described above
+        // If it IS JSON, this is more complex -- probably a relation that we have to handle
         try {
             const keyJSON = JSON.parse(formData[key])
             if (keyJSON["connect"]) {
+                // If there's a value "connect" set to true, then use the "name" and "value" props to create this relation
                 data[keyJSON["name"]] = { connect: { id: keyJSON["value"] } }
+            } else if (keyJSON["disconnect"]) {
+                // If there's a value "disconnect" set to true, first get all the existing relations for this
+                const currConnections = await prisma.record.findUnique({
+                    where: { id: params.id },
+                    select: { [keyJSON["name"]]: true }
+                })
+                // and filter out the one that matches the value that we've passed
+                const newConnections = []
+                for (let connection of currConnections[keyJSON["name"]]) {
+                    if (connection.id !== keyJSON["value"]) {
+                        newConnections.push({ id: connection.id })
+                    }
+                }
+                // Finally, set the relation array to the new value
+                data[keyJSON["name"]] = { set: newConnections }
             }
         } catch {
             data[key] = formData[key]

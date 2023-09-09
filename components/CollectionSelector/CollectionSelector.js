@@ -3,7 +3,9 @@
 import styles from './CollectionSelector.module.scss'
 import { useEffect, useState } from 'react'
 
-const CollectionSelector = () => {
+const CollectionSelector = (props) => {
+    // Optional prop "recordId" -- takes a record ID with which to show only collections the record is currently in
+
     const [collections, setcollections] = useState([]) // List of collections we want to make selectable
     const [activeCollection, setactiveCollection] = useState(null) // The parent collection of the children we are currently looking at (if applicable)
     const [selectedCollection, setselectedCollection] = useState(null) // The actual, highlighted selection
@@ -22,6 +24,12 @@ const CollectionSelector = () => {
         }
     }
 
+    const getCollectionsFromRecordId = async () => {
+        let collectionsData = await fetch(`/api/collection?recordId=${props.recordId}`)
+        collectionsData = await collectionsData.json()
+        setcollections(collectionsData.data.collections)
+    }
+
     const searchCollections = async (name) => {
         let collectionsData = await fetch(`/api/collection?name=${name}`)
         collectionsData = await collectionsData.json()
@@ -31,7 +39,11 @@ const CollectionSelector = () => {
     }
 
     useEffect(() => {
-        getChildren()
+        if (props.recordId) {
+            getCollectionsFromRecordId(props.recordId)
+        } else {
+            getChildren()
+        }
     }, [])
 
     return (
@@ -39,20 +51,22 @@ const CollectionSelector = () => {
             <input type='hidden' name="collectionParentId" id="collectionParentId" value={selectedCollection ? selectedCollection : ""} />
 
             <div className={styles.formControl}>
-                <input
-                    type='text'
-                    id='collectionSearch'
-                    className={styles.collectionSearch}
-                    placeholder='Search collections...'
-                    onChange={(e) => {
-                        if (e.target.value == "") {
-                            setisSearching(false)
-                        } else {
-                            setisSearching(true)
-                        }
-                        searchCollections(e.target.value)
-                    }}
-                ></input>
+                {!props.recordId ?
+                    <input
+                        type='text'
+                        id='collectionSearch'
+                        className={styles.collectionSearch}
+                        placeholder='Search collections...'
+                        onChange={(e) => {
+                            if (e.target.value == "") {
+                                setisSearching(false)
+                            } else {
+                                setisSearching(true)
+                            }
+                            searchCollections(e.target.value)
+                        }}
+                    ></input>
+                    : ""}
                 {activeCollection ?
                     <a
                         href="#"
@@ -82,7 +96,7 @@ const CollectionSelector = () => {
                     key={collection.id}
                 >
                     {collection.name}
-                    {isSearching ? "" :
+                    {isSearching || props.recordId ? "" :
                         <span
                             className="material-icons levelDown"
                             onClick={(e) => { getChildren(collection.id) }}
