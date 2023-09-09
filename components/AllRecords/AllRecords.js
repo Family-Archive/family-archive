@@ -28,6 +28,19 @@ const fetchRecords = async (params) => {
     return await records.json()
 }
 
+const fetchRecordFiles = async (recordId) => {
+    let record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${recordId}`,
+        {
+            headers: {
+                Cookie: lib.cookieObjectToString(cookies().getAll())
+            }
+        }
+    )
+    record = await record.json()
+
+    return record.data.files
+}
+
 const AllRecords = async (props) => {
     // If passed record list is empty, then use the fetchRecords method
 
@@ -39,9 +52,11 @@ const AllRecords = async (props) => {
     return (
         <div className={styles.AllRecords}>
             <section className={styles.recordsGrid}>
-                {recordList.map(record => {
+                {recordList.map(async record => {
+                    const recordFiles = await fetchRecordFiles(record.id)
+
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
-                        <div className={styles.image} />
+                        <div className={styles.image} style={{ backgroundImage: recordFiles.length > 0 ? `url('/api/file/${recordFiles[0].id}')` : "" }} />
                         <span className={styles.recordName}>{record.name}</span>
                         <span className={styles.recordType}>{record.type}</span>
                         {/* Right now this displays the created date, but once we have a date selector on records we'll use that value */}
