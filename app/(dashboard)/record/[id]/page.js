@@ -19,9 +19,21 @@ const fetchRecord = async (params) => {
     return await record.json()
 }
 
+const fetchCollections = async (params) => {
+    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/collection?recordId=${params.id}`, {
+        headers: {
+            Cookie: lib.cookieObjectToString(cookies().getAll())
+        }
+    })
+    return await record.json()
+}
+
 const ViewRecord = async ({ params }) => {
     const recordData = await fetchRecord(params);
     const record = recordData.data.record
+
+    const collectionsData = await fetchCollections(params)
+    const collections = collectionsData.data
 
     // Fetch people connected to record by reading the custom "Person" field
     let people = []
@@ -48,7 +60,7 @@ const ViewRecord = async ({ params }) => {
                         title="Options"
                         options={[
                             <MoveToCollectionButton id={record.id} />,
-                            <RemoveFromCollectionButton id={record.id} />,
+                            collections.collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
                             <DeleteRecordButton id={record.id} />
                         ]}
                     />
