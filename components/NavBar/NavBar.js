@@ -8,6 +8,7 @@ import Link from 'next/link'
 
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { FamilyContext } from '@/app/(contexts)/FamilyContext'
+import { DraftContext } from '@/app/(contexts)/DraftContext'
 import RecordSelector from '../RecordSelector/RecordSelector'
 import SelectorInput from '../SelectorInput/SelectorInput'
 import Dropdown from '../Dropdown/Dropdown'
@@ -16,6 +17,7 @@ const NavBar = () => {
     const { data: session, status } = useSession()
     const modalFunctions = useContext(ModalContext)
     const familyContext = useContext(FamilyContext)
+    const draftContext = useContext(DraftContext)
 
     // Build set of options that will be passed to family selector
     let familySelectOptions
@@ -45,6 +47,7 @@ const NavBar = () => {
                     <section className={styles.mainButtons}>
                         <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
                         <Link className={styles.drafts} href='/drafts'>
+                            {draftContext.count > 0 ? <span className={styles.draftCount}>{draftContext.count}</span> : ""}
                             <button className="secondary"><span className="material-icons">design_services</span>Drafts</button>
                         </Link>
                     </section>

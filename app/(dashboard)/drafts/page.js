@@ -1,18 +1,16 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
-import { prisma } from "@/app/db/prisma"
-import { cookies } from 'next/headers'
+import { cookies } from 'next/dist/client/components/headers'
 import lib from '@/lib/lib';
 
 import AllRecords from '@/components/AllRecords/AllRecords'
 
-const draftView = async ({ searchParams }) => {
-    const session = await getServerSession(authOptions);
-
-    let where = lib.limitQueryByFamily({ completed: false }, cookies(), session)
-    const drafts = await prisma.record.findMany({
-        where: where
+const draftView = async () => {
+    let drafts = await fetch(`${process.env.NEXTAUTH_URL}/api/drafts`, {
+        headers: {
+            Cookie: lib.cookieObjectToString(cookies().getAll())
+        }
     })
+    drafts = await drafts.json()
+    drafts = drafts.data.records
 
     return (
         <>

@@ -2,6 +2,10 @@
     position: relative;
 
     &.active {
+        &:not(.icon) span {
+            transform: rotate(180deg);
+        }
+
         .options {
             transform: translateY(0rem);
             pointer-events: all;

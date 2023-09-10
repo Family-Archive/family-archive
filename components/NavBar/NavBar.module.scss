@@ -44,6 +44,26 @@
             a {
                 width: 100%;
             }
+
+            .drafts {
+                position: relative;
+
+                .draftCount {
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    position: absolute;
+                    right: -0.5rem;
+                    top: -0.5rem;
+                    padding: 0.9rem;
+                    background: red;
+                    color: white;
+                    border: 2px solid $accent-border-color;
+                    border-radius: 90rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
         }
 
         .navLinks {
