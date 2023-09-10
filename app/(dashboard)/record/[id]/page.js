@@ -9,6 +9,7 @@ import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
+import RenameButton from './RenameButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -59,6 +60,7 @@ const ViewRecord = async ({ params }) => {
                     <Dropdown
                         title="Options"
                         options={[
+                            <RenameButton id={record.id} />,
                             <MoveToCollectionButton id={record.id} />,
                             collections.collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
                             <DeleteRecordButton id={record.id} />

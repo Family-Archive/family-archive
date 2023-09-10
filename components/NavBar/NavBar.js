@@ -53,10 +53,10 @@ const NavBar = () => {
 
                 <section className={styles.navLinks}>
                     <Link className={styles.button} href='/records/all'><span className="material-icons">inventory</span>All records</Link>
+                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                     <button><span className="material-icons">watch_later</span>Timeline</button>
                     <button><span className="material-icons">public</span>Map</button>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
-                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                 </section>
             </section>
 

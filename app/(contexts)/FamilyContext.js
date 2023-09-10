@@ -12,7 +12,7 @@ export const FamilyProvider = ({ children }) => {
     const updateFamily = (familyId) => {
         setfamily(familyId)
         document.cookie = `familyId=${familyId}; SameSite=Strict; Path=/;`
-        location.reload(true)
+        window.location = '/'
     }
 
     // When the session is initialized, set the current family to what's in the cookie if one is set
