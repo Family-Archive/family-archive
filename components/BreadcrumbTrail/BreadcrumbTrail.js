@@ -6,7 +6,7 @@ import { useEffect, useState, useContext } from 'react'
 import Link from 'next/link'
 import { BreadcrumbContext } from '@/app/(contexts)/BreadcrumbContext'
 
-const BreadcrumbTrail = (props) => {
+const BreadcrumbTrail = () => {
     const breadcrumbContext = useContext(BreadcrumbContext)
     const [trail, settrail] = useState([])
 

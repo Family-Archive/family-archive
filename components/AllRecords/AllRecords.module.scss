@@ -23,9 +23,10 @@
                 height: 8rem;
                 border-radius: 1rem;
                 background-size: cover;
-                background-color: $accent-border-color;
+                border: 3px solid $accent-border-color;
                 background-position: center top;
                 background-repeat: no-repeat;
+                background-color: $accent-bg-color;
             }
 
             .recordName {

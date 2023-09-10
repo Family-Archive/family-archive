@@ -2,6 +2,7 @@
     padding: 0.5rem;
     border: 2px solid $accent-secondary-color;
     border-radius: 0.5rem;
+    min-width: 20vw;
 
     .formControl {
         display: flex;
@@ -24,5 +25,10 @@
             background: $accent-color;
             color: white;
         }
+    }
+
+    .loading {
+        display: block;
+        height: 10rem;
     }
 }
