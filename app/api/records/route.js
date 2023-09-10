@@ -6,6 +6,14 @@ import lib from "../../../lib/lib"
 export async function GET(request) {
     const params = request.nextUrl.searchParams
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     // Pull out sort and direction params and set those explicitly
     const sortField = params.get('sort') ? params.get('sort') : 'name'

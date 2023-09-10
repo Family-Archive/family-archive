@@ -12,7 +12,12 @@ export async function GET(request, { params }) {
     // Logged-in users can view any files if they have the ID
     const session = await getServerSession(authOptions);
     if (!session) {
-        return Response.json({ 'status': 'error', 'message': "Invalid session" }, { status: 401 })
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
     }
 
     const fileRecord = await prisma.file.findFirst({

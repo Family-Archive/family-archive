@@ -19,9 +19,31 @@
 
     .top {
         .header {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
+
+            button[class*="Dropdown"] {
+                padding: 0.25rem;
+                margin-top: -0.5rem;
+            }
+
+            span {
+                font-size: 3rem;
+                color: $accent-secondary-color;
+            }
+        }
+
+        .mainButtons {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+
+            button,
+            a {
+                width: 100%;
+            }
         }
 
         .navLinks {
@@ -60,5 +82,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .settings {
+            font-size: 3rem;
+            color: $accent-secondary-color;
+            margin-right: 0.25rem;
+        }
     }
 }

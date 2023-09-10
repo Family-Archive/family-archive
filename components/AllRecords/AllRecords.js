@@ -9,7 +9,7 @@ import { cookies } from 'next/dist/client/components/headers'
 /**
  * This component displays records. Despite the name "AllRecords," it also can take an explicit list of record objects to display
  * Optional prop {Array} records: A list of record objects to display
- * Optional prop {Bool} showOptions: Whether or not to show the sorting/filtering option sidebar
+ * Optional prop {Bool} showOptions: Whether or not to show the sorting/filtering option sidebar. Defaults to false
  */
 
 /**

@@ -7,6 +7,15 @@ export async function POST(request) {
     const referer = headersList.get('referer')
 
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
     let requestData = await request.formData()
     requestData = Object.fromEntries(requestData)
 

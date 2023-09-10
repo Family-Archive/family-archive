@@ -4,6 +4,14 @@ import lib from '@/lib/lib';
 
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
     const collections = await prisma.collection.findMany({

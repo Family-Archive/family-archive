@@ -39,6 +39,7 @@ const CollectionSelector = (props) => {
         let collectionsData = await fetch(`/api/collection?recordId=${props.recordId}`)
         collectionsData = await collectionsData.json()
         setcollections(collectionsData.data.collections)
+        setloading(false)
     }
 
     const searchCollections = async (name) => {
@@ -55,12 +56,15 @@ const CollectionSelector = (props) => {
         // and if so, set it as the active and selected collection. But we actually want the active collection to be one level up,
         // so we also programmatically click the Back button :P
         const activateCurrentCollection = async () => {
-            await getChildren(params.id ? params.id : null)
-            if (params.id) {
+            const route = window.location.pathname.split('/').slice(-2)[0]
+            if (params.id && route === 'collection') {
+                await getChildren(params.id)
                 window.setTimeout(() => {
                     document.querySelector('#up').click()
                     setselectedCollection(params.id)
                 }, 200)
+            } else {
+                getChildren()
             }
         }
 

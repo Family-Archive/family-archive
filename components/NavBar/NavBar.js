@@ -10,6 +10,7 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { FamilyContext } from '@/app/(contexts)/FamilyContext'
 import RecordSelector from '../RecordSelector/RecordSelector'
 import SelectorInput from '../SelectorInput/SelectorInput'
+import Dropdown from '../Dropdown/Dropdown'
 
 const NavBar = () => {
     const { data: session, status } = useSession()
@@ -29,10 +30,26 @@ const NavBar = () => {
                 <section className={styles.header}>
                     <Link href='/'><img src='/logo.svg' /></Link>
                     {session ?
-                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
+                        <Dropdown
+                            icon="account_circle"
+                            title=""
+                            options={[
+                                <button onClick={signOut}>Log Out</button>,
+                            ]}
+                        />
                         : <Link href="/auth/login"><button>Log In</button></Link>
                     }
                 </section>
+
+                {session ?
+                    <section className={styles.mainButtons}>
+                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
+                        <Link className={styles.drafts} href='/drafts'>
+                            <button className="secondary"><span className="material-icons">design_services</span>Drafts</button>
+                        </Link>
+                    </section>
+                    : ""
+                }
 
                 <section className={styles.navLinks}>
                     <Link className={styles.button} href='/records/all'><span className="material-icons">inventory</span>All records</Link>
@@ -69,8 +86,7 @@ const NavBar = () => {
                     }}
                 /> : ""}
 
-                {session ? <a className="secondary" href="#" onClick={signOut}>Log Out</a> : ""}
-
+                {session ? <span className={`material-icons ${styles.settings}`}>settings</span> : ""}
             </section>
         </nav>
     )
