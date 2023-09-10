@@ -1,6 +1,6 @@
 import CreateCollectionButton from "./CreateCollectionButton"
 
-const CollectionLayout = async ({ children }) => {
+const CollectionLayout = async ({ children, params, searchParams }) => {
     return (
         <>
             <div className='pageOptions'>
