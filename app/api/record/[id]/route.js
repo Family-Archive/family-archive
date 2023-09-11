@@ -4,8 +4,15 @@ import { getServerSession } from 'next-auth';
 import lib from '../../../../lib/lib'
 
 export async function GET(request, { params }) {
-
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
     const record = await prisma.record.findFirst({
@@ -29,6 +36,14 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions)
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let formData = await request.formData()
     formData = Object.fromEntries(formData)
@@ -65,16 +80,26 @@ export async function PUT(request, { params }) {
         }
     }
 
-    const record = await prisma.record.update({
+    let record = await prisma.record.update({
         where: { id: params.id },
         data: data
     })
 
+    // Update the record's completed state (all necessary fields are filled out) before returning
+    record = await lib.updateRecordCompletion(params.id)
     return Response.json({ status: "success", data: { record: record } })
 }
 
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
     const record = await prisma.record.deleteMany({

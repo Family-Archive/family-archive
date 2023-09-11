@@ -8,19 +8,22 @@ import Link from 'next/link'
 
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { FamilyContext } from '@/app/(contexts)/FamilyContext'
+import { DraftContext } from '@/app/(contexts)/DraftContext'
 import RecordSelector from '../RecordSelector/RecordSelector'
 import SelectorInput from '../SelectorInput/SelectorInput'
+import Dropdown from '../Dropdown/Dropdown'
 
 const NavBar = () => {
     const { data: session, status } = useSession()
     const modalFunctions = useContext(ModalContext)
     const familyContext = useContext(FamilyContext)
+    const draftContext = useContext(DraftContext)
 
     // Build set of options that will be passed to family selector
     let familySelectOptions
     if (session) {
         familySelectOptions = session.user.families.map(family => { return { value: family.id, name: `${family.name} family` } })
-        familySelectOptions.unshift({ value: 'addFamily', name: '<span className="material-icons">add_circle</span>  Add new family', settable: false })
+        familySelectOptions.unshift({ value: 'addFamily', name: '<span class="material-icons">add_circle</span>  Add new family', settable: false })
     }
 
     return (
@@ -29,17 +32,34 @@ const NavBar = () => {
                 <section className={styles.header}>
                     <Link href='/'><img src='/logo.svg' /></Link>
                     {session ?
-                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
+                        <Dropdown
+                            icon="account_circle"
+                            title=""
+                            options={[
+                                <button onClick={signOut}>Log Out</button>,
+                            ]}
+                        />
                         : <Link href="/auth/login"><button>Log In</button></Link>
                     }
                 </section>
 
+                {session ?
+                    <section className={styles.mainButtons}>
+                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
+                        <Link className={styles.drafts} href='/drafts'>
+                            {draftContext.count > 0 ? <span className={styles.draftCount}>{draftContext.count}</span> : ""}
+                            <button className="secondary"><span className="material-icons">design_services</span>Drafts</button>
+                        </Link>
+                    </section>
+                    : ""
+                }
+
                 <section className={styles.navLinks}>
                     <Link className={styles.button} href='/records/all'><span className="material-icons">inventory</span>All records</Link>
+                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                     <button><span className="material-icons">watch_later</span>Timeline</button>
                     <button><span className="material-icons">public</span>Map</button>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
-                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                 </section>
             </section>
 
@@ -69,8 +89,7 @@ const NavBar = () => {
                     }}
                 /> : ""}
 
-                {session ? <a className="secondary" href="#" onClick={signOut}>Log Out</a> : ""}
-
+                {session ? <span className={`material-icons ${styles.settings}`}>settings</span> : ""}
             </section>
         </nav>
     )

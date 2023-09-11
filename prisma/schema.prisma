@@ -98,6 +98,7 @@ model Record {
   family               Family                 @relation(fields: [familyId], references: [id])
   familyId             String
   collections          Collection[]
+  completed            Boolean                @default(false)
 }
 
 model RecordField {

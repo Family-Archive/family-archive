@@ -48,15 +48,15 @@ const FileViewer = (props) => {
             <div style={{ marginLeft: "5rem" }}>
                 <div className={`${styles.fileviewContainer} ${fullscreen ? styles.fullscreen : ""}`}>
                     {generateFileView()}
-                </div>
 
-                <a
-                    href={`/api/file/${activeFile.id}?download=true`}
-                    className={`${styles.download} button`}
-                >
-                    <span className='material-icons'>download</span>
-                    Download
-                </a>
+                    <a
+                        href={`/api/file/${activeFile.id}?download=true`}
+                        className={`${styles.download} button`}
+                    >
+                        <span className='material-icons'>download</span>
+                        Download
+                    </a>
+                </div>
             </div>
         </div>
     )

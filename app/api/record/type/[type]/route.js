@@ -19,6 +19,15 @@ export async function POST(request, { params }) {
     revalidateTag(tag)
 
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
     const RecordType = require(`/recordtypes/${params.type}/record.js`)
     const recordType = new RecordType()
 

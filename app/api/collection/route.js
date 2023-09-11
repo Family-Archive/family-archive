@@ -8,6 +8,14 @@ export async function GET(request) {
     // If ?name is passed, return collections where name like '%{name}%'
 
     const session = await getServerSession(authOptions)
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     const name = request.nextUrl.searchParams.get('name')
     const recordId = request.nextUrl.searchParams.get('recordId')
@@ -42,7 +50,16 @@ export async function GET(request) {
 export async function POST(request) {
     const headersList = headers()
     const referer = headersList.get('referer')
+
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let requestData = await request.formData()
     requestData = Object.fromEntries(requestData)
