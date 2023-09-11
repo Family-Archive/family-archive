@@ -7,6 +7,10 @@ class Image extends Record {
             'image',
             [
                 {
+                    name: 'Is this a photograph?',
+                    type: 'Toggle'
+                },
+                {
                     name: 'Photographer',
                     type: 'PersonSelector'
                 },

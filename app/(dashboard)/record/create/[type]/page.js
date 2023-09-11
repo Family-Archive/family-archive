@@ -1,9 +1,6 @@
 import CreateRecordForm from "@/components/CreateRecordForm/CreateRecordForm"
 
-const createRecordType = async ({ params }) => {
-    // let recordTypeData = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.type}`)
-    // recordTypeData = await recordTypeData.json()
-
+const createRecordType = async ({ params, searchParams }) => {
     let recordType
     let recordTypeData
 
@@ -23,7 +20,7 @@ const createRecordType = async ({ params }) => {
         <div>
             <div className="column">
                 <h1 className='title'>Add {recordTypeData.name}</h1>
-                <CreateRecordForm recordTypeData={recordTypeData} recordTypeClass={recordType} />
+                <CreateRecordForm recordTypeData={recordTypeData} recordTypeClass={recordType} searchParams={searchParams} />
             </div>
         </div>
     )

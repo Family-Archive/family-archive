@@ -5,20 +5,60 @@ import styles from './Form.module.scss'
 import FileUploader from '../FileUploader/FileUploader'
 import fieldComponents from './FieldComponentsGenerated'
 import { useRouter } from 'next/navigation'
-import formLib from './formlib'
+import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
 export default function Form({
     fields,
+    initialFiles,
     method,
     action,
     submitMessage,
     acceptedFileTypes,
     allowMultipleFiles,
     requireFileUploadFirst,
+    fileUploadedCallback,
     recordType
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
+    fileUploadedCallback = fileUploadedCallback || false
+    initialFiles = initialFiles || []
+
+    // All of the files that will be submitted with the form.
+    const [files, setFiles] = useState([])
+
+    /**
+     * Convert the initalFiles provided to the form into file
+     * objects expected by the files state variable.
+     * 
+     * @param {array} initialFiles 
+     * @return {array} converted files
+     */
+    const prepareInitialFiles = async (initialFiles) => {
+        let updatedFiles = []
+
+        for (const file of initialFiles) {
+            const response = await fetch(`/api/file/${file.id}/content`)
+            const fileBlob = await response.blob()
+
+            const convertedFile = new File([fileBlob], file.name, { type: file.mimeType })
+
+            getFileIcon(convertedFile).then(icon => {
+                updatedFiles.push({
+                    file: convertedFile,
+                    icon: icon
+                })
+
+                setFiles([...updatedFiles])
+                setIsFilePicked(true)
+
+                if (!fileWasUploaded) {
+                    setFileWasUploaded(true)
+                }
+            })
+        }
+    }
+
     const { push } = useRouter()
 
     // Add an empty "value" property to each field to hold
@@ -38,9 +78,6 @@ export default function Form({
     // All of the form fields that will be submitted with the form,
     // excluding files input.
     const [masterFields, setMasterFields] = useState(fields)
-
-    // All of the files that will be submitted with the form.
-    const [files, setFiles] = useState([])
 
     // Track whether a file has been uploaded. This value only changes
     // when a file is initially uploaded - if it is later removed, this
@@ -78,12 +115,19 @@ export default function Form({
     // When a file is uploaded, find out 
     useEffect(() => {
         if (fileWasUploaded) {
-            // Find out what type of file was uploaded.
-            const fileRecordType = formLib.getRecordTypeFromMimeType(files[0].file)
-
-            updateFormForRecordType(fileRecordType)
+            if (fileUploadedCallback) {
+                fileUploadedCallback(files[0].file)
+            }
         }
     }, [fileWasUploaded])
+
+    // When the form is first loaded, add any files that were
+    // passed in the URL params to the file selector.
+    useEffect(() => {
+        (async () => {
+            prepareInitialFiles(initialFiles)
+        })()
+    }, [])
 
     const handleDragOver = (event) => {
         event.stopPropagation()
@@ -126,6 +170,7 @@ export default function Form({
         let updatedMasterFields = [...masterFields]
         updatedMasterFields[event.target.dataset.index].value = event.target.value
         setMasterFields(updatedMasterFields)
+        afterFieldChanged(masterFields, setMasterFields)
     }
 
     const fileChangeHandler = (event) => {
@@ -177,6 +222,8 @@ export default function Form({
     // icon to display for it.
     const getFileIcon = (file) => {
         return new Promise((resolve, reject) => {
+            console.log('File in getFileIcon')
+            console.log(file)
             if (file.type.includes('image')) {
                 const reader = new FileReader()
                 reader.addEventListener('load', () => {

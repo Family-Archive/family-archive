@@ -2,32 +2,32 @@ import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
 
 export async function POST(request) {
-    const formData = await request.formData();
+    const formData = await request.formData()
 
     // Store records for files that were successfully uploaded.
-    let newFiles = [];
+    let newFiles = []
 
     // Store error messages for files that failed to upload.
-    let errorFiles = [];
+    let errorFiles = []
 
-    const files = formData.getAll('file');
+    const files = formData.getAll('file')
 
     for (const file of files) {
         try {
             const newFile = await storeFile(file);
-            newFiles.push(newFile);
+            newFiles.push(newFile)
         } catch (error) {
             errorFiles.push({
                 name: file.name,
                 error: error.message
-            });
+            })
         }
     }
 
     // Remove undefined values from the array
     newFiles = newFiles.filter((newFile) => {
-        return newFile !== undefined;
-    });
+        return newFile !== undefined
+    })
 
     if (newFiles.length === 0) {
         return NextResponse.json({
@@ -38,7 +38,7 @@ export async function POST(request) {
             }
         }, {
             status: 500
-        });
+        })
     }
 
     return NextResponse.json({
@@ -49,11 +49,44 @@ export async function POST(request) {
         }
     }, {
         status: 201
-    });
+    })
+}
+
+export async function GET(request) {
+    // const { searchParams } = new URL(request.url)
+    // const fileId = searchParams.get('id')
+    // console.log('File id', fileId)
+
+    // const fileSystem = FileStorageFactory.instance()
+    // const filePath = await fileSystem.getPath(fileId)
+
+    // const file = await prisma.File.findUnique({
+    //     where: {
+    //         id: fileId
+    //     }
+    // })
+
+    // return NextResponse.json({
+    //     status: 'success',
+    //     data: {
+    //         file: {
+    //             id: fileId,
+    //             url: filePath,
+    //             name: file.name
+    //         }
+    //     }
+    // }, {
+    //     status: 200
+    // })
+    // const fileBuffer = fileSystem.loadFile(json.id)
+
+    // const response = new NextResponse(fileBuffer)
+    // response.headers.set('content-type', file.mimeType)
+    // return response
 }
 
 async function storeFile(file) {
-    const fileSystem = FileStorageFactory.instance();
-    const newFile = await fileSystem.store(file);
-    return newFile;
+    const fileSystem = FileStorageFactory.instance()
+    const newFile = await fileSystem.store(file)
+    return newFile
 }
