@@ -67,10 +67,12 @@ const findFirstPhoto = (fileArray) => {
 }
 
 const AllRecords = async (props) => {
-    // If passed record list is empty, then use the fetchRecords method
-    let recordList = props.records
-    if (recordList.length === 0) {
+    // If no record list was passed, use the fetchRecords method
+    let recordList
+    if (!props.records) {
         recordList = await fetchRecords(props.params)
+    } else {
+        recordList = props.records
     }
 
     return (
