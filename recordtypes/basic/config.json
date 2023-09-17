@@ -1,6 +1,7 @@
 {
     "name": "Basic",
     "type": "basic",
+    "icon": "description",
     "description": "A basic record type with minimal content; serves as the template for all other record types.",
     "version": "1.0.0",
     "settings": {},

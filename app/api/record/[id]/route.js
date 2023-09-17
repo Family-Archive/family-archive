@@ -15,9 +15,14 @@ export async function GET(request, { params }) {
     }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const record = await prisma.record.findFirst({
+    const recordData = await prisma.record.findFirst({
         where: where
     })
+
+    const RecordType = require(`/recordtypes/${recordData.type}/record.js`)
+    const recordType = new RecordType()
+    const recordConfig = recordType.getRecordTypeConfig()
+    const icon = recordType.getRecordTypeIcon()
 
     const files = await prisma.file.findMany({
         where: {
@@ -31,7 +36,7 @@ export async function GET(request, { params }) {
         }
     })
 
-    return Response.json({ status: "success", data: { record: record, files: files, fields: extraFields } })
+    return Response.json({ status: "success", data: { icon: icon, recordType: recordConfig, record: recordData, files: files, fields: extraFields } })
 }
 
 export async function PUT(request, { params }) {

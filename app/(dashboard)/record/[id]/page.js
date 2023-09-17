@@ -51,6 +51,13 @@ const ViewRecord = async ({ params }) => {
         }
     }
 
+    let recordIcon
+    if (recordData.data.icon.type === 'svg') {
+        recordIcon = <div dangerouslySetInnerHTML={{ __html: recordData.data.icon.content }} />
+    } else {
+        recordIcon = <span className='material-icons'>{recordData.data.icon.content}</span>
+    }
+
     return (
         <div className={styles.ViewRecord}>
             <div className="topBar">
@@ -70,7 +77,7 @@ const ViewRecord = async ({ params }) => {
             </div>
 
             <div className={styles.infoBar}>
-                <span className={styles.type}>{record.type}</span>
+                <span className={styles.type}>{recordIcon}{record.type}</span>
                 <BreadcrumbTrail name={record.name} />
             </div>
 
