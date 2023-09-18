@@ -7,6 +7,16 @@
 
         .type {
             text-transform: capitalize;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+
+            svg,
+            span {
+                max-width: 3rem;
+                max-height: 3rem;
+                font-size: 2rem;
+            }
         }
     }
 
