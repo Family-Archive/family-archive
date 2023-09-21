@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google'
 import AuthContext from './(contexts)/AuthContext'
 import { ModalProvider } from './(contexts)/ModalContext'
 import { FamilyProvider } from './(contexts)/FamilyContext'
+import { BreadcrumbProvider } from './(contexts)/BreadcrumbContext'
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
@@ -36,7 +37,9 @@ const RootLayout = async ({ children }) => {
         <AuthContext session={session}>
           <FamilyProvider>
             <ModalProvider>
-              {children}
+              <BreadcrumbProvider>
+                {children}
+              </BreadcrumbProvider>
             </ModalProvider>
           </FamilyProvider>
         </AuthContext>

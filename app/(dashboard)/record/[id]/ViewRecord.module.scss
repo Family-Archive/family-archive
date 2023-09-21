@@ -1,0 +1,68 @@
+.ViewRecord {
+    .infoBar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 2rem;
+        margin-top: -1rem;
+
+        .type {
+            text-transform: capitalize;
+        }
+    }
+
+    .mainContent {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+
+        p {
+            margin: 0.25rem 0 1rem 0;
+        }
+
+        .content {
+            display: flex;
+            gap: 2rem;
+            width: 65%;
+
+            p {
+                margin-bottom: 2rem;
+            }
+
+            .icon {
+                font-size: 3rem;
+                margin-left: -1rem;
+                margin-right: -0.5rem;
+            }
+
+            .people {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                margin-bottom: 2rem;
+
+                .person {
+                    border-radius: 99rem;
+                    background: $accent-border-color;
+                    color: black;
+                }
+            }
+        }
+
+        .otherInfo {
+            padding: 1rem;
+            border: $accent-border;
+            background: white;
+            border-radius: 1rem;
+            width: 25%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            h2 {
+                margin: 0 0 1rem 0;
+            }
+        }
+    }
+}

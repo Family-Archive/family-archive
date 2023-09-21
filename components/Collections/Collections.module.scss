@@ -1,0 +1,34 @@
+.collections {
+    display: flex;
+    flex-direction: column;
+
+    .collectionContainer {
+        position: relative;
+        display: flex;
+        align-items: center;
+        transition: transform 0.2s ease;
+        border-bottom: 1px solid $accent-border-color;
+
+        .collection {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            align-items: center;
+
+            .folderImg {
+                font-size: 2rem;
+                opacity: 0.5;
+            }
+
+            .collectionName {
+                font-size: 1rem;
+            }
+        }
+
+        &:hover {
+            background: $accent-border-color;
+            border-radius: 0.5rem;
+        }
+    }
+}

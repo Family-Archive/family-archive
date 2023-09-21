@@ -69,6 +69,7 @@ model Family {
   indirectRelationships IndirectRelationship[]
   relationshipTypes     RelationshipType[]
   defaultUsers          User[]                 @relation("defaultFamily")
+  collections           Collection[]
 }
 
 model File {
@@ -79,14 +80,14 @@ model File {
   size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  record    Record?  @relation(fields: [recordId], references: [id])
+  record    Record?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId  String?
 }
 
 model Record {
   id            String        @id @default(cuid())
   name          String
-  description   String?
+  description   String?       @db.Text
   type          String        @default("basic")
   userCreated   User          @relation(fields: [userCreatedId], references: [id])
   userCreatedId String
@@ -96,13 +97,14 @@ model Record {
   files         File[]
   family        Family        @relation(fields: [familyId], references: [id])
   familyId      String
+  collections   Collection[]
 }
 
 model RecordField {
   id       String @id @default(cuid())
   name     String
   value    String
-  record   Record @relation(fields: [recordId], references: [id])
+  record   Record @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId String
 }
 
@@ -149,6 +151,17 @@ model RelationshipType {
   indirectRelationships IndirectRelationship[]
   family                Family                 @relation(fields: [familyId], references: [id])
   familyId              String
+}
+
+model Collection {
+  id       String       @id @default(cuid())
+  name     String
+  family   Family       @relation(fields: [familyId], references: [id])
+  familyId String
+  children Collection[] @relation("collectionHierarchy")
+  parent   Collection?  @relation("collectionHierarchy", fields: [parentId], references: [id])
+  parentId String?
+  records  Record[]
 }
 
 model Setting {

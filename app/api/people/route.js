@@ -14,7 +14,7 @@ export async function GET(request) {
     })
 }
 
-export async function POST(request) {
+export async function POST(request, session) {
     const parameters = await request.json()
 
     // Validation: we need a full name to add a new person.
@@ -27,7 +27,7 @@ export async function POST(request) {
         })
     }
 
-    const currentFamilyId = await lib.getCurrentFamilyId()
+    const currFamily = request.cookies.get('familyId').value
 
     const newPerson = await prisma.Person.create({
         data: {
@@ -37,8 +37,10 @@ export async function POST(request) {
                 connect: { id: parameters.pronouns }
             },
             family: {
-                connect: { id: currentFamilyId }
-            }
+                connect: {
+                    id: currFamily
+                }
+            },
         }
     })
     return NextResponse.json({

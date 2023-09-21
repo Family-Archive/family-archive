@@ -243,7 +243,7 @@ export default function PersonSelector() {
             <label htmlFor="personSelector">Person</label>
             <div className={styles.selectedPeopleContainer}>
                 {selectedPeople.map(person => <span className={styles.selectedPerson} data-id={person.id} key={person.id}>
-                    <span className={styles.removePerson} data-id={person.id} onClick={removePerson}>X</span>
+                    <span className={styles.removePerson} data-id={person.id} onClick={removePerson}><span className="material-icons">close</span></span>
                     {person.fullName}
                 </span>)}
             </div>

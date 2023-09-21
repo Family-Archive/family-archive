@@ -16,10 +16,11 @@ const NavBar = () => {
     const modalFunctions = useContext(ModalContext)
     const familyContext = useContext(FamilyContext)
 
+    // Build set of options that will be passed to family selector
     let familySelectOptions
     if (session) {
         familySelectOptions = session.user.families.map(family => { return { value: family.id, name: `${family.name} family` } })
-        familySelectOptions.unshift({ value: 'addFamily', name: '<span class="material-icons">add_circle</span>  Add new family', settable: false })
+        familySelectOptions.unshift({ value: 'addFamily', name: '<span className="material-icons">add_circle</span>  Add new family', settable: false })
     }
 
     return (
@@ -38,11 +39,15 @@ const NavBar = () => {
                     <button><span className="material-icons">watch_later</span>Timeline</button>
                     <button><span className="material-icons">public</span>Map</button>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
+                    <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                 </section>
             </section>
 
             <section className={styles.bottom}>
 
+                {/* If we're logged in, display the family selector */}
+                {/* Set as default whatever is in the family context; if this isn't anything, use the defaultfamily from the session */}
+                {/* When changed, set the family, unless the value is "addFamily" -- then display the modal */}
                 {session ? <SelectorInput
                     default={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
                     options={familySelectOptions}

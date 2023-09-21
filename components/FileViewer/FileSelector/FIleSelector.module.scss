@@ -1,0 +1,37 @@
+.FileSelector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: $accent-border-color;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    max-width: 4rem;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.4s ease;
+    position: absolute;
+    z-index: 2;
+
+    &:hover {
+        max-width: 50rem;
+    }
+
+    .file {
+        display: flex;
+        gap: 1rem;
+        background: $accent-border-color;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        width: max-content;
+        color: black;
+        align-items: center;
+        pointer-events: all;
+
+        img,
+        span {
+            width: 2rem;
+            height: 2rem;
+            object-fit: cover;
+        }
+    }
+}
