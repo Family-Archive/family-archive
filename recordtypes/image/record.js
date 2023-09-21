@@ -7,32 +7,12 @@ class Image extends Record {
             'image',
             [
                 {
-                    name: 'Is this a photograph?',
-                    type: 'Toggle'
-                },
-                {
-                    name: 'Photographer',
+                    name: 'Who is related to the image?',
                     type: 'PersonSelector'
-                },
-                {
-                    name: 'Pictured in the photo',
-                    type: 'PersonSelector'
-                },
-                {
-                    name: 'Related to the image',
-                    type: 'PersonSelector'
-                },
-                {
-                    name: 'When the photo was taken',
-                    type: 'date'
                 },
                 {
                     name: 'When the image was created',
                     type: 'date'
-                },
-                {
-                    name: 'Where the photo was taken',
-                    type: 'text'
                 },
                 {
                     name: 'Where the image was created',

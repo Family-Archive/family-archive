@@ -13,7 +13,7 @@
         background-color: black;
         position: absolute;
         top: 4px;
-        left: 42px;
+        left: 6px;
         transition: 0.2s;
     }
 
@@ -28,12 +28,12 @@
 
     .onMessage {
         color: blue;
-        right: 8px;
+        left: 10px;
     }
 
     .offMessage {
         color: gray;
-        left: 12px;
+        right: 8px;
     }
 }
 
@@ -42,6 +42,6 @@
 
     .toggleSwitch {
         background-color: blue;
-        left: 6px;
+        left: 42px;
     }
 }

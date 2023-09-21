@@ -36,15 +36,13 @@ const RecordSelector = () => {
         const json = await result.json()
         const fileId = json.data.files[0].id
 
-        console.log('File was uploaded')
-        console.log(json)
-
         const recordType = lib.getRecordTypeFromMimeType(file)
         router.push(`record/create/${recordType}?files=${fileId}`)
 
         // Hide the modal when we've redirected to the new page,
         // otherwise it will remain open.
-        modalFunctions.popModal()
+        // modalFunctions.popModal()
+        modalFunctions.clearModalStack()
     }
 
     return (

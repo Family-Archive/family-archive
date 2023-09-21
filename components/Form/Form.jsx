@@ -9,7 +9,7 @@ import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
 export default function Form({
     fields,
-    initialFiles,
+    // initialFiles,
     method,
     action,
     submitMessage,
@@ -22,7 +22,7 @@ export default function Form({
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
     fileUploadedCallback = fileUploadedCallback || false
-    initialFiles = initialFiles || []
+    // initialFiles = initialFiles || []
 
     // All of the files that will be submitted with the form.
     const [files, setFiles] = useState([])
@@ -31,17 +31,22 @@ export default function Form({
      * Convert the initalFiles provided to the form into file
      * objects expected by the files state variable.
      * 
-     * @param {array} initialFiles 
      * @return {array} converted files
      */
-    const prepareInitialFiles = async (initialFiles) => {
+    const prepareInitialFiles = async () => {
         let updatedFiles = []
+        let initialFiles = []
+
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('files')) {
+            initialFiles = urlParams.get('files').split(',')
+        }
 
         for (const file of initialFiles) {
-            const response = await fetch(`/api/file/${file.id}/content`)
+            const response = await fetch(`/api/file/${file}`)
             const fileBlob = await response.blob()
 
-            const convertedFile = new File([fileBlob], file.name, { type: file.mimeType })
+            const convertedFile = new File([fileBlob], response.headers.get('X-File-Name'), { type: fileBlob.type })
 
             getFileIcon(convertedFile).then(icon => {
                 updatedFiles.push({
@@ -125,7 +130,7 @@ export default function Form({
     // passed in the URL params to the file selector.
     useEffect(() => {
         (async () => {
-            prepareInitialFiles(initialFiles)
+            prepareInitialFiles()
         })()
     }, [])
 
