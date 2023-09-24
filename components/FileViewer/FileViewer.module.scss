@@ -5,6 +5,15 @@
     .fileviewContainer {
         position: relative;
 
+        &:hover {
+
+            .download,
+            .zoom {
+                pointer-events: all;
+                opacity: 1;
+            }
+        }
+
         &.fullscreen {
             position: fixed;
             top: 0;
@@ -31,6 +40,8 @@
             font-size: 4rem;
             color: white;
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .fileview {
@@ -44,15 +55,17 @@
             height: 30rem;
             text-align: center;
         }
-    }
 
-
-    .download {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-top: 1rem;
+        .download {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            opacity: 0;
+            pointer-events: none;
+        }
     }
 }

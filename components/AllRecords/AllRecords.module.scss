@@ -5,19 +5,28 @@
     .recordsGrid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(18%, 1fr));
-        gap: 1rem;
         flex-grow: 1;
 
         .record {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 1rem;
+
+            &:hover {
+                background: $accent-border-color;
+            }
 
             .image {
                 width: 100%;
-                height: 6rem;
-                background: gray;
+                height: 8rem;
                 border-radius: 1rem;
+                background-size: cover;
+                border: 3px solid $accent-border-color;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-color: $accent-bg-color;
             }
 
             .recordName {

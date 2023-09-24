@@ -9,6 +9,7 @@ import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
+import RenameButton from './RenameButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -19,9 +20,21 @@ const fetchRecord = async (params) => {
     return await record.json()
 }
 
+const fetchCollections = async (params) => {
+    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/collection?recordId=${params.id}`, {
+        headers: {
+            Cookie: lib.cookieObjectToString(cookies().getAll())
+        }
+    })
+    return await record.json()
+}
+
 const ViewRecord = async ({ params }) => {
     const recordData = await fetchRecord(params);
     const record = recordData.data.record
+
+    const collectionsData = await fetchCollections(params)
+    const collections = collectionsData.data
 
     // Fetch people connected to record by reading the custom "Person" field
     let people = []
@@ -38,6 +51,13 @@ const ViewRecord = async ({ params }) => {
         }
     }
 
+    let recordIcon
+    if (recordData.data.icon.type === 'svg') {
+        recordIcon = <div dangerouslySetInnerHTML={{ __html: recordData.data.icon.content }} />
+    } else {
+        recordIcon = <span className='material-icons'>{recordData.data.icon.content}</span>
+    }
+
     return (
         <div className={styles.ViewRecord}>
             <div className="topBar">
@@ -47,8 +67,9 @@ const ViewRecord = async ({ params }) => {
                     <Dropdown
                         title="Options"
                         options={[
+                            <RenameButton id={record.id} />,
                             <MoveToCollectionButton id={record.id} />,
-                            <RemoveFromCollectionButton id={record.id} />,
+                            collections.collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
                             <DeleteRecordButton id={record.id} />
                         ]}
                     />
@@ -56,7 +77,7 @@ const ViewRecord = async ({ params }) => {
             </div>
 
             <div className={styles.infoBar}>
-                <span className={styles.type}>{record.type}</span>
+                <span className={styles.type}>{recordIcon}{record.type}</span>
                 <BreadcrumbTrail name={record.name} />
             </div>
 

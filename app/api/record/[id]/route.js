@@ -4,13 +4,25 @@ import { getServerSession } from 'next-auth';
 import lib from '../../../../lib/lib'
 
 export async function GET(request, { params }) {
-
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const record = await prisma.record.findFirst({
+    const recordData = await prisma.record.findFirst({
         where: where
     })
+
+    const RecordType = require(`/recordtypes/${recordData.type}/record.js`)
+    const recordType = new RecordType()
+    const recordConfig = recordType.getRecordTypeConfig()
+    const icon = recordType.getRecordTypeIcon()
 
     const files = await prisma.file.findMany({
         where: {
@@ -24,11 +36,19 @@ export async function GET(request, { params }) {
         }
     })
 
-    return Response.json({ status: "success", data: { record: record, files: files, fields: extraFields } })
+    return Response.json({ status: "success", data: { icon: icon, recordType: recordConfig, record: recordData, files: files, fields: extraFields } })
 }
 
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions)
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let formData = await request.formData()
     formData = Object.fromEntries(formData)
@@ -65,16 +85,26 @@ export async function PUT(request, { params }) {
         }
     }
 
-    const record = await prisma.record.update({
+    let record = await prisma.record.update({
         where: { id: params.id },
         data: data
     })
 
+    // Update the record's completed state (all necessary fields are filled out) before returning
+    record = await lib.updateRecordCompletion(params.id)
     return Response.json({ status: "success", data: { record: record } })
 }
 
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
     const record = await prisma.record.deleteMany({
