@@ -4,7 +4,8 @@ class Website extends Record {
     constructor() {
         super('Website', 'website', [
             {
-                'name': 'Person Selector',
+                'label': 'Person',
+                'name': 'PersonSelector',
                 'type': 'PersonSelector'
             },
             {
@@ -14,6 +15,7 @@ class Website extends Record {
                 'showLabel': false
             },
             {
+                'label': 'URL',
                 'name': 'URL',
                 'type': 'url'
             }
