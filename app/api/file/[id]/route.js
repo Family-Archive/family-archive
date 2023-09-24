@@ -12,12 +12,7 @@ export async function GET(request, { params }) {
     // Logged-in users can view any files if they have the ID
     const session = await getServerSession(authOptions);
     if (!session) {
-        return Response.json({
-            'status': 'error',
-            'message': 'Not authorized'
-        }, {
-            status: 401
-        })
+        return Response.json({ 'status': 'error', 'message': "Invalid session" }, { status: 401 })
     }
 
     const fileRecord = await prisma.file.findFirst({
@@ -26,10 +21,13 @@ export async function GET(request, { params }) {
     const filePath = lib.getFilePath(fileRecord.hash)
     const file = await fs.readFileSync(filePath)
 
+    // The response will have a custom "X-File-Name" header for convenient access
+    // to the file name if you're not trying to download it as an attachment.
     return new Response(file, {
         headers: {
             "Content-Type": fileRecord.mimeType,
-            "Content-Disposition": searchParams.get('download') === "true" ? `attachment; filename="${fileRecord.name}"` : "inline"
+            "Content-Disposition": searchParams.get('download') === "true" ? `attachment; filename="${fileRecord.name}"` : "inline",
+            "X-File-Name": fileRecord.name
         }
     })
 }

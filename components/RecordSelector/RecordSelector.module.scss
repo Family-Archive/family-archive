@@ -1,10 +1,30 @@
 .RecordSelector {
-    display: grid;
-    gap: 1rem;
+    display: flex;
+    flex-direction: row;
     width: 100%;
+    min-width: 650px;
 
     .recordType {
         padding: 1.25rem;
         border-radius: 1rem;
+    }
+
+    .leftPanel {
+        width: 50%;
+        padding: 1em;
+        border-right: 1px solid lightgray;
+    }
+
+    .rightPanel {
+        width: 50%;
+        padding: 1em;
+
+        .recordTypeButtons {
+            margin-top: 1em;
+            display: flex;
+            flex-wrap: wrap;
+            row-gap: 1em;
+            column-gap: 1em;
+        }
     }
 }

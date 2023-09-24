@@ -1,0 +1,47 @@
+.toggleContainer {
+    border-radius: 18px;
+    width: 76px;
+    height: 36px;
+    background-color: lightgray;
+    position: relative;
+    cursor: pointer;
+
+    .toggleSwitch {
+        border-radius: 50%;
+        height: 28px;
+        width: 28px;
+        background-color: black;
+        position: absolute;
+        top: 4px;
+        left: 6px;
+        transition: 0.2s;
+    }
+
+    .onMessage,
+    .offMessage {
+        font-weight: bold;
+        position: absolute;
+        top: 8px;
+        font-size: 16px;
+        transition: 0.2s;
+    }
+
+    .onMessage {
+        color: blue;
+        left: 10px;
+    }
+
+    .offMessage {
+        color: gray;
+        right: 8px;
+    }
+}
+
+.toggleTrue {
+    background-color: lightblue;
+
+    .toggleSwitch {
+        background-color: blue;
+        left: 42px;
+    }
+}

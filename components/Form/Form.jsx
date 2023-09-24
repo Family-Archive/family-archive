@@ -1,35 +1,138 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './Form.module.scss'
 import FileUploader from '../FileUploader/FileUploader'
 import fieldComponents from './FieldComponentsGenerated'
 import { useRouter } from 'next/navigation'
+import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
-export default function Form({ fields, method, action, submitMessage, acceptedFileTypes, allowMultipleFiles }) {
+export default function Form({
+    fields,
+    // initialFiles,
+    method,
+    action,
+    submitMessage,
+    acceptedFileTypes,
+    allowMultipleFiles,
+    requireFileUploadFirst,
+    fileUploadedCallback,
+    recordType
+}) {
     acceptedFileTypes = acceptedFileTypes || ['*']
+    requireFileUploadFirst = requireFileUploadFirst || false
+    fileUploadedCallback = fileUploadedCallback || false
+    // initialFiles = initialFiles || []
+
+    // All of the files that will be submitted with the form.
+    const [files, setFiles] = useState([])
+
+    /**
+     * Convert the initalFiles provided to the form into file
+     * objects expected by the files state variable.
+     * 
+     * @return {array} converted files
+     */
+    const prepareInitialFiles = async () => {
+        let updatedFiles = []
+        let initialFiles = []
+
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('files')) {
+            initialFiles = urlParams.get('files').split(',')
+        }
+
+        for (const file of initialFiles) {
+            const response = await fetch(`/api/file/${file}`)
+            const fileBlob = await response.blob()
+
+            const convertedFile = new File([fileBlob], response.headers.get('X-File-Name'), { type: fileBlob.type })
+
+            getFileIcon(convertedFile).then(icon => {
+                updatedFiles.push({
+                    file: convertedFile,
+                    icon: icon
+                })
+
+                setFiles([...updatedFiles])
+                setIsFilePicked(true)
+
+                if (!fileWasUploaded) {
+                    setFileWasUploaded(true)
+                }
+            })
+        }
+    }
+
     const { push } = useRouter()
 
     // Add an empty "value" property to each field to hold
     // the field value in state.
-    fields = fields.map(field => {
-        return {
-            ...field,
-            value: ''
-        }
-    })
+    const prepareFieldsForForm = (formFields) => {
+        formFields = formFields.map(field => {
+            return {
+                ...field,
+                value: ''
+            }
+        })
+        return formFields
+    }
+
+    fields = prepareFieldsForForm(fields)
 
     // All of the form fields that will be submitted with the form,
     // excluding files input.
     const [masterFields, setMasterFields] = useState(fields)
 
-    // All of the files that will be submitted with the form.
-    const [files, setFiles] = useState([])
+    // Track whether a file has been uploaded. This value only changes
+    // when a file is initially uploaded - if it is later removed, this
+    // value will not change again. This variable is used to know when
+    // to show the rest of the form for a new file record type.
+    const [fileWasUploaded, setFileWasUploaded] = useState(false)
+
+    // If we require a file upload before displaying the form, there will
+    // be some additional processing that needs to happen (fetching the new
+    // record type field data) before we can display the form. When we finish
+    // that processing, we set this variable to true and the rest of the form
+    // will render.
+    const [readyToDisplayForm, setReadyToDisplayForm] = useState(!requireFileUploadFirst)
 
     // File uploader state management variables.
     const [isFilePicked, setIsFilePicked] = useState(false)
     const [hovered, setHovered] = useState(false)
     const [fileError, setFileError] = useState('')
+
+    const updateFormForRecordType = async (recordType) => {
+        // Get the necessary record type data for the type of file
+        // that was uploaded.
+        const results = await fetch(`/api/record/${recordType}`)
+        const recordTypeData = await results.json()
+        console.log(recordTypeData)
+
+        // Update the fields on this form with the record type data.
+        const updatedFormFields = prepareFieldsForForm(recordTypeData.fields)
+        setMasterFields(updatedFormFields)
+
+        // Display the rest of the form.
+        setReadyToDisplayForm(true)
+    }
+
+    // When a file is uploaded, find out 
+    useEffect(() => {
+        if (fileWasUploaded) {
+            if (fileUploadedCallback) {
+                fileUploadedCallback(files[0].file)
+            }
+        }
+    }, [fileWasUploaded])
+
+    // When the form is first loaded, add any files that were
+    // passed in the URL params to the file selector.
+    useEffect(() => {
+        (async () => {
+            prepareInitialFiles()
+        })()
+    }, [])
 
     const handleDragOver = (event) => {
         event.stopPropagation()
@@ -72,6 +175,7 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
         let updatedMasterFields = [...masterFields]
         updatedMasterFields[event.target.dataset.index].value = event.target.value
         setMasterFields(updatedMasterFields)
+        afterFieldChanged(masterFields, setMasterFields)
     }
 
     const fileChangeHandler = (event) => {
@@ -99,6 +203,10 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
 
                     setFiles([...updatedFiles])
                     setIsFilePicked(true)
+
+                    if (!fileWasUploaded) {
+                        setFileWasUploaded(true)
+                    }
                 })
             } else {
                 setFileError('One or more of your files could not be selected.')
@@ -119,6 +227,8 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
     // icon to display for it.
     const getFileIcon = (file) => {
         return new Promise((resolve, reject) => {
+            console.log('File in getFileIcon')
+            console.log(file)
             if (file.type.includes('image')) {
                 const reader = new FileReader()
                 reader.addEventListener('load', () => {
@@ -216,27 +326,30 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
                     allowMultiple={allowMultipleFiles}
                 />
             </div>
-            <div className={styles.formArea}>
-                {masterFields.map((field, index) => {
-                    let Element = getElement(field)
+            {/* Only display the rest of the form if we're ready to. */}
+            {!requireFileUploadFirst || (requireFileUploadFirst && readyToDisplayForm) ?
+                <div className={styles.formArea}>
+                    {masterFields.map((field, index) => {
+                        let Element = getElement(field)
 
-                    return (
-                        <formitem key={index}>
-                            {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.name}</label>}
-                            <Element
-                                id={field.name}
-                                name={field.name}
-                                type={field.type}
-                                value={field.value}
-                                index={index}
-                                data-index={index}
-                                onChange={changeHandler}
-                            >{field.content}</Element>
-                        </formitem>
-                    )
-                })}
-                <input type="submit" className="button" value={submitMessage || 'Submit'} />
-            </div>
+                        return (
+                            <formitem key={index}>
+                                {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.name}</label>}
+                                <Element
+                                    id={field.name}
+                                    name={field.name}
+                                    type={field.type}
+                                    value={field.value}
+                                    index={index}
+                                    data-index={index}
+                                    onChange={changeHandler}
+                                >{field.content}</Element>
+                            </formitem>
+                        )
+                    })}
+                    <input type="submit" className="button" value={submitMessage || 'Submit'} />
+                </div>
+                : ''}
         </form>
     )
 }
