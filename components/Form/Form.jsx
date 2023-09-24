@@ -78,8 +78,9 @@ export default function Form({
                     value: ''
                 }
             }
-            return formFields
         })
+
+        return formFields
     }
 
     fields = prepareFieldsForForm(fields)
@@ -336,10 +337,9 @@ export default function Form({
                     {masterFields.map((field, index) => {
                         let Element = getElement(field)
 
-<<<<<<< HEAD
                         return (
                             <formitem key={index}>
-                                {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.name}</label>}
+                                {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.label}</label>}
                                 <Element
                                     id={field.name}
                                     name={field.name}
@@ -355,25 +355,6 @@ export default function Form({
                     <input type="submit" className="button" value={submitMessage || 'Submit'} />
                 </div>
                 : ''}
-=======
-                    return (
-                        <formitem key={index}>
-                {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.label}</label>}
-                <Element
-                    id={field.name}
-                    name={field.name}
-                    type={field.type}
-                    value={field.value}
-                    index={index}
-                    data-index={index}
-                    onChange={changeHandler}
-                >{field.content}</Element>
-            </formitem>
-            )
-                })}
-            <input type="submit" className="button" value={submitMessage || 'Submit'} />
-        </div>
->>>>>>> 5c339fb (Create edit page and fill fields with stored data)
-        </form >
+        </form>
     )
 }
