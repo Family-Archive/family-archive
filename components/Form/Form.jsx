@@ -10,12 +10,16 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
     acceptedFileTypes = acceptedFileTypes || ['*']
     const { push } = useRouter()
 
-    // Add an empty "value" property to each field to hold
-    // the field value in state.
+    // Add an empty "value" property to each field that doesn't
+    // already have one in order to hold the field value in state.
     fields = fields.map(field => {
-        return {
-            ...field,
-            value: ''
+        if (field.value) {
+            return field
+        } else {
+            return {
+                ...field,
+                value: ''
+            }
         }
     })
 
@@ -222,7 +226,7 @@ export default function Form({ fields, method, action, submitMessage, acceptedFi
 
                     return (
                         <formitem key={index}>
-                            {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.name}</label>}
+                            {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.label}</label>}
                             <Element
                                 id={field.name}
                                 name={field.name}
