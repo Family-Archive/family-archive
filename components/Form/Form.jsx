@@ -242,6 +242,7 @@ export default function Form({
     }
 
     const submissionHandler = async (event) => {
+        console.log('uh ok')
         event.preventDefault()
 
         const formData = new FormData()
