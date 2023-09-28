@@ -13,6 +13,8 @@ export async function GET(request) {
         const RecordType = require(`recordtypes/${filename}/record`)
         const recordType = new RecordType()
         let type = await recordType.getStructure()
+        let icon = recordType.getRecordTypeIcon()
+        type.icon = icon
         types.push(type)
     }
 

@@ -40,7 +40,7 @@ export async function GET(request) {
 
     where = lib.limitQueryByFamily(where, request.cookies, session)
 
-    const result = await prisma.Record.findMany({
+    const results = await prisma.Record.findMany({
         skip: skip,
         take: take,
         orderBy: {
@@ -49,5 +49,12 @@ export async function GET(request) {
         where: where
     })
 
-    return Response.json(result)
+    for (let result of results) {
+        const RecordType = require(`/recordtypes/${result.type}/record.js`)
+        const recordType = new RecordType()
+        const icon = recordType.getRecordTypeIcon()
+        result.icon = icon
+    }
+
+    return Response.json(results)
 }

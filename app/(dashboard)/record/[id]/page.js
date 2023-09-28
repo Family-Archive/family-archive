@@ -1,5 +1,6 @@
 import { cookies } from 'next/dist/client/components/headers'
-import lib from '../../../../lib/lib'
+import clientLib from '../../../../lib/client/lib'
+import lib from '../../../../lib//lib'
 import { prisma } from "../../../db/prisma"
 
 import styles from './ViewRecord.module.scss'
@@ -51,12 +52,7 @@ const ViewRecord = async ({ params }) => {
         }
     }
 
-    let recordIcon
-    if (recordData.data.icon.type === 'svg') {
-        recordIcon = <div dangerouslySetInnerHTML={{ __html: recordData.data.icon.content }} />
-    } else {
-        recordIcon = <span className='material-icons'>{recordData.data.icon.content}</span>
-    }
+    const recordIcon = clientLib.renderIconFromData(recordData.data.icon)
 
     return (
         <div className={styles.ViewRecord}>

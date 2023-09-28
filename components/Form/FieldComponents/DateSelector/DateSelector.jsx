@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import { ModalContext } from "@/app/(contexts)/ModalContext"
 import DateSelectorForm from "./DateSelectorForm"
+import clientLib from '@/lib/client/lib'
 
 const DateSelector = ({ value, index, onChange }) => {
     const modalFunctions = useContext(ModalContext)
@@ -19,6 +20,7 @@ const DateSelector = ({ value, index, onChange }) => {
     const renderUIButton = label => {
         return <button
             type="button"
+            className='tertiary'
             onClick={() => {
                 modalFunctions.addModal(
                     "Add date or time",
@@ -29,9 +31,12 @@ const DateSelector = ({ value, index, onChange }) => {
         </button>
     }
 
-    return <div className="DateSelector">
-        {fieldValue ? <>
-            {fieldValue.startdate}
+    return <div
+        className="DateSelector"
+        style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}
+    >
+        {fieldValue && fieldValue.startdate ? <>
+            <b>{clientLib.renderDate(fieldValue.startdate, fieldValue.enddate, fieldValue.unit)}</b>
             {renderUIButton('Edit date')}
         </> :
             renderUIButton('Add date or time')

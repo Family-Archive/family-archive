@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react"
 
 const DateInput = (props) => {
@@ -7,6 +9,13 @@ const DateInput = (props) => {
 
     const setDate = (year, month = null, day = null) => {
         const newDate = new Date(year, month, day)
+
+        // We want to store the time in UTC, so we subtract the TZ offset if one exists
+        // Also, for some reason the initialized time is always 24 hours behind what's specfied, so we add a day
+        const offset = newDate.getTimezoneOffset() * 60000;
+        newDate.setTime(newDate.getTime() - offset);
+        newDate.setDate(newDate.getDate() + 1)
+
         props.setDate(newDate.getTime(), props.type)
     }
 
