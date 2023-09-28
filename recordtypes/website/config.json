@@ -1,1 +1,10 @@
-{}
+{
+    "name": "Website",
+    "type": "website",
+    "icon": "language",
+    "description": "A URL ",
+    "version": "1.0.0",
+    "options": {
+        "disableFileUploads": true
+    }
+}
