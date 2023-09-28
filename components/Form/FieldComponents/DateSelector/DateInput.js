@@ -7,8 +7,12 @@ const DateInput = (props) => {
     const [month, setMonth] = useState(null)
     const [year, setYear] = useState(null)
 
-    const setDate = (year, month = null, day = null) => {
-        const newDate = new Date(year, month, day)
+    const [hasTime, sethasTime] = useState(false)
+    const [hour, sethour] = useState(null)
+    const [minute, setminute] = useState(null)
+
+    const setDate = (year, month = null, day = null, hour = null, minute = null) => {
+        const newDate = new Date(year, month, day, hour, minute)
 
         // We want to store the time in UTC, so we subtract the TZ offset if one exists
         // Also, for some reason the initialized time is always 24 hours behind what's specfied, so we add a day
@@ -21,7 +25,12 @@ const DateInput = (props) => {
 
     useEffect(() => {
         if (props.unit == 'days' && day != null && month != null && year != null) {
-            setDate(year, month, day)
+            if (hasTime && hour != null && minute != null) {
+                console.log('ah')
+                setDate(year, month, day, hour, minute)
+            } else {
+                setDate(year, month, day)
+            }
         }
 
         if (props.unit == 'months' && month != null && year != null) {
@@ -31,14 +40,14 @@ const DateInput = (props) => {
         if (props.unit == 'years' && year != null) {
             setDate(year)
         }
-    }, [day, month, year])
+    }, [day, month, year, hour, minute, hasTime])
 
     return (
-        <div className="DateInput">
+        <div className="DateInput" style={{ marginBottom: '1rem' }}>
             {props.unit == 'days' ?
                 <select name="day" id="day" onChange={e => setDay(e.target.value)}>
                     <option selected disabled>Day</option>
-                    {[...Array(30).keys()].map(num => {
+                    {[...Array(31).keys()].map(num => {
                         return <option value={num}>{num + 1}</option>
                     })}
                 </select> : ""}
@@ -61,6 +70,36 @@ const DateInput = (props) => {
                 </select> : ""}
 
             <input type='text' name='year' id='year' placeholder="Year" onChange={e => setYear(e.target.value)} />
+
+            {props.type === 'both' ?
+                <>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '1rem',
+                        marginBottom: '0.5rem'
+                    }}>
+                        <label for='hasTime'>Did this record occur at a specific time?</label>
+                        <input type='checkbox' name='hasTime' onChange={e => sethasTime(!hasTime)} />
+                    </div>
+
+                    {hasTime ? <>
+                        <select name="hour" id="hour" onChange={e => sethour(e.target.value)}>
+                            <option selected disabled>Hour</option>
+                            {[...Array(24).keys()].map(num => {
+                                return <option value={num}>{num}</option>
+                            })}
+                        </select>
+
+                        <select name="minute" id="minute" onChange={e => setminute(e.target.value)}>
+                            <option selected disabled>Minute</option>
+                            {[...Array(60).keys()].map(num => {
+                                return <option value={num}>{num}</option>
+                            })}
+                        </select>
+                    </> : ""}
+                </>
+                : ""}
         </div>
     )
 }

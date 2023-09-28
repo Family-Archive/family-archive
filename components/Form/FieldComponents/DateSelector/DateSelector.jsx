@@ -35,6 +35,7 @@ const DateSelector = ({ value, index, onChange }) => {
         className="DateSelector"
         style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}
     >
+        <span className="material-icons">calendar_month</span>
         {fieldValue && fieldValue.startdate ? <>
             <b>{clientLib.renderDate(fieldValue.startdate, fieldValue.enddate, fieldValue.unit)}</b>
             {renderUIButton('Edit date')}
