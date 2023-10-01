@@ -1,6 +1,7 @@
 import { cookies } from 'next/dist/client/components/headers'
 import lib from '../../../../lib/lib'
 import { prisma } from "../../../db/prisma"
+import Link from 'next/link'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
@@ -63,7 +64,9 @@ const ViewRecord = async ({ params }) => {
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
                 <div className='pageOptions'>
-                    <button><span className="material-icons">edit</span>Edit record</button>
+                    <Link href={`/record/${params.id}/edit`}>
+                        <button><span className="material-icons">edit</span>Edit record</button>
+                    </Link>
                     <Dropdown
                         title="Options"
                         options={[

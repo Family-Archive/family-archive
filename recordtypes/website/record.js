@@ -5,18 +5,12 @@ class Website extends Record {
         super('Website', 'website', [
             {
                 'label': 'Person',
-                'name': 'PersonSelector',
+                'name': 'person',
                 'type': 'PersonSelector'
             },
             {
-                'name': 'Label',
-                'type': 'h1',
-                'content': "Oh no!",
-                'showLabel': false
-            },
-            {
                 'label': 'URL',
-                'name': 'URL',
+                'name': 'url',
                 'type': 'url'
             }
         ])

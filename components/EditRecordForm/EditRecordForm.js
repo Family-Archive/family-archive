@@ -5,6 +5,18 @@ const EditRecordForm = ({ recordTypeData, recordData }) => {
     const acceptedFileTypes = recordTypeOptions.acceptedFileTypes
     let fields = recordTypeData.fields
 
+    const getFileIdsFromRecordData = () => {
+        let fileIds = []
+
+        for (const file of recordData.data.files) {
+            fileIds.push(file.id)
+        }
+
+        return fileIds
+    }
+
+    let fileIds = getFileIdsFromRecordData()
+
     const addValuesToFields = () => {
         let updatedFields = []
 
@@ -33,11 +45,13 @@ const EditRecordForm = ({ recordTypeData, recordData }) => {
 
     return (
         <Form
-            method="POST"
-            action={`/api/record/type/${recordTypeData.type}`}
+            method="PUT"
+            action={`/api/record/${recordData.data.record.id}`}
             fields={addValuesToFields()}
             acceptedFileTypes={acceptedFileTypes}
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
+            editMode={true}
+            fileIds={fileIds}
         />
     )
 }

@@ -9,7 +9,6 @@ import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
 export default function Form({
     fields,
-    // initialFiles,
     method,
     action,
     submitMessage,
@@ -17,12 +16,14 @@ export default function Form({
     allowMultipleFiles,
     requireFileUploadFirst,
     fileUploadedCallback,
-    recordType
+    recordType,
+    editMode,
+    fileIds,
+    loadFilesFromUrl
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
     fileUploadedCallback = fileUploadedCallback || false
-    // initialFiles = initialFiles || []
 
     // All of the files that will be submitted with the form.
     const [files, setFiles] = useState([])
@@ -34,7 +35,6 @@ export default function Form({
      * @return {array} converted files
      */
     const prepareInitialFiles = async () => {
-        let updatedFiles = []
         let initialFiles = []
 
         const urlParams = new URLSearchParams(window.location.search)
@@ -43,24 +43,7 @@ export default function Form({
         }
 
         for (const file of initialFiles) {
-            const response = await fetch(`/api/file/${file}`)
-            const fileBlob = await response.blob()
-
-            const convertedFile = new File([fileBlob], response.headers.get('X-File-Name'), { type: fileBlob.type })
-
-            getFileIcon(convertedFile).then(icon => {
-                updatedFiles.push({
-                    file: convertedFile,
-                    icon: icon
-                })
-
-                setFiles([...updatedFiles])
-                setIsFilePicked(true)
-
-                if (!fileWasUploaded) {
-                    setFileWasUploaded(true)
-                }
-            })
+            addFileToSelector(file)
         }
     }
 
@@ -112,7 +95,6 @@ export default function Form({
         // that was uploaded.
         const results = await fetch(`/api/record/${recordType}`)
         const recordTypeData = await results.json()
-        console.log(recordTypeData)
 
         // Update the fields on this form with the record type data.
         const updatedFormFields = prepareFieldsForForm(recordTypeData.fields)
@@ -131,13 +113,56 @@ export default function Form({
         }
     }, [fileWasUploaded])
 
-    // When the form is first loaded, add any files that were
-    // passed in the URL params to the file selector.
+    // Load any necessary files into the file selector.
     useEffect(() => {
         (async () => {
-            prepareInitialFiles()
+
+            // If this form is in editing mode, load any necessary files
+            // from storage.
+            if (editMode) {
+                addFilesToSelectorById(fileIds)
+            }
+
+            // Otherwise, check to see if any initial files were passed in
+            // the URL params and load any that are found.
+            else {
+                if (loadFilesFromUrl) {
+                    prepareInitialFiles()
+                }
+            }
         })()
     }, [])
+
+    // Retrieve files from backend and load them into file selector.
+    const addFilesToSelectorById = async (fileIds) => {
+        for (const fileId of fileIds) {
+            addFileToSelector(fileId)
+        }
+    }
+
+    const addFileToSelector = async (fileId) => {
+        let updatedFiles = files
+
+        const response = await fetch(`/api/file/${fileId}`)
+        const fileBlob = await response.blob()
+
+        const convertedFile = new File([fileBlob], response.headers.get('X-File-Name'), { type: fileBlob.type })
+
+        getFileIcon(convertedFile).then(icon => {
+            updatedFiles.push({
+                file: convertedFile,
+                icon: icon,
+                fileId: fileId
+            })
+
+            setFiles([...updatedFiles])
+            setIsFilePicked(true)
+
+            if (!fileWasUploaded) {
+                setFileWasUploaded(true)
+            }
+        })
+    }
 
     const handleDragOver = (event) => {
         event.stopPropagation()
@@ -256,15 +281,39 @@ export default function Form({
             formData.append(field.name, field.value)
         })
 
-        // Add any uploaded files to the form submission.
-        files.forEach((file) => {
-            formData.append('file', file.file)
-        })
+        // If we're in edit mode, we'll be making a PUT request, which
+        // expects files in a different format because they will need
+        // to be connected to/disconnected from the record instead of
+        // stored for the first time.
+        if (editMode) {
+            files.forEach((file) => {
+                // If the file doesn't have an id, we need to add it like
+                // a normal file so it can be stored. It will then be connected
+                // to the record on the backend.
+                if (!file.fileId) {
+                    formData.append('files', file.file)
+                } else {
+                    formData.append('files', file.fileId)
+                }
+            })
+        } else {
+            // Add any uploaded files to the form submission.
+            files.forEach((file) => {
+                formData.append('files', file.file)
+            })
+        }
 
         const response = await fetch(action, {
             method: method,
             body: formData
         })
+
+        if (response.status < 200 || response.status >= 300) {
+            const error = await response.error()
+            console.log(error)
+            return
+        }
+
         const json = await response.json()
 
         push('/records/all')
