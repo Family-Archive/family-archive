@@ -1,1 +1,14 @@
-{}
+{
+    "name": "Website",
+    "type": "website",
+    "icon": "description",
+    "description": "An external website",
+    "version": "1.0.0",
+    "settings": {},
+    "options": {
+        "disableFileUploads": true,
+        "acceptedFileTypes": [
+            "*"
+        ]
+    }
+}

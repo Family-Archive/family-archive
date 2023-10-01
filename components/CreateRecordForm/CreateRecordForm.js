@@ -15,6 +15,7 @@ const CreateRecordForm = async (props) => {
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
             requireFileUploadFirst={recordTypeOptions.requireFileUploadFirst}
             recordType={recordType.name}
+            loadFilesFromUrl={true}
         />
     )
 }
