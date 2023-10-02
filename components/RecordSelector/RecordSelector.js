@@ -5,6 +5,7 @@ import { useEffect, useState, useContext } from 'react'
 import Link from 'next/link'
 import Form from '../Form/Form'
 import lib from './lib'
+import clientLib from '@/lib/client/lib'
 import { useRouter } from 'next/navigation'
 
 import { ModalContext } from '@/app/(contexts)/ModalContext'
@@ -62,12 +63,15 @@ const RecordSelector = () => {
                 <div>Or choose from one of these record types:</div>
                 <div className={styles.recordTypeButtons}>
                     {recordTypes.length ? recordTypes.map(recordType => {
+                        const recordIcon = clientLib.renderIconFromData(recordType.icon)
+
                         return <Link
                             href={`/record/create/${recordType.type}`}
                             key={recordType.type}
                             className={`${styles.recordType} button`}
                             onClick={modalFunctions.clearModalStack}
                         >
+                            {recordIcon}
                             {recordType.name}
                         </Link>
                     }) : ''}

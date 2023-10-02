@@ -1,6 +1,7 @@
 {
     "name": "File",
     "type": "file",
+    "icon": "description",
     "description": "A record that features a file of any type.",
     "version": "1.0.0",
     "settings": {},

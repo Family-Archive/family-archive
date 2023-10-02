@@ -1,7 +1,7 @@
 {
     "name": "Website",
     "type": "website",
-    "icon": "description",
+    "icon": "language",
     "description": "An external website",
     "version": "1.0.0",
     "settings": {},

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import lib from '../../lib/lib'
+import clientLib from '@/lib/client/lib'
 import ViewFilter from '../ViewFilter/ViewFilter'
 import PageSelector from '../PageSelector/PageSelector'
 import styles from './AllRecords.module.scss'
@@ -83,9 +84,13 @@ const AllRecords = async (props) => {
                     const recordFiles = await fetchRecordFiles(record.id)
                     const photo = findFirstPhoto(recordFiles)
 
+                    const recordIcon = clientLib.renderIconFromData(record.icon)
+
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
                         {/* If we found an image in this record's files, use it as the background image */}
-                        <div className={styles.image} style={{ backgroundImage: photo ? `url('/api/file/${photo.id}')` : "" }} />
+                        <div className={styles.image} style={{ backgroundImage: photo ? `url('/api/file/${photo.id}')` : "" }} >
+                            {!photo ? <span className={styles.typeIcon}>{recordIcon}</span> : ""}
+                        </div>
 
                         <span className={styles.recordName}>{record.name}</span>
                         <span className={styles.recordType}>{record.type}</span>

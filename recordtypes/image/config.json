@@ -1,6 +1,7 @@
 {
     "name": "Image",
     "type": "image",
+    "icon": "photo_camera",
     "description": "An image, photograph or otherwise.",
     "version": "1.0.0",
     "settings": {

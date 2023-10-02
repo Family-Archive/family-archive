@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import lib from '@/lib/client/lib'
+import clientLib from '@/lib/client/lib'
 
 import styles from './FileViewer.module.scss'
 import FileSelector from './FileSelector/FileSelector'
@@ -36,7 +36,7 @@ const FileViewer = (props) => {
                     <span className='material-icons'>description</span>
                     <strong>{activeFile.name}</strong><br />
                     {activeFile.mimeType}<br />
-                    {lib.convertBytesToUnit(activeFile.size)}<br />
+                    {clentLib.convertBytesToUnit(activeFile.size)}<br />
                     {activeFile.createdAt}<br />
                 </div>
         }

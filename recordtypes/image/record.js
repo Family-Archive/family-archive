@@ -12,7 +12,7 @@ class Image extends Record {
                 },
                 {
                     name: 'When the image was created',
-                    type: 'date'
+                    type: 'DateSelector'
                 },
                 {
                     name: 'Where the image was created',
