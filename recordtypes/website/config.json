@@ -2,9 +2,13 @@
     "name": "Website",
     "type": "website",
     "icon": "language",
-    "description": "A URL ",
+    "description": "An external website",
     "version": "1.0.0",
+    "settings": {},
     "options": {
-        "disableFileUploads": true
+        "disableFileUploads": true,
+        "acceptedFileTypes": [
+            "*"
+        ]
     }
 }
