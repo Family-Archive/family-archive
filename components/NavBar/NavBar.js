@@ -48,7 +48,7 @@ const NavBar = () => {
                         <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
                         <Link className={styles.drafts} href='/drafts'>
                             {draftContext.count > 0 ? <span className={styles.draftCount}>{draftContext.count}</span> : ""}
-                            <button className="secondary"><span className="material-icons">design_services</span>Drafts</button>
+                            <button className={`${draftContext.count > 0 ? 'secondary' : 'tertiary'}`}><span className="material-icons">design_services</span>Drafts</button>
                         </Link>
                     </section>
                     : ""

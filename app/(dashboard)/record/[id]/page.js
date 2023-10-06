@@ -101,7 +101,7 @@ const ViewRecord = async ({ params }) => {
                         {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
-                        {specialData.people.length > 0 ?
+                        {specialData.people && specialData.people.length > 0 ?
                             <div className={styles.people}>
                                 <span className={`${styles.icon} material-icons`}>boy</span>
                                 {specialData.people.map(person => {
