@@ -40,7 +40,7 @@ const fetchRecords = async (params) => {
  * @param {string} recordId: The ID of the record to get the files for
  * @returns {Array}: The list of files
  */
-const fetchRecordFiles = async (recordId) => {
+const fetchExtraRecordData = async (recordId) => {
     let record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${recordId}`,
         {
             headers: {
@@ -50,7 +50,7 @@ const fetchRecordFiles = async (recordId) => {
     )
     record = await record.json()
 
-    return record.data.files
+    return record.data
 }
 
 /**
@@ -81,10 +81,10 @@ const AllRecords = async (props) => {
             <section className={styles.recordsGrid}>
                 {recordList.map(async record => {
                     // Get all files for this record and then search the list for a photo
-                    const recordFiles = await fetchRecordFiles(record.id)
-                    const photo = findFirstPhoto(recordFiles)
+                    const recordData = await fetchExtraRecordData(record.id)
+                    const photo = findFirstPhoto(recordData.files)
 
-                    const recordIcon = clientLib.renderIconFromData(record.icon)
+                    const recordIcon = clientLib.renderIconFromData(recordData.icon)
 
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
                         {/* If we found an image in this record's files, use it as the background image */}

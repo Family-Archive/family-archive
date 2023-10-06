@@ -19,12 +19,9 @@ const MoveToCollectionButton = (props) => {
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {
-                                const formData = new FormData()
                                 const collectionId = document.querySelector('#collectionParentId').value
-                                formData.append('collections', JSON.stringify({ value: collectionId, connect: true, name: "collections" }))
-                                fetch(`/api/record/${props.id}`, {
-                                    method: "PUT",
-                                    body: formData
+                                fetch(`/api/record/${props.id}/collection/${collectionId}`, {
+                                    method: "POST"
                                 })
                                     .then(response => response.json())
                                     .then(data => { window.location = `/collection/${collectionId}` })

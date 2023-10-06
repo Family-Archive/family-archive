@@ -11,7 +11,6 @@ import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
-import RenameButton from './RenameButton'
 
 const fetchRecord = async (params) => {
     const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
@@ -31,17 +30,12 @@ const fetchCollections = async (params) => {
     return await record.json()
 }
 
-const ViewRecord = async ({ params }) => {
-    const recordData = await fetchRecord(params);
-    const record = recordData.data.record
+const fetchSpecialData = async (recordData) => {
+    let data = {}
 
-    const collectionsData = await fetchCollections(params)
-    const collections = collectionsData.data
-
-    // Fetch people connected to record by reading the custom "Person" field
     let people = []
     for (let field of recordData.data.fields) {
-        if (field.name === "Person" && field.value) {
+        if (field.name === "person" && field.value) {
             for (let id of JSON.parse(field.value)) {
                 if (id) {
                     const person = await prisma.person.findFirst({
@@ -50,8 +44,29 @@ const ViewRecord = async ({ params }) => {
                     people.push(person)
                 }
             }
+            data.people = people
+        }
+
+        if (field.name === "date" && field.value) {
+            let dateData = JSON.parse(field.value)
+            data.date = dateData
         }
     }
+
+    return data
+}
+
+const ViewRecord = async ({ params }) => {
+    const recordData = await fetchRecord(params);
+    const record = recordData.data.record
+
+    const collectionsData = await fetchCollections(params)
+    const collections = collectionsData.data.collections
+    console.log(collections)
+
+    // Fetch special data
+    const specialFields = ['person', 'date', 'location']
+    const specialData = await fetchSpecialData(recordData)
 
     const recordIcon = clientLib.renderIconFromData(recordData.data.icon)
 
@@ -66,9 +81,8 @@ const ViewRecord = async ({ params }) => {
                     <Dropdown
                         title="Options"
                         options={[
-                            <RenameButton id={record.id} />,
                             <MoveToCollectionButton id={record.id} />,
-                            collections.collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
+                            collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
                             <DeleteRecordButton id={record.id} />
                         ]}
                     />
@@ -84,14 +98,13 @@ const ViewRecord = async ({ params }) => {
 
                 <div className={styles.content}>
                     <div className={styles.file}>
-                        {/* <Image src={`/api/file/${recordData.data.files[0].id}`} width={500} height={500} /> */}
                         {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
-                        {people.length > 0 ?
+                        {specialData.people.length > 0 ?
                             <div className={styles.people}>
                                 <span className={`${styles.icon} material-icons`}>boy</span>
-                                {people.map(person => {
+                                {specialData.people.map(person => {
                                     return <button className={styles.person}>
                                         {person.fullName}
                                     </button>
@@ -99,11 +112,18 @@ const ViewRecord = async ({ params }) => {
                             </div>
                             : ""}
 
+                        {specialData.date ?
+                            <div className={styles.date}>
+                                <span className={`${styles.icon} material-icons`}>event</span>
+                                <b>{clientLib.renderDate(specialData.date.startdate, specialData.date.enddate, specialData.date.unit)}</b>
+                            </div>
+                            : ""}
+
                         <strong>Description</strong>
                         <p>{record.description}</p>
 
                         {recordData.data.fields.map(field => {
-                            if (field.value) {
+                            if (field.value && !specialFields.includes(field.name)) {
                                 return <div key={field.id}>
                                     <strong>{field.name}</strong>
                                     <p>{field.value}</p>
@@ -124,6 +144,10 @@ const ViewRecord = async ({ params }) => {
                         <p>{record.updatedAt}</p>
                         <strong>Type</strong>
                         <p>{record.type}</p>
+                        <strong>Collections</strong>
+                        <p>{collections.map(collection => {
+                            return <a href={`/collection/${collection.id}`}>{collection.name}, </a>
+                        })}</p>
                     </div>
                     <div>
                         <strong>Family ID</strong>

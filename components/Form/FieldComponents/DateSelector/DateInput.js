@@ -26,7 +26,6 @@ const DateInput = (props) => {
     useEffect(() => {
         if (props.unit == 'days' && day != null && month != null && year != null) {
             if (hasTime && hour != null && minute != null) {
-                console.log('ah')
                 setDate(year, month, day, hour, minute)
             } else {
                 setDate(year, month, day)

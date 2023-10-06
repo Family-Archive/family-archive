@@ -257,8 +257,6 @@ export default function Form({
     // icon to display for it.
     const getFileIcon = (file) => {
         return new Promise((resolve, reject) => {
-            console.log('File in getFileIcon')
-            console.log(file)
             if (file.type.includes('image')) {
                 const reader = new FileReader()
                 reader.addEventListener('load', () => {
@@ -272,7 +270,6 @@ export default function Form({
     }
 
     const submissionHandler = async (event) => {
-        console.log('uh ok')
         event.preventDefault()
 
         const formData = new FormData()
