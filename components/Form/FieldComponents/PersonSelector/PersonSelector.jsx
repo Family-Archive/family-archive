@@ -6,11 +6,6 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
 export default function PersonSelector({ value, onChange, index }) {
-    // try {
-    //     value = JSON.parse(value)
-    // } catch (error) {
-    //     value = '[]'
-    // }
     value = value || '[]'
 
     // The value of the text field used to enter people.
