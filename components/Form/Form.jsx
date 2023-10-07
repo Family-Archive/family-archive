@@ -281,10 +281,6 @@ export default function Form({
             formData.append(field.name, field.value)
         })
 
-        // If we're in edit mode, we'll be making a PUT request, which
-        // expects files in a different format because they will need
-        // to be connected to/disconnected from the record instead of
-        // stored for the first time.
         if (editMode) {
             files.forEach((file) => {
                 // If the file doesn't have an id, we need to add it like
