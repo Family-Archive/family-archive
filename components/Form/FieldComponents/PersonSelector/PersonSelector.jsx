@@ -6,6 +6,11 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
 export default function PersonSelector({ value, onChange, index }) {
+    // try {
+    //     value = JSON.parse(value)
+    // } catch (error) {
+    //     value = '[]'
+    // }
     value = value || '[]'
 
     // The value of the text field used to enter people.
@@ -44,11 +49,50 @@ export default function PersonSelector({ value, onChange, index }) {
     // form.
     const [peopleToSubmit, setPeopleToSubmit] = useState('[]')
 
+    // This is silly, but in situations where we need to select
+    // multiple people at once (like on initial page load) we have
+    // to track them in this array because the selectPerson function
+    // won't be aware of the updated list of selected people each
+    // time it gets called in a loop.
+    let temporarySelectedPeople = []
+
+    // Tracks whether we have performed the initial update of the
+    // display for people already selected when the page loaded.
+    const [initialPeopleSelected, setInitialPeopleSelected] = useState(false)
+
     const modalFunctions = useContext(ModalContext)
 
     useEffect(() => {
         fetchPeople()
     }, [])
+
+    useEffect(() => {
+        if (listItems.length > 0) {
+            // When "people" gets updated for the first time, update the
+            // component's display to reflect the currently selected people
+            // when the page was loaded.
+            if (!initialPeopleSelected) {
+                // Update the display to reflect the selected people.
+                try {
+                    const people = JSON.parse(value)
+                    for (const person of people) {
+                        selectPerson({
+                            target: {
+                                dataset: {
+                                    id: person
+                                }
+                            }
+                        })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+
+                setInitialPeopleSelected(true)
+                setSelectedPeople(temporarySelectedPeople)
+            }
+        }
+    }, [listItems])
 
     // Get a list of all the people currently in the database.
     const fetchPeople = async () => {
@@ -158,6 +202,7 @@ export default function PersonSelector({ value, onChange, index }) {
         })
 
         if (selectedPerson) {
+            temporarySelectedPeople = [...temporarySelectedPeople, selectedPerson]
             setSelectedPeople([...selectedPeople, selectedPerson])
 
             // Remove the selected person from the list of available people.
@@ -171,6 +216,10 @@ export default function PersonSelector({ value, onChange, index }) {
             // get submitted with the rest of the form.
             let updatedPeopleToSubmit = JSON.parse(value)
             updatedPeopleToSubmit.push(selectedPerson.id)
+
+            // Remove any duplicates from the array.
+            updatedPeopleToSubmit = [... new Set(updatedPeopleToSubmit)]
+
             // setPeopleToSubmit(JSON.stringify(updatedPeopleToSubmit))
             onChange({
                 target: {
