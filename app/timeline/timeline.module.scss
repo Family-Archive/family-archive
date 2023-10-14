@@ -1,0 +1,30 @@
+.timeline {
+    .container {
+
+        .tlObject {
+            height: 5px;
+            background-color: red;
+        }
+
+        .markers {
+            display: flex;
+            justify-content: space-between;
+
+            .marker {
+                width: 3px;
+                background-color: green;
+                height: 10px;
+            }
+        }
+
+        .entries {
+            .entry {
+                background: blue;
+                color: white;
+                padding: 0.25rem;
+                border-radius: 0.1rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+}
