@@ -144,10 +144,12 @@ const ViewRecord = async ({ params }) => {
                         <p>{record.updatedAt}</p>
                         <strong>Type</strong>
                         <p>{record.type}</p>
-                        <strong>Collections</strong>
-                        <p>{collections.map(collection => {
-                            return <a href={`/collection/${collection.id}`}>{collection.name}, </a>
-                        })}</p>
+                        {collections.length > 0 ? <>
+                            <strong>Collections</strong>
+                            <p>{collections.map(collection => {
+                                return <a href={`/collection/${collection.id}`}>{collection.name}, </a>
+                            })}</p>
+                        </> : ""}
                     </div>
                     <div>
                         <strong>Family ID</strong>
