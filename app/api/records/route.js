@@ -15,9 +15,11 @@ export async function GET(request) {
         })
     }
 
-    // Pull out sort and direction params and set those explicitly
+    // Pull out explicit params
     const sortField = params.get('sort') ? params.get('sort') : 'name'
     const direction = params.get('dir') ? params.get('dir') : 'asc'
+    const startdate = params.get('startdate') ? params.get('startdate') : null
+    const enddate = params.get('enddate') ? params.get('enddate') : null
 
     const page = params.get('page') ? params.get('page') : '1'
     const take = page * 20
@@ -46,15 +48,57 @@ export async function GET(request) {
         orderBy: {
             [sortField]: direction
         },
+        include: {
+            RecordField: true
+        },
         where: where
     })
 
+    // Reformat and filter final results
+    let finalArray = []
     for (let result of results) {
+        // Add icon information
         const RecordType = require(`/recordtypes/${result.type}/record.js`)
         const recordType = new RecordType()
         const icon = recordType.getRecordTypeIcon()
         result.icon = icon
+
+        // put significant record fields on the top level for easy access
+        if (result.RecordField) {
+            for (const recordField of result.RecordField) {
+                if (['date', 'person'].includes(recordField.name)) {
+                    try {
+                        result[recordField.name] = JSON.parse(recordField.value)
+                    } catch { /* probably null or something, just don't include it */ }
+                }
+            }
+        }
+
+        // filter out records if they don't meet specific recordfield criteria
+        let addToFinalArray = true
+        if (startdate) {
+            if (!result.date || !result.date.startdate || result.date.startdate < startdate) {
+                addToFinalArray = false
+                continue
+            }
+        }
+        if (enddate) {
+            if (!result.date || !result.date.enddate || result.date.enddate > enddate) {
+                addToFinalArray = false
+                continue
+            }
+        }
+        if (addToFinalArray) {
+            finalArray.push(result)
+        }
     }
 
-    return Response.json(results)
+    return Response.json({
+        status: 'success',
+        data: {
+            records: finalArray
+        }
+    }, {
+        status: 201
+    });
 }

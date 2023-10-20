@@ -7,10 +7,6 @@ import clientLib from '@/lib/client/lib'
 
 const Timeline = (props) => {
 
-    // TODO: connect to real data, and have some way to bring up an info card about each record, or something
-
-    // show some data on entry hover, click
-
     const [fontSize, setfontSize] = useState(55)
     const [date, setdate] = useState(null)
     const [mouseDown, setmouseDown] = useState(false)
@@ -221,7 +217,7 @@ const Timeline = (props) => {
                                         style={{
                                             width: `${(datum.date.enddate - datum.date.startdate) / 86400000 / 2}em`,
                                             marginLeft: `${(datum.date.startdate - bounds[0]) / 86400000 / 2}em`,
-                                            filter: `hue-rotate(${(datum.date.startdate % 9) * 45}deg)`
+                                            filter: `hue-rotate(${(datum.date.startdate * 0.000001 % 9) * 45}deg)`
                                         }}
                                     >
                                         <span>{datum.name}</span>

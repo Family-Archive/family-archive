@@ -32,7 +32,8 @@ const fetchRecords = async (params) => {
         throw new Error('Failed to fetch data')
     }
 
-    return await records.json()
+    records = await records.json()
+    return records.data.records
 }
 
 /**
@@ -68,6 +69,7 @@ const findFirstPhoto = (fileArray) => {
 }
 
 const AllRecords = async (props) => {
+
     // If no record list was passed, use the fetchRecords method
     let recordList
     if (!props.records) {
@@ -86,6 +88,8 @@ const AllRecords = async (props) => {
 
                     const recordIcon = clientLib.renderIconFromData(recordData.icon)
 
+                    console.log(record.date)
+
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
                         {/* If we found an image in this record's files, use it as the background image */}
                         <div className={styles.image} style={{ backgroundImage: photo ? `url('/api/file/${photo.id}')` : "" }} >
@@ -94,15 +98,20 @@ const AllRecords = async (props) => {
 
                         <span className={styles.recordName}>{record.name}</span>
                         <span className={styles.recordType}>{record.type}</span>
-                        {/* Right now this displays the created date, but once we have a date selector on records we'll use that value */}
-                        <span className={styles.recordDate}>{new Date(Date.parse(record.createdAt)).toLocaleDateString()}</span>
+
+                        {record.date && record.date.startdate ?
+                            <span className={styles.recordDate}>{clientLib.renderDate(record.date.startdate, record.date.enddate, record.date.unit)}</span>
+                            : ""
+                        }
+
+                        <span className={styles.createdDate}>Created on {new Date(record.createdAt).toLocaleDateString()}</span>
                     </Link>
                 })}
             </section>
 
             {props.showOptions ?
                 <section className={styles.viewOptions}>
-                    <ViewFilter params={props.params} />
+                    <ViewFilter params={props.params} sortOptions={true} />
                     <PageSelector page={props.params.page} />
                 </section>
                 : ""}

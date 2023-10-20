@@ -12,6 +12,16 @@ const PageSelector = () => {
     const [hasLoaded, sethasLoaded] = useState(false)
 
     useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search)
+        for (let [key, value] of urlParams) {
+            if (key == "page") {
+                return
+            }
+        }
+        setpage(1)
+    }, [window.location.search])
+
+    useEffect(() => {
         if (!hasLoaded) {
             sethasLoaded(true)
             return
@@ -43,6 +53,7 @@ const PageSelector = () => {
                 className={styles.pageNumber}
                 type="number"
                 value={page}
+                id='pageNum'
                 onChange={(e) => setpage(parseInt(e.target.value))}
             />
 

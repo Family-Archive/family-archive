@@ -28,6 +28,10 @@ const ViewFilter = (props) => {
         "name": filterJSON.name ? filterJSON.name : [],
         "type": filterJSON.age ? filterJSON.age : [],
     })
+    const [extraParams, setextraParams] = useState({
+        "startdate": props.params.startdate ? props.params.startdate : "",
+        "enddate": props.params.enddate ? props.params.enddate : "",
+    })
     const [hasLoaded, sethasLoaded] = useState(false)
 
     /**
@@ -63,7 +67,7 @@ const ViewFilter = (props) => {
         setfilters({ ...filters, [name]: currFilterEntries })
     }
 
-    // Watch the sort and filter settings for changes; when a change occurs, convert this into a query string and add it to the URL
+    // Watch the sort, filter, and extra param settings for changes; when a change occurs, convert this into a query string and add it to the URL
     // Then call router.refresh, which re-fetches the data using the new URL string
     // We overwrite the page parameter here because changing these options should reset back to page 1
     useEffect(() => {
@@ -73,17 +77,24 @@ const ViewFilter = (props) => {
         }
 
         const filterString = JSON.stringify(filters)
-        router.replace(`${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}`);
+        let URLString = `${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}`
+        for (let param of Object.keys(extraParams)) {
+            URLString += `&${param}=${extraParams[param]}`
+        }
+
+        router.replace(URLString);
         router.refresh()
-    }, [sortSettings, filters])
+    }, [sortSettings, filters, extraParams])
 
     return (
         <div className={styles.ViewFilter}>
-            <section className={styles.sortOptions}>
-                <span className={styles.sectionHead}>Sort by</span>
-                <SortToggle option="Name" settings={sortSettings} updateSortSettings={updateSortSettings} />
-                <SortToggle option="Date" settings={sortSettings} updateSortSettings={updateSortSettings} />
-            </section>
+            {props.sortOptions ?
+                <section className={styles.sortOptions}>
+                    <span className={styles.sectionHead}>Sort by</span>
+                    <SortToggle option="name" label="Name" settings={sortSettings} updateSortSettings={updateSortSettings} />
+                    <SortToggle option="createdAt" label="Date Created" settings={sortSettings} updateSortSettings={updateSortSettings} />
+                </section>
+                : ""}
 
             <section className={styles.filterOptions}>
                 <span className={styles.sectionHead}>Filter by</span>
@@ -96,6 +107,32 @@ const ViewFilter = (props) => {
                         removeFilter={removeFilter}
                     />
                 })}
+                <div className={styles.dates}>
+                    <div>
+                        <label htmlFor='startdate'>Start date</label>
+                        <input
+                            onChange={(e) => {
+                                e.target.value ? setextraParams({ ...extraParams, startdate: new Date(e.target.value).getTime() }) :
+                                    setextraParams(delete extraParams['startdate'])
+                            }}
+                            name='startdate'
+                            type='date'
+                            value={extraParams.startdate ? new Date(parseInt(extraParams.startdate)).toISOString().split('T')[0] : ""}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor='enddate'>End date</label>
+                        <input
+                            onChange={(e) => {
+                                e.target.value ? setextraParams({ ...extraParams, enddate: new Date(e.target.value).getTime() }) :
+                                    setextraParams(delete extraParams['enddate'])
+                            }}
+                            name='enddate'
+                            type='date'
+                            value={extraParams.enddate ? new Date(parseInt(extraParams.enddate)).toISOString().split('T')[0] : ""}
+                        />
+                    </div>
+                </div>
             </section>
         </div>
     )
