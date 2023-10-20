@@ -1,41 +1,97 @@
+import { prisma } from "../../../db/prisma"
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 import { cookies } from 'next/dist/client/components/headers'
 
 import styles from './timelinePage.module.scss'
 import Timeline from '../../../../components/Timeline/Timeline'
-import lib from '@/lib/lib'
+import lib from "@/lib/lib"
 
-const timelinePage = async () => {
+const filterRecordsWithoutDateFields = records => {
+    let recordsWithDateFields = []
+    for (let record of records) {
+        let hasDateField = false
+        for (let recordField of record.RecordField) {
+            if (recordField.name === 'date') {
+                hasDateField = true
+            }
+        }
+        if (hasDateField) {
+            recordsWithDateFields.push(record)
+        }
+    }
+
+    return recordsWithDateFields
+}
+
+const timelinePage = async ({ searchParams }) => {
 
     // Fetch records with date data
-    // This is pretty inefficient... We have to make a network call to the DB to get the list of records, and then for each record, make a call to the /api/record endpoint
-    // in order to get the date field
-
-    // Fetch all records
-    let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records`, {
-        headers: {
-            Cookie: lib.cookieObjectToString(cookies().getAll())
-        }
+    const session = await getServerSession(authOptions);
+    const where = lib.limitQueryByFamily({}, cookies(), session)
+    let result = await prisma.record.findMany({
+        include: {
+            RecordField: {
+                where: {
+                    OR: [
+                        {
+                            name: {
+                                equals: 'date'
+                            }
+                        },
+                        {
+                            name: {
+                                equals: 'person'
+                            }
+                        },
+                    ]
+                }
+            },
+        },
+        where: where
     })
-    records = await records.json()
 
-    // For each record, check if we have a date field attached to it, and if so, attach it to the record object and append it to a new array
-    let recordsWithDate = []
-    for (let record of records) {
-        const recordId = record.id
+    // Remove any records that don't have date fields
+    result = filterRecordsWithoutDateFields(result)
 
-        let recordData = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${recordId}`, {
-            headers: {
-                Cookie: lib.cookieObjectToString(cookies().getAll())
+    // Iterate through the remaining records and ensure they match all query params
+    let data = []
+    for (let record of result) {
+        if (record.RecordField.length > 0) {
+            let matchesConditions = true
+            for (let recordField of record.RecordField) {
+
+                // If this is a person record field, and we're filtering on people, make sure that at least one person connected to this record is in the list
+                if (recordField.name === 'person' && searchParams.people) {
+                    const personVal = JSON.parse(recordField.value)
+                    let personFound = false
+                    for (let person of personVal) {
+                        if (searchParams.people.split(',').includes(person)) {
+                            personFound = true
+                        }
+                        break
+                    }
+                    if (!personFound) {
+                        matchesConditions = false
+                        break
+                    }
+                }
+
+                // If we're filtering on dates, make sure that the record's startdate and enddate are after and before the start + date we're filtering on, respectivley
+                if (recordField.name === 'date') {
+                    const dateVal = JSON.parse(recordField.value)
+                    record['date'] = dateVal
+                    if (dateVal.startdate) {
+                        if (searchParams.startdate && (searchParams.startdate > dateVal.startdate || searchParams.enddate < dateVal.enddate)) {
+                            matchesConditions = false
+                        }
+                    }
+                }
             }
-        })
-        recordData = await recordData.json()
 
-        for (let field of recordData.data.fields) {
-            if (field.name === "date") {
-                const fieldData = JSON.parse(field.value)
-                record['date'] = fieldData
-                recordsWithDate.push(record)
-                break
+            // If we didn't mark any conditions false, add this record to the data array
+            if (matchesConditions) {
+                data.push(record)
             }
         }
     }
@@ -43,7 +99,10 @@ const timelinePage = async () => {
     return (
         <>
             <h1 className='title'>Timeline</h1>
-            <Timeline />
+            {data.length > 0 ?
+                <Timeline data={data} />
+                : <span>There are no records matching the current timeline criteria.</span>
+            }
         </>
     )
 }

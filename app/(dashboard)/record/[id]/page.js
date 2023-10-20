@@ -62,7 +62,6 @@ const ViewRecord = async ({ params }) => {
 
     const collectionsData = await fetchCollections(params)
     const collections = collectionsData.data.collections
-    console.log(collections)
 
     // Fetch special data
     const specialFields = ['person', 'date', 'location']

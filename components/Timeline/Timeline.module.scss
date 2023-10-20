@@ -3,28 +3,41 @@
     width: calc(100vw - 26rem);
     overflow: auto;
     position: relative;
-    transition: font-size 0.4s ease;
+    mask-image: linear-gradient(to left, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+    padding: 0 2rem;
+    user-select: none;
+    cursor: grab;
 
     .date {
         font-size: 1.5rem;
         position: fixed;
-        top: 45%;
+        top: 40vh;
         color: grey;
+        z-index: 2;
+        background: white;
+        padding: 1.5rem;
+        margin-left: -2rem;
+        border-radius: 0 99rem 99rem 0;
+        width: 12rem;
+
+        &.right {
+            right: 0;
+            margin-left: unset;
+            border-radius: 99rem 0 0 99rem;
+        }
     }
 
     .zoomControls {
         display: flex;
-        gap: 0.5rem;
         position: fixed;
-        right: 1rem;
+        right: 2rem;
         bottom: 1rem;
-        padding: 1rem;
         background: $accent-border-color;
         border-radius: 99rem;
+        z-index: 2;
 
         button {
-            border-radius: 99rem;
-            border: 2px solid black;
+            padding: 1.5rem;
 
             span {
                 font-size: 2rem;
@@ -34,17 +47,24 @@
 
     .container {
         position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        margin-top: 27rem;
+        pointer-events: none;
+        transition: left 0.4s ease;
 
         .tlObject {
             height: 4px;
             background-color: $accent-secondary-color;
+            position: sticky;
+            top: 40vh;
+            z-index: 2;
         }
 
         .markers {
             display: flex;
             justify-content: space-between;
+            position: sticky;
+            top: 40.3vh;
+            z-index: 2;
 
             .marker {
                 width: 4px;
@@ -64,9 +84,22 @@
                 .entry {
                     background: #a3a8ff;
                     color: white;
-                    padding: 0.75rem;
+                    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
                     border-radius: 0.25rem;
                     position: absolute;
+                    pointer-events: all;
+                    display: flex;
+                    align-items: center;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+
+                    span {
+                        font-size: 1rem;
+                        position: sticky;
+                        left: 0rem;
+                    }
                 }
             }
         }
