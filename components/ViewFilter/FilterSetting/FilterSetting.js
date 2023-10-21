@@ -13,9 +13,12 @@ const FilterSetting = (props) => {
                 <span className={styles.filterName}>{props.name}</span>
                 <button
                     className='secondary'
-                    onClick={() => modalFunctions.addModal(`Add ${props.name} filter`,
+                    onClick={() => modalFunctions.addModal(`Filter by ${props.name}`,
                         <>
-                            <input id="filterInput" type="text" />
+                            <formitem>
+                                <label htmlFor='filterInput'>Search term</label>
+                                <input name='filterInput' id="filterInput" type="text" /><br /><br />
+                            </formitem>
                             <button
                                 onClick={() => { props.addFilter(props.name, document.querySelector('#filterInput').value); modalFunctions.clearModalStack() }}
                             >

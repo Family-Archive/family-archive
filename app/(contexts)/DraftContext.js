@@ -12,7 +12,9 @@ export const DraftProvider = ({ children }) => {
     const updateCount = async () => {
         let drafts = await fetch(`/api/drafts`)
         drafts = await drafts.json()
-        setnumDraftFiles(drafts.data.records.length)
+        if (drafts.status != 'error') {
+            setnumDraftFiles(drafts.data.records.length)
+        }
     }
 
     useEffect(() => {

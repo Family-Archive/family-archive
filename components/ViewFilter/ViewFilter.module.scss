@@ -15,4 +15,15 @@
     .filterOptions {
         margin-top: 1rem;
     }
+
+    .dates {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+
+        div,
+        input {
+            width: 100%;
+        }
+    }
 }

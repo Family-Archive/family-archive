@@ -41,10 +41,11 @@
             .icon {
                 font-size: 3rem;
                 margin-left: -1rem;
-                margin-right: -0.5rem;
+                margin-right: 0.5rem;
             }
 
-            .people {
+            .people,
+            .date {
                 display: flex;
                 gap: 0.5rem;
                 align-items: center;
@@ -54,6 +55,13 @@
                     border-radius: 99rem;
                     background: $accent-border-color;
                     color: black;
+                }
+            }
+
+            .date {
+                .icon {
+                    font-size: 2.25rem;
+                    margin-left: -0.5rem;
                 }
             }
         }

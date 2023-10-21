@@ -25,8 +25,24 @@ export async function GET(request, { params }) {
 
     where = lib.limitQueryByFamily({ collections: { some: { id: params.id } } }, request.cookies, session)
     const records = await prisma.record.findMany({
+        include: {
+            RecordField: true
+        },
         where: where
     })
+
+    // Reformat records with important recordFields on the top level for easy access
+    for (let record of records) {
+        if (record.RecordField) {
+            for (const recordField of record.RecordField) {
+                if (['date', 'person'].includes(recordField.name)) {
+                    try {
+                        record[recordField.name] = JSON.parse(recordField.value)
+                    } catch { /* probably null or something, just don't include it */ }
+                }
+            }
+        }
+    }
 
     collections[0]['children'] = childCollections
     return Response.json({ status: "success", data: { collections: collections, records: records } })
