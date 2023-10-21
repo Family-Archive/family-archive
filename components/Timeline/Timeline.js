@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Timeline.module.scss'
-import clientLib from '@/lib/client/lib'
 
 const Timeline = (props) => {
 
@@ -11,6 +10,7 @@ const Timeline = (props) => {
     const [date, setdate] = useState(null)
     const [mouseDown, setmouseDown] = useState(false)
     const [markerElement, setmarkerElement] = useState(null)
+    const [zooming, setzooming] = useState(false)
 
     const getTimelineBounds = (data) => {
         let startdate = data[0].date.startdate
@@ -42,20 +42,20 @@ const Timeline = (props) => {
 
     const getMarkerElement = () => {
         if (fontSize < 5) {
-            return <div className={`${styles.years} ${styles.markers}`}>
+            return <div className={`${styles.years} ${styles.markers}`} style={{ width: `${parseInt(numDays / 2)}em` }}>
                 {[...Array(parseInt(numYears + 1)).keys()].map(num => {
                     return <div key={num} className={styles.marker} />
                 })}
             </div>
         } else if (fontSize <= 30) {
-            return <div className={`${styles.months} ${styles.markers}`}>
+            return <div className={`${styles.months} ${styles.markers}`} style={{ width: `${parseInt(numDays / 2)}em` }}>
                 {[...Array(parseInt(numMonths + 1)).keys()].map(num => {
                     return <div key={num} className={styles.marker} />
                 })}
             </div>
         } else {
-            return <div className={`${styles.days} ${styles.markers}`}>
-                {[...Array(parseInt(numDays)).keys()].map(num => {
+            return <div className={`${styles.days} ${styles.markers}`} style={{ width: `${parseInt(numDays / 2)}em` }}>
+                {[...Array(parseInt(numDays - 1)).keys()].map(num => {
                     return <div key={num} className={styles.marker} />
                 })}
             </div>
@@ -63,33 +63,45 @@ const Timeline = (props) => {
     }
 
     const changeZoomLevel = (direction) => {
+        setzooming(true)
         const timeline = document.querySelector('#timeline')
 
         const oldFontSize = fontSize
         let newFontSize = fontSize
 
         if (direction === 'in') {
-            if (fontSize <= 11 && fontSize > 1.1) {
-                newFontSize = fontSize - 1
-            } else if (fontSize <= 1.1 && fontSize > 0) {
-                newFontSize = fontSize - 0.1
+            if (fontSize <= 21 && fontSize > 2.1) {
+                newFontSize = fontSize - 2
+            } else if (fontSize <= 2.1 && fontSize > 0) {
+                newFontSize = fontSize - 0.2
             } else if (fontSize > 20) {
                 newFontSize = fontSize - 10
             }
         } else {
-            if (fontSize <= 1) {
-                newFontSize = fontSize + 0.1
+            if (fontSize <= 2) {
+                newFontSize = fontSize + 0.2
             }
-            else if (fontSize <= 10) {
-                newFontSize = fontSize + 1
+            else if (fontSize <= 20) {
+                newFontSize = fontSize + 2
             } else {
-                newFontSize = fontSize + 10
+                newFontSize = fontSize + 20
             }
         }
 
         const pctChange = newFontSize / oldFontSize
+        const newLeft = timeline.scrollLeft - (timeline.scrollLeft * pctChange)
+        document.querySelector('#timelineContainer').style.left = newLeft + 'px'
         setfontSize(newFontSize)
-        timeline.scrollTo((timeline.scrollLeft * pctChange) + 100, 0)
+
+        window.setTimeout(() => {
+            document.querySelector('#timelineContainer').classList.add(styles.noAnim)
+            timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
+            document.querySelector('#timelineContainer').style.left = '0px'
+            window.setTimeout(() => {
+                document.querySelector('#timelineContainer').classList.remove(styles.noAnim)
+                setzooming(false)
+            }, 50)
+        }, 100)
     }
 
     const getScrollTime = (scrollLeft) => {
@@ -102,14 +114,6 @@ const Timeline = (props) => {
     }
 
     const data = props.data
-
-    // const data = [
-    //     { startdate: '1696724670362', enddate: '1697614680362', unit: 'days' },
-    //     { startdate: '1695714670362', enddate: '1696614670362', unit: 'days' },
-    //     { startdate: '1686714670362', enddate: '1697714670362', unit: 'days' },
-    //     { startdate: '1596714770392', enddate: '1696814670362', unit: 'years' },
-    //     { startdate: '0', enddate: '1696814670362', unit: 'years' },
-    // ]
 
     // Sort original array by startdate
     data.sort((a, b) => {
@@ -137,7 +141,6 @@ const Timeline = (props) => {
     }
 
     const bounds = getTimelineBounds(data)
-
     const numDays = (bounds[1] - bounds[0]) / 86400000
     const numMonths = (bounds[1] - bounds[0]) / 2629800000 // approximation since not all months are the same length
     const numYears = (bounds[1] - bounds[0]) / 31556952000
@@ -164,7 +167,7 @@ const Timeline = (props) => {
     // We only want to call this function when the fontsize changes to improve performance
     useEffect(() => {
         setmarkerElement(getMarkerElement)
-    }, [fontSize])
+    }, [fontSize, props.data])
 
     return (
         <div
@@ -181,13 +184,31 @@ const Timeline = (props) => {
                 }
             }}
         >
-            <div className={`${styles.date} ${styles.right}`}>
-                {date ?
-                    new Date(date.getTime() + (document.querySelector('#timeline').clientWidth / fontSize) * 172800000).toLocaleDateString()
-                    : ""}
+
+            <div className={styles.dateContainer}>
+                <div className={`${styles.date}`}>
+                    {date ?
+                        new Date(date.getTime() + ((63 / fontSize) * 172800000)).toLocaleDateString()
+                        : ""
+                    }
+                </div>
+                <div className={`${styles.date} ${styles.center}`}>
+                    {date ?
+                        // Get current date for left side, get width of element / 2 (cause its halfway over), subtract the offset, divide by fontSize to get ems,
+                        // multiply by 2 cause 0.5 em per day, multiply by number of ms in day
+                        new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 147) / 2) / fontSize) * 172800000).toLocaleDateString()
+                        : ""
+                    }
+                </div>
+                <div className={`${styles.date} ${styles.right}`}>
+                    {date ?
+                        new Date(date.getTime() + ((document.querySelector('#timeline').clientWidth - 50) / fontSize) * 172800000).toLocaleDateString()
+                        : ""
+                    }
+                </div>
             </div>
-            <div className={styles.date}>{date ? date.toLocaleDateString() : ""}</div>
-            <div className={styles.zoomControls}>
+
+            <div className={`${styles.zoomControls} ${zooming ? styles.disabled : ''}`}>
                 <button
                     className='tertiary'
                     style={{ borderRadius: '99rem 0 0 99rem', borderRight: '1px solid grey' }}
@@ -204,7 +225,7 @@ const Timeline = (props) => {
                 </button>
             </div>
             <div id='timelineContainer' className={styles.container} style={{ width: `${numDays / 2}em` }} >
-                <div className={styles.tlObject} onClick={e => console.log(e.screenX)} />
+                <div className={styles.tlObject} />
                 {markerElement}
                 <div className={styles.entries}>
                     {visualData.map(section => {
