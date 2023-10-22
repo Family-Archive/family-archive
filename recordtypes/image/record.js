@@ -19,7 +19,7 @@ class Image extends Record {
                 {
                     name: 'location',
                     label: 'Where was this image created?',
-                    type: 'text'
+                    type: 'LocationSelector'
                 }
             ]
         )
