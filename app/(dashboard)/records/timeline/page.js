@@ -13,7 +13,7 @@ const filterRecordsWithoutDateFields = records => {
     for (const record of records) {
         let hasDateField = false
         for (let recordField of record.RecordField) {
-            if (recordField.name === 'date') {
+            if (recordField.name === 'date' && recordField.value) {
                 hasDateField = true
                 break
             }
@@ -53,6 +53,7 @@ const timelinePage = async ({ searchParams }) => {
 
     let data = await fetchRecords(searchParams)
     data = filterRecordsWithoutDateFields(data)
+    console.log(data)
 
     return (
         <div className={styles.timelinePage}>

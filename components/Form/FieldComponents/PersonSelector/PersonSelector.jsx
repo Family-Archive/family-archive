@@ -324,16 +324,19 @@ export default function PersonSelector({ value, onChange, index }) {
                     {person.fullName}
                 </span>)}
             </div>
-            <input
-                id="personSelector"
-                type="text"
-                value={input}
-                onChange={changeHandler}
-                onFocus={focusHandler}
-                onBlur={blurHandler}
-                onKeyDown={keyPressHandler}
-                autoComplete='off'
-            ></input>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '2.5rem', margin: '-1rem 0 0 -0.5rem' }} className="material-icons">boy</span>
+                <input
+                    id="personSelector"
+                    type="text"
+                    value={input}
+                    onChange={changeHandler}
+                    onFocus={focusHandler}
+                    onBlur={blurHandler}
+                    onKeyDown={keyPressHandler}
+                    autoComplete='off'
+                ></input>
+            </div>
             <input
                 name="people"
                 type="hidden"
