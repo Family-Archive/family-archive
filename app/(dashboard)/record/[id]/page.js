@@ -64,7 +64,7 @@ const ViewRecord = async ({ params }) => {
     const collections = collectionsData.data.collections
 
     // Fetch special data
-    const specialFields = ['person', 'date', 'location']
+    const specialFields = ['person', 'date', 'lodcation']
     const specialData = await fetchSpecialData(recordData)
 
     const recordIcon = clientLib.renderIconFromData(recordData.data.icon)

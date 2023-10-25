@@ -1,10 +1,15 @@
 import { useContext, useEffect, useState } from "react"
+import dynamic from 'next/dynamic'
 import { ModalContext } from "@/app/(contexts)/ModalContext"
-import LocationModal from "./LocationModal"
 
 const LocationSelector = ({ value, index, onChange }) => {
     const modalFunctions = useContext(ModalContext)
     const [fieldValue, setfieldValue] = useState(value)
+
+    const LocationModal = dynamic(
+        () => import("./LocationModal"), {
+        ssr: false,
+    });
 
     const updateValue = (value) => {
         document.querySelector('#location').value = JSON.stringify(value)
@@ -20,14 +25,26 @@ const LocationSelector = ({ value, index, onChange }) => {
         })
     }
 
+    const locationText = () => {
+        if (!fieldValue || !JSON.parse(fieldValue)) {
+            return ""
+        }
+
+        const parsedVal = JSON.parse(fieldValue)
+        if (parsedVal.name) {
+            return <span>{parsedVal.name}</span>
+        }
+
+        return <span>
+            {parsedVal.lat}<br />
+            {parsedVal.lng}
+        </span>
+    }
+
     return <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
         <input type='hidden' id='location' name='location' value={value} />
         <span className="material-icons">location_on</span>
-        {fieldValue && JSON.parse(fieldValue)?.lat && JSON.parse(fieldValue)?.lng ? <div>
-            {JSON.parse(fieldValue).lat}<br />{JSON.parse(fieldValue).lng}
-        </div>
-            : ""
-        }
+        {locationText()}
         <button
             type="button"
             className="tertiary"

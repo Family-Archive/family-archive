@@ -1,9 +1,10 @@
-import styles from './LocationModal.module.scss'
-import { MapContainer, TileLayer, Marker, uesMap, useMap } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import { useState, useContext } from 'react'
-import { ModalContext } from "@/app/(contexts)/ModalContext"
+"use client"
 
+import styles from './LocationModal.module.scss'
+import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+import { useState, useContext, useEffect } from 'react'
+import { ModalContext } from "@/app/(contexts)/ModalContext"
 
 // Fix missing icon file
 import L from 'leaflet';
@@ -15,49 +16,129 @@ const icon = L.icon({
 const LocationModal = (props) => {
     const modalFunctions = useContext(ModalContext)
 
-    const [value, setvalue] = useState(null)
-    const [marker, setmarker] = useState(null)
+    const [value, setvalue] = useState({ lat: null, lng: null, name: null })
     const [map, setmap] = useState(null)
+    const [isSearchMode, setisSearchMode] = useState(true)
+    const [hasName, sethasName] = useState(false)
 
-    const addMarker = (e) => {
-        setmarker({ 'lat': e.latlng.lat, 'lng': e.latlng.lng })
-        setvalue({ 'lat': e.latlng.lat, 'lng': e.latlng.lng })
-        document.querySelector('#lat').value = e.latlng.lat
-        document.querySelector('#lng').value = e.latlng.lng
-    }
+    /**
+     * Update the position of the component:
+     * - If the map is accessible, "fly to" the position
+     * - Set the field value to the location
+     * - Set the lat and lng fields to the location (if possible)
+     * If a lat and lng aren't explicitly passed, we will try to get them from the input fields
+     * This function is set up this way because it is invoked both from the map to update the fields
+     * as well as from the FIELDS, to update the map. Both ways.
+     * @param {float} lat: The latitude value
+     * @param {float} lng: The longitude value
+     */
+    const updatePos = (lat = null, lng = null) => {
+        if (!lat || !lng) {
+            lat = document.querySelector('#lat').value
+            lng = document.querySelector('#lng').value
+        }
+        if (map) {
+            map.target.flyTo([lat, lng])
+        }
 
-    const updatePos = () => {
-        const lat = document.querySelector('#lat').value
-        const lng = document.querySelector('#lng').value
-        map.target.flyTo([lat, lng])
-        setmarker({ 'lat': lat, 'lng': lng })
         setvalue({ 'lat': lat, 'lng': lng })
+        if (document.querySelector('#lat')) {
+            document.querySelector('#lat').value = lat
+            document.querySelector('#lng').value = lng
+        }
     }
 
+    /**
+     * Use the value in the search field to ask OpenStreetMap for possible location results
+     * If we have some, update the component with the lat + lng of the first one in the list
+     */
+    const getCoordsFromSearch = async () => {
+        const query = document.querySelector('#search').value
+        let results = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+        results = await results.json()
+        if (results) {
+            updatePos(results[0].lat, results[0].lon)
+        }
+    }
+
+    // When the search mode is switched, update the lat + lng fields if necessary
+    useEffect(() => {
+        if (!isSearchMode && value) {
+            document.querySelector('#lat').value = value.lat
+            document.querySelector('#lng').value = value.lng
+        }
+    }, [isSearchMode])
+
+    useEffect(() => {
+        if (hasName) {
+            if (isSearchMode) {
+                setvalue({ ...value, name: document.querySelector('#search').value })
+                document.querySelector('#customName').value = document.querySelector('#search').value
+            }
+        } else {
+            setvalue({ ...value, name: null })
+        }
+    }, [hasName])
+
+    // center-of-the-US-ish
     const initPos = [39.8283, -98.5795]
 
     return (
         <div className={styles.LocationModal}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-                <formitem>
-                    <label htmlFor='lat'>Latitude</label>
-                    <input name='lat' id='lat' type='text' onChange={updatePos} />
-                </formitem>
-                <formitem>
-                    <label htmlFor='lng'>Longitude</label>
-                    <input name='lng' id='lng' type='text' onChange={updatePos} />
-                </formitem>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'end', marginBottom: '1rem' }}>
+                <span>Use {isSearchMode ? 'location search' : 'coordinates'}</span>
+                <div>
+                    <input type="checkbox" id='mode' className='toggle' defaultChecked onChange={e => setisSearchMode(e.target.checked)} />
+                    <label className='toggle' htmlFor="mode">Toggle</label>
+                </div>
             </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+                {!isSearchMode ?
+                    <>
+                        <formitem>
+                            <label htmlFor='lat'>Latitude</label>
+                            <input name='lat' id='lat' type='text' onChange={updatePos} />
+                        </formitem>
+                        <formitem>
+                            <label htmlFor='lng'>Longitude</label>
+                            <input name='lng' id='lng' type='text' onChange={updatePos} />
+                        </formitem>
+                    </>
+                    : <>
+                        <formitem>
+                            <label htmlFor='search'>Search for a location</label>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <input name='search' id='search' type='text' onKeyDown={e => { if (e.key === 'Enter') { getCoordsFromSearch() } }} />
+                                <button type='button' onClick={getCoordsFromSearch}>Search</button>
+                            </div>
+                        </formitem>
+                    </>
+                }
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '2rem 0 0.5rem 0' }}>
+                <input onClick={(e) => sethasName(e.target.checked)} type='checkbox' id='hasName' name='hasName' />
+                <label htmlFor='hasName'>Add a custom name to this location?</label>
+            </div>
+
+            {hasName ?
+                <formitem>
+                    <label htmlFor='customName'>Name</label>
+                    <input onChange={(e) => setvalue({ ...value, name: e.target.value })} type='text' id='customName' name='customName' />
+                    <br /><br />
+                </formitem>
+                : ""
+            }
 
             <br />
             <MapContainer
                 center={initPos}
                 zoom={4}
-                scrollWheelZoom={false}
+                scrollWheelZoom={true}
                 whenReady={(map) => {
                     setmap(map)
                     map.target.on("click", (e) => {
-                        addMarker(e)
+                        updatePos(e.latlng.lat, e.latlng.lng)
                     });
                 }}
             >
@@ -65,8 +146,8 @@ const LocationModal = (props) => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {marker ?
-                    <Marker icon={icon} position={[marker.lat, marker.lng]} />
+                {value.lat ?
+                    <Marker icon={icon} position={[value.lat, value.lng]} />
                     : ""
                 }
 
