@@ -124,7 +124,56 @@ textarea {
     font-family: Inter;
 }
 
+/* <input type="checkbox" class='toggle' /><label class='toggle'>Toggle</label> */
+input[type=checkbox].toggle {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+    position: absolute;
+
+    &:checked+label {
+        background: $accent-color;
+    }
+
+    &:checked+label:after {
+        left: calc(100% - 5px);
+        transform: translateX(-100%);
+    }
+}
+
+label.toggle {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 3.5rem;
+    height: 2rem;
+    background: grey;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+
+    &:after {
+        content: '';
+        position: absolute;
+        top: 4px;
+        left: 5px;
+        width: 1.4rem;
+        height: 1.4rem;
+        background: #fff;
+        border-radius: 99rem;
+        transition: 0.2s;
+    }
+}
+
+
 label {
     display: block;
     margin-bottom: 0.25rem;
+}
+
+.leaflet-container {
+    width: 100%;
+    height: 25rem;
+    border-radius: 0.5rem;
+    border: 2px solid $accent-secondary-color;
+    cursor: crosshair !important;
 }

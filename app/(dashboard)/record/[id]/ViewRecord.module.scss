@@ -45,7 +45,8 @@
             }
 
             .people,
-            .date {
+            .date,
+            .location {
                 display: flex;
                 gap: 0.5rem;
                 align-items: center;
@@ -58,7 +59,8 @@
                 }
             }
 
-            .date {
+            .date,
+            .location {
                 .icon {
                     font-size: 2.25rem;
                     margin-left: -0.5rem;

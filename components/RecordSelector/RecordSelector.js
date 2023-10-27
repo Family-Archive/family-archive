@@ -68,7 +68,7 @@ const RecordSelector = () => {
                         return <Link
                             href={`/record/create/${recordType.type}`}
                             key={recordType.type}
-                            className={`${styles.recordType} button`}
+                            className={`${styles.recordType} button tertiary`}
                             onClick={modalFunctions.clearModalStack}
                         >
                             {recordIcon}

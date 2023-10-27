@@ -12,7 +12,15 @@ const Timeline = (props) => {
     const [markerElement, setmarkerElement] = useState(null)
     const [zooming, setzooming] = useState(false)
 
+    /**
+     * Given an array of records, find the first startdate and last enddate among these records,
+     * and then round the start down and end up to the nearest year, respectively  
+     * @param {Object} data: A list of record objects, containing a date object with a startdate and enddate value
+     * @returns {Array}: An array containing the first start and end bounds for the timeline
+     */
     const getTimelineBounds = (data) => {
+        // This is written so that the array doesn't need to be sorted
+        // because I wrote it before deciding to sort the array by startdate first
         let startdate = data[0].date.startdate
         let enddate = data[0].date.enddate
         for (let timedata of data) {
@@ -26,6 +34,9 @@ const Timeline = (props) => {
 
         // To improve accuracy of month + year zooms,
         // round start date down to beginning of year
+        // Why? Well, because the way we do the marks on the timeline is simply by getting the number of units (months, days, years)
+        // in the timespan, and then spacing them evenly on the timeline. If we start the timeline in August, the year notches won't
+        // line up with January 1, for example. This is an easy way to fix this + add some padding to the timeline.
         let start = new Date(parseInt(startdate))
         start.setMonth(0)
         start.setDate(0)
@@ -40,6 +51,10 @@ const Timeline = (props) => {
         return [startdate, enddate]
     }
 
+    /**
+     * Return a certain number of timeline notches based on the fontsize
+     * @returns {JSX}: The computed JSX to be inserted in the render() method
+     */
     const getMarkerElement = () => {
         if (fontSize < 5) {
             return <div className={`${styles.years} ${styles.markers}`} style={{ width: `${parseInt(numDays / 2)}em` }}>
@@ -62,6 +77,10 @@ const Timeline = (props) => {
         }
     }
 
+    /**
+     * Zoom in or out on the timeline
+     * @param {String: in|out} direction: The direction we should zoom
+     */
     const changeZoomLevel = (direction) => {
         setzooming(true)
         const timeline = document.querySelector('#timeline')
@@ -69,6 +88,7 @@ const Timeline = (props) => {
         const oldFontSize = fontSize
         let newFontSize = fontSize
 
+        // We zoom by a different amount based on our font size, to keep it feeling proportional
         if (direction === 'in') {
             if (fontSize <= 21 && fontSize > 2.1) {
                 newFontSize = fontSize - 2
@@ -88,6 +108,16 @@ const Timeline = (props) => {
             }
         }
 
+        // Since we're using fontSize for this, zooming in means the timeline grows to the right,
+        // making it look like our scroll position moves to the left. ie, if you're looking at July 17 and zoom in,
+        // now you'll be looking at June or w/e.
+        // We can compensate for this by scrolling the same multiple we are increasing the zoom by.
+        // However, we also want to zoom in smoothly with an animation to prevent visual confusion.
+        // The ONLY way I've found to smoothly offset the fontSize increase (which is CSS) is by physically moving the TL the same amount
+        // (in this case with the "left" property -- also CSS). I haven't found any way to smoothly animate the scroll while animating fontSize,
+        // and I've tried like four different things. So what we do is animate the fontSize and "left" at the same time to make it look like
+        // everything is staying in place, disable the zoom buttons while this is happening, and then as SOON as the animation is done,
+        // snap the scrollbar to our new calculated position based on the multiple.
         const pctChange = newFontSize / oldFontSize
         const newLeft = timeline.scrollLeft - (timeline.scrollLeft * pctChange)
         document.querySelector('#timelineContainer').style.left = newLeft + 'px'
@@ -104,6 +134,10 @@ const Timeline = (props) => {
         }, 100)
     }
 
+    /**
+     * Given the amount the scrollbar is to the left, calculate what the date would be at X=0 on the screen
+     * @param {int} scrollLeft: The amount (in px) the scrollbar has been scrolled to the left
+     */
     const getScrollTime = (scrollLeft) => {
         const scrollDistance = scrollLeft / fontSize; // convert px to em
         const scrollDays = scrollDistance * 2 // 0.5 em per day
@@ -113,6 +147,7 @@ const Timeline = (props) => {
         setdate(new Date(datestamp))
     }
 
+    // Get passed data
     const data = props.data
 
     // Sort original array by startdate
@@ -140,6 +175,7 @@ const Timeline = (props) => {
         }
     }
 
+    // Get our units in order to render the timeline markers (notches)
     const bounds = getTimelineBounds(data)
     const numDays = (bounds[1] - bounds[0]) / 86400000
     const numMonths = (bounds[1] - bounds[0]) / 2629800000 // approximation since not all months are the same length
@@ -188,14 +224,14 @@ const Timeline = (props) => {
             <div className={styles.dateContainer}>
                 <div className={`${styles.date}`}>
                     {date ?
+                        // Here we have some magic numbers to get the exact date where the timeline labels are pointing
+                        // These numbers are due to the offset we're dealing with on each label
                         new Date(date.getTime() + ((63 / fontSize) * 172800000)).toLocaleDateString()
                         : ""
                     }
                 </div>
                 <div className={`${styles.date} ${styles.center}`}>
                     {date ?
-                        // Get current date for left side, get width of element / 2 (cause its halfway over), subtract the offset, divide by fontSize to get ems,
-                        // multiply by 2 cause 0.5 em per day, multiply by number of ms in day
                         new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 147) / 2) / fontSize) * 172800000).toLocaleDateString()
                         : ""
                     }

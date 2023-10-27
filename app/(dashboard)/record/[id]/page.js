@@ -51,6 +51,11 @@ const fetchSpecialData = async (recordData) => {
             let dateData = JSON.parse(field.value)
             data.date = dateData
         }
+
+        if (field.name === "location" && field.value) {
+            let locationData = JSON.parse(field.value)
+            data.location = locationData
+        }
     }
 
     return data
@@ -109,14 +114,27 @@ const ViewRecord = async ({ params }) => {
                                     </button>
                                 })}
                             </div>
-                            : ""}
+                            : ""
+                        }
 
                         {specialData.date ?
                             <div className={styles.date}>
                                 <span className={`${styles.icon} material-icons`}>event</span>
                                 <b>{clientLib.renderDate(specialData.date.startdate, specialData.date.enddate, specialData.date.unit)}</b>
                             </div>
-                            : ""}
+                            : ""
+                        }
+
+
+                        {specialData.location ?
+                            <div className={styles.location}>
+                                <span className={`${styles.icon} material-icons`}>location_on</span>
+                                <b>{specialData.location.name ? specialData.location.name :
+                                    <span>{specialData.location.lat}<br />{specialData.location.lng}</span>
+                                }</b>
+                            </div>
+                            : ""
+                        }
 
                         <strong>Description</strong>
                         <p>{record.description}</p>
