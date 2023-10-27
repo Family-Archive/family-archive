@@ -16,10 +16,10 @@ const icon = L.icon({
 const LocationModal = (props) => {
     const modalFunctions = useContext(ModalContext)
 
-    const [value, setvalue] = useState({ lat: null, lng: null, name: null })
+    const [value, setvalue] = useState(props.value ? JSON.parse(props.value) : { lat: null, lng: null, name: null })
     const [map, setmap] = useState(null)
     const [isSearchMode, setisSearchMode] = useState(true)
-    const [hasName, sethasName] = useState(false)
+    const [hasName, sethasName] = useState(props.value && JSON.parse(props.value).name ? true : false)
 
     /**
      * Update the position of the component:
@@ -38,7 +38,7 @@ const LocationModal = (props) => {
             lng = document.querySelector('#lng').value
         }
         if (map) {
-            map.target.flyTo([lat, lng])
+            map.target.setView([lat, lng], 4, { animation: true })
         }
 
         setvalue({ 'lat': lat, 'lng': lng })
@@ -69,9 +69,11 @@ const LocationModal = (props) => {
         }
     }, [isSearchMode])
 
+    // When the name boolean is updated to true, set the value + input box to whatever's in the search box if we're in search mode
+    // When name is turned off, set it to null
     useEffect(() => {
         if (hasName) {
-            if (isSearchMode) {
+            if (isSearchMode && document.querySelector('#search').value) {
                 setvalue({ ...value, name: document.querySelector('#search').value })
                 document.querySelector('#customName').value = document.querySelector('#search').value
             }
@@ -86,7 +88,7 @@ const LocationModal = (props) => {
     return (
         <div className={styles.LocationModal}>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'end', marginBottom: '1rem' }}>
-                <span>Use {isSearchMode ? 'location search' : 'coordinates'}</span>
+                <span>Select via {isSearchMode ? 'location search' : 'coordinates'}</span>
                 <div>
                     <input type="checkbox" id='mode' className='toggle' defaultChecked onChange={e => setisSearchMode(e.target.checked)} />
                     <label className='toggle' htmlFor="mode">Toggle</label>
@@ -117,14 +119,26 @@ const LocationModal = (props) => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '2rem 0 0.5rem 0' }}>
-                <input onClick={(e) => sethasName(e.target.checked)} type='checkbox' id='hasName' name='hasName' />
-                <label htmlFor='hasName'>Add a custom name to this location?</label>
+                <input
+                    defaultChecked={value.name ? true : false}
+                    onClick={(e) => sethasName(e.target.checked)}
+                    type='checkbox'
+                    id='hasName'
+                    name='hasName'
+                />
+                <label htmlFor='hasName'>Use a name for this location, instead of coordinates?</label>
             </div>
 
             {hasName ?
                 <formitem>
                     <label htmlFor='customName'>Name</label>
-                    <input onChange={(e) => setvalue({ ...value, name: e.target.value })} type='text' id='customName' name='customName' />
+                    <input
+                        defaultValue={value.name ? value.name : ""}
+                        onChange={(e) => setvalue({ ...value, name: e.target.value })}
+                        type='text'
+                        id='customName'
+                        name='customName'
+                    />
                     <br /><br />
                 </formitem>
                 : ""
@@ -132,7 +146,7 @@ const LocationModal = (props) => {
 
             <br />
             <MapContainer
-                center={initPos}
+                center={value.lat ? [value.lat, value.lng] : initPos}
                 zoom={4}
                 scrollWheelZoom={true}
                 whenReady={(map) => {

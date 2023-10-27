@@ -6,6 +6,7 @@ const LocationSelector = ({ value, index, onChange }) => {
     const modalFunctions = useContext(ModalContext)
     const [fieldValue, setfieldValue] = useState(value)
 
+    // Have to load this in a special way or leaflet throws errors
     const LocationModal = dynamic(
         () => import("./LocationModal"), {
         ssr: false,
@@ -26,11 +27,13 @@ const LocationSelector = ({ value, index, onChange }) => {
     }
 
     const locationText = () => {
-        if (!fieldValue || !JSON.parse(fieldValue)) {
+        let parsedVal
+        try {
+            parsedVal = JSON.parse(fieldValue)
+        } catch {
             return ""
         }
 
-        const parsedVal = JSON.parse(fieldValue)
         if (parsedVal.name) {
             return <span>{parsedVal.name}</span>
         }
@@ -51,7 +54,7 @@ const LocationSelector = ({ value, index, onChange }) => {
             onClick={() => {
                 modalFunctions.addModal(
                     "Add location",
-                    <LocationModal updateValue={updateValue} />
+                    <LocationModal updateValue={updateValue} value={fieldValue} />
                 )
             }}
         >
