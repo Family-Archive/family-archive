@@ -1,0 +1,12 @@
+.mapPage {
+    position: relative;
+
+    .mapContainer {
+        width: calc(100% + 2rem);
+        height: 100vh;
+        top: -2rem;
+        left: 0;
+        background-color: blue;
+        position: absolute;
+    }
+}

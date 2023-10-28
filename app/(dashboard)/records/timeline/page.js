@@ -53,7 +53,6 @@ const timelinePage = async ({ searchParams }) => {
 
     let data = await fetchRecords(searchParams)
     data = filterRecordsWithoutDateFields(data)
-    console.log(data)
 
     return (
         <div className={styles.timelinePage}>

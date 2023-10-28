@@ -58,7 +58,7 @@ const NavBar = () => {
                     <Link className={styles.button} href='/records/all'><span className="material-icons">inventory</span>All records</Link>
                     <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                     <Link className={styles.button} href='/records/timeline'><span className="material-icons">watch_later</span>Timeline</Link>
-                    <button><span className="material-icons">public</span>Map</button>
+                    <Link className={styles.button} href='/records/map'><span className="material-icons">public</span>Map</Link>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
                 </section>
             </section>
