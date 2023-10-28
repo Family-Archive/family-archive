@@ -1,6 +1,3 @@
-import { prisma } from "../../../db/prisma"
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
 import { cookies } from 'next/dist/client/components/headers'
 
 import styles from './timelinePage.module.scss'

@@ -1,0 +1,12 @@
+.RecordMap {
+    position: relative;
+
+    .mapContainer {
+        margin-top: 1rem;
+        width: calc(100% + 2rem);
+        height: 100vh;
+        top: -2rem;
+        left: 0;
+        position: absolute;
+    }
+}

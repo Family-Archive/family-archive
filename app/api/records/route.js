@@ -66,7 +66,7 @@ export async function GET(request) {
         // put significant record fields on the top level for easy access
         if (result.RecordField) {
             for (const recordField of result.RecordField) {
-                if (['date', 'person'].includes(recordField.name)) {
+                if (['date', 'person', 'location'].includes(recordField.name)) {
                     try {
                         result[recordField.name] = JSON.parse(recordField.value)
                     } catch { /* probably null or something, just don't include it */ }
