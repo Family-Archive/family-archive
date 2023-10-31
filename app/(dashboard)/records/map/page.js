@@ -1,7 +1,6 @@
 import { cookies } from 'next/dist/client/components/headers'
 import dynamic from 'next/dynamic'
 import lib from "@/lib/lib"
-import ViewFilter from '@/components/ViewFilter/ViewFilter'
 
 import styles from './mapPage.module.scss'
 
@@ -59,11 +58,7 @@ const mapPage = async ({ searchParams }) => {
     return (
         <div className={styles.mapPage}>
             <h1 className='title'>Map</h1>
-            <RecordMap data={data} />
-
-            <div class={styles.sidebar}>
-                <ViewFilter params={searchParams} sortOptions={false} />
-            </div>
+            <RecordMap data={data} params={searchParams} />
         </div>
     )
 }
