@@ -172,8 +172,32 @@ label {
 
 .leaflet-container {
     width: 100%;
-    height: 25rem;
+    height: 100%;
+    min-height: 25rem;
     border-radius: 0.5rem;
     border: 2px solid $accent-secondary-color;
     cursor: crosshair !important;
+    z-index: 1;
+}
+
+#mapContainer {
+    .leaflet-container {
+        border: none;
+        border-radius: 1rem 0 0 1rem;
+        cursor: grab;
+    }
+
+    .leaflet-popup {
+        margin-bottom: 4rem;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+        box-shadow: none;
+        border: 2px solid $accent-secondary-color;
+    }
+
+    .leaflet-popup-tip-container {
+        display: none;
+    }
 }
