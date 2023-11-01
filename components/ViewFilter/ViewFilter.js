@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import styles from './ViewFilter.module.scss'
 import SortToggle from './SortToggle/SortToggle/SortToggle'
 import FilterSetting from './FilterSetting/FilterSetting'
+import PersonFilter from './PersonFilter/PersonFilter'
 
 const ViewFilter = (props) => {
     // This component manages state for sorting and filtering options. While it can be used on any page,
@@ -31,6 +32,7 @@ const ViewFilter = (props) => {
     const [extraParams, setextraParams] = useState({
         "startdate": props.params.startdate ? props.params.startdate : "",
         "enddate": props.params.enddate ? props.params.enddate : "",
+        "people": props.params.people ? props.params.people : ""
     })
     const [hasLoaded, sethasLoaded] = useState(false)
 
@@ -43,6 +45,26 @@ const ViewFilter = (props) => {
             option: settings.option,
             direction: settings.direction
         })
+    }
+
+    /**
+     * Set a param
+     * @param {string} name: The name of param to set
+     * @param {string} entry: The value of the param
+     */
+    const setParam = (name, entry) => {
+        setextraParams({ ...extraParams, [name]: entry })
+    }
+
+    /**
+     * Remove a param
+     * @param {string} name: The name of param to add
+     * @param {string} entry: The value of the param
+     */
+    const removeParam = (name) => {
+        let currParams = extraParams
+        delete currParams[name]
+        setextraParams({ currParams })
     }
 
     /**
@@ -133,6 +155,9 @@ const ViewFilter = (props) => {
                         />
                     </div>
                 </div>
+
+                <PersonFilter setParam={setParam} removeParam={removeParam} people={extraParams.people} />
+
             </section>
         </div>
     )

@@ -1,7 +1,6 @@
 import { cookies } from 'next/dist/client/components/headers'
 import clientLib from '../../../../lib/client/lib'
 import lib from '../../../../lib//lib'
-import { prisma } from "../../../db/prisma"
 import Link from 'next/link'
 
 import styles from './ViewRecord.module.scss'
@@ -30,49 +29,25 @@ const fetchCollections = async (params) => {
     return await record.json()
 }
 
-const fetchSpecialData = async (recordData) => {
-    let data = {}
-
-    let people = []
-    for (let field of recordData.data.fields) {
-        if (field.name === "person" && field.value) {
-            for (let id of JSON.parse(field.value)) {
-                if (id) {
-                    const person = await prisma.person.findFirst({
-                        where: { id: id }
-                    })
-                    people.push(person)
-                }
+const ViewRecord = async ({ params }) => {
+    const fetchFieldRenderFunction = (name) => {
+        for (let field of recordType.fields) {
+            if (field.name === name) {
+                const renderFunction = require(`/components/Form/FieldComponents/${field.type}/render.js`)
+                return renderFunction
             }
-            data.people = people
         }
-
-        if (field.name === "date" && field.value) {
-            let dateData = JSON.parse(field.value)
-            data.date = dateData
-        }
-
-        if (field.name === "location" && field.value) {
-            let locationData = JSON.parse(field.value)
-            data.location = locationData
-        }
+        return false
     }
 
-    return data
-}
-
-const ViewRecord = async ({ params }) => {
     const recordData = await fetchRecord(params);
     const record = recordData.data.record
+    const RecordType = require(`/recordtypes/${record.type}/record.js`)
+    const recordType = new RecordType()
+    const recordIcon = clientLib.renderIconFromData(recordData.data.icon)
 
     const collectionsData = await fetchCollections(params)
     const collections = collectionsData.data.collections
-
-    // Fetch special data
-    const specialFields = ['person', 'date', 'location']
-    const specialData = await fetchSpecialData(recordData)
-
-    const recordIcon = clientLib.renderIconFromData(recordData.data.icon)
 
     return (
         <div className={styles.ViewRecord}>
@@ -105,46 +80,20 @@ const ViewRecord = async ({ params }) => {
                         {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
-                        {specialData.people && specialData.people.length > 0 ?
-                            <div className={styles.people}>
-                                <span className={`${styles.icon} material-icons`}>boy</span>
-                                {specialData.people.map(person => {
-                                    return <button className={styles.person}>
-                                        {person.fullName}
-                                    </button>
-                                })}
-                            </div>
-                            : ""
-                        }
-
-                        {specialData.date ?
-                            <div className={styles.date}>
-                                <span className={`${styles.icon} material-icons`}>event</span>
-                                <b>{clientLib.renderDate(specialData.date.startdate, specialData.date.enddate, specialData.date.unit)}</b>
-                            </div>
-                            : ""
-                        }
-
-
-                        {specialData.location ?
-                            <div className={styles.location}>
-                                <span className={`${styles.icon} material-icons`}>location_on</span>
-                                <b>{specialData.location.name ? specialData.location.name :
-                                    <span>{specialData.location.lat}<br />{specialData.location.lng}</span>
-                                }</b>
-                            </div>
-                            : ""
-                        }
-
                         <strong>Description</strong>
                         <p>{record.description}</p>
 
                         {recordData.data.fields.map(field => {
-                            if (field.value && !specialFields.includes(field.name)) {
-                                return <div key={field.id}>
-                                    <strong>{field.name}</strong>
-                                    <p>{field.value}</p>
-                                </div>
+                            if (field.value) {
+                                const renderFunction = fetchFieldRenderFunction(field.name)
+                                if (renderFunction) {
+                                    return renderFunction.render(field.value)
+                                } else {
+                                    return <div key={field.id}>
+                                        <strong>{field.name}</strong>
+                                        <p>{field.value}</p>
+                                    </div>
+                                }
                             }
                         })}
                     </div>
@@ -164,7 +113,7 @@ const ViewRecord = async ({ params }) => {
                         {collections.length > 0 ? <>
                             <strong>Collections</strong>
                             <p>{collections.map(collection => {
-                                return <a href={`/collection/${collection.id}`}>{collection.name}, </a>
+                                return <a id={collection.id} href={`/collection/${collection.id}`}>{collection.name}, </a>
                             })}</p>
                         </> : ""}
                     </div>

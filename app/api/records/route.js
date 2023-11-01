@@ -20,6 +20,7 @@ export async function GET(request) {
     const direction = params.get('dir') ? params.get('dir') : 'asc'
     const startdate = params.get('startdate') ? params.get('startdate') : null
     const enddate = params.get('enddate') ? params.get('enddate') : null
+    const people = params.get('people') ? params.get('people') : null
 
     const page = params.get('page') ? params.get('page') : '1'
     const take = page * 20
@@ -88,6 +89,20 @@ export async function GET(request) {
                 continue
             }
         }
+        if (people) {
+            let hasPerson = false
+            for (let person of people.split(',')) {
+                if (result.person?.includes(person)) {
+                    hasPerson = true
+                    break
+                }
+            }
+            if (!hasPerson) {
+                addToFinalArray = false
+                continue
+            }
+        }
+
         if (addToFinalArray) {
             finalArray.push(result)
         }

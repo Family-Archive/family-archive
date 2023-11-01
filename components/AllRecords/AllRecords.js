@@ -88,8 +88,6 @@ const AllRecords = async (props) => {
 
                     const recordIcon = clientLib.renderIconFromData(recordData.icon)
 
-                    console.log(record.date)
-
                     return <Link href={`/record/${record.id}`} className={styles.record} key={record.id}>
                         {/* If we found an image in this record's files, use it as the background image */}
                         <div className={styles.image} style={{ backgroundImage: photo ? `url('/api/file/${photo.id}')` : "" }} >
