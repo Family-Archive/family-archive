@@ -1,8 +1,27 @@
 import { prisma } from '@/app/db/prisma'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
+import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
 
 export async function GET(request) {
-    const people = await prisma.Person.findMany()
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
+    const params = request.nextUrl.searchParams
+    let where = params.get('search') ? { fullName: { contains: params.get('search') } } : {}
+    where = lib.limitQueryByFamily(where, request.cookies, session)
+    const people = await prisma.Person.findMany({
+        where: where
+    })
+
     return NextResponse.json({
         status: 'success',
         data: {
@@ -27,7 +46,6 @@ export async function POST(request, session) {
     }
 
     const currFamily = request.cookies.get('familyId').value
-
     const newPerson = await prisma.Person.create({
         data: {
             fullName: parameters.fullName,
