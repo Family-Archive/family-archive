@@ -44,27 +44,9 @@
                 margin-right: 0.5rem;
             }
 
-            .people,
-            .date,
-            .location {
+            .info {
                 display: flex;
-                gap: 0.5rem;
-                align-items: center;
-                margin-bottom: 2rem;
-
-                .person {
-                    border-radius: 99rem;
-                    background: $accent-border-color;
-                    color: black;
-                }
-            }
-
-            .date,
-            .location {
-                .icon {
-                    font-size: 2.25rem;
-                    margin-left: -0.5rem;
-                }
+                flex-direction: column;
             }
         }
 
