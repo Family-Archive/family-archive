@@ -34,6 +34,7 @@ const peoplePage = () => {
                     type='text'
                     name='peopleSearch'
                     id='peopleSearch'
+                    autoComplete='false'
                     onKeyUp={e => setquery(e.target.value)}
                     placeholder='Start typing to filter list'
                 />

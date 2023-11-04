@@ -45,6 +45,9 @@ export async function DELETE(request, { params }) {
     // ESPECIALLY because the connection is stored in JSON in the RecordField table, not via an actual relation
     // What do we do if a record is connected to a nonexistant user? Should we clear that out here?
 
+    // For now, we just handle nonexistant person IDs in the PersonSelector component itself.
+    // If an ID in the field doesn't match anybody in the site, we just display "Deleted user" and can remove said missing user manually
+
     const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({

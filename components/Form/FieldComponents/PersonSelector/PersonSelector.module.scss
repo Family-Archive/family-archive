@@ -1,11 +1,11 @@
 .PersonSelector {
     position: relative;
+    margin-top: 0.5rem;
 
     .selectedPeople {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
-        margin-bottom: 1rem;
 
         .selectedPerson {
             img {

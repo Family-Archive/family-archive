@@ -33,6 +33,7 @@ const PersonSelector = ({ value, onChange, index }) => {
      * @param {Array} value: Our array of IDs
      */
     const updateValue = (value) => {
+        document.querySelector('#peopleSearch').value = ""
         setfieldValue(value)
         onChange({
             target: {
@@ -115,9 +116,11 @@ const PersonSelector = ({ value, onChange, index }) => {
     return (
         <div className={styles.PersonSelector} ref={myRef}>
 
+            {/* Print list of users stored in current value */}
             {fieldValue.length > 0 && Object.keys(people).length > 0 ?
                 <div className={styles.selectedPeople}>
                     {fieldValue.map(personId => {
+                        // If user doesn't seem to exist, they may have been deleted
                         if (!people[personId]) {
                             return <div className={styles.selectedPerson} key={personId}>
                                 <button type='button' onClick={() => removeSelectedPerson(personId)}>
@@ -135,7 +138,7 @@ const PersonSelector = ({ value, onChange, index }) => {
                         </div>
                     })}
                 </div>
-                : ""
+                : <span style={{ opacity: 0.5 }}>No users selected</span>
             }
 
             <input
@@ -145,6 +148,7 @@ const PersonSelector = ({ value, onChange, index }) => {
                 placeholder='Start typing to find people...'
                 onKeyUp={e => updateActivePeople(e.target.value)}
                 onKeyDown={e => {
+                    // Bind key events for navigating dropdown list
                     if (['ArrowDown', 'ArrowUp', 'Enter'].includes(e.key)) {
                         if (e.key === 'ArrowDown' && activePersonIndex < activePeople.length) {
                             setactivePersonIndex(activePersonIndex + 1)
@@ -158,8 +162,10 @@ const PersonSelector = ({ value, onChange, index }) => {
                 }}
                 onFocus={() => setfieldActive(true)}
                 autoComplete='off'
+                style={{ marginTop: "0.5rem" }}
             />
 
+            {/* Display the list of matching users if field is active */}
             {fieldActive ?
                 <div className={styles.dropdown}>
                     {activePeople.map((person, index) => {
