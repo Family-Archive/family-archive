@@ -30,19 +30,19 @@ export async function render(data) {
     const people = await fetchPeopleData()
     data = JSON.parse(data)
 
-    return <div className={styles.people}>
+    return data.length > 0 ? <div className={styles.people}>
         <span className={`${styles.icon} material-icons`}>boy</span>
         {data.map(person => {
             if (!people[person]) {
                 return <button key={person} className={styles.person}>Deleted user</button>
             }
 
-            return <Link href={`/people/${person}`}>
-                <button key={person} className={styles.person}>
+            return <Link href={`/people/${person}`} key={person}>
+                <button className={styles.person}>
                     <img src={people[person].profileImageId ? `/api/file/${people[person].profileImageId}` : '/icons/no-user.png'} />
                     {people[person].fullName}
                 </button>
             </Link>
         })}
-    </div>
+    </div> : ""
 }

@@ -19,6 +19,7 @@ export default function AddPersonForm({ name, afterSubmission }) {
     const [pronounSets, setPronounSets] = useState([])
 
     useEffect(() => {
+        document.querySelector('#fullName').focus()
         const getPronounSets = async () => {
             const response = await fetch('/api/pronounset')
             const pronounSets = await response.json()

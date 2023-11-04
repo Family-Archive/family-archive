@@ -49,6 +49,7 @@ button,
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)
 }
 
 button.secondary,
@@ -64,9 +65,16 @@ button.tertiary,
 }
 
 button:hover,
-.button:hover {
+.button:hover,
+button.hovered,
+.button.hovered {
     cursor: pointer;
     filter: brightness(0.85);
+}
+
+button:active,
+.button:active {
+    transform: scale(0.95);
 }
 
 button:disabled,
