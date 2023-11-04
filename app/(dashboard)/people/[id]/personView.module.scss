@@ -1,0 +1,50 @@
+.personView {
+    .profileImage {
+        overflow: hidden;
+        text-align: center;
+
+        h2 {
+            font-weight: lighter;
+        }
+
+        img {
+            width: 20rem;
+            height: 20rem;
+            object-fit: cover;
+            border-radius: 999rem;
+        }
+    }
+
+    .info {
+        display: flex;
+        gap: 3rem;
+        margin-bottom: 2rem;
+
+        b {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+    }
+
+    .extraInfo {
+        background: white;
+        border-radius: 1rem;
+        border: 2px solid $accent-border-color;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-width: 25rem;
+
+        h2 {
+            margin: 0;
+            margin-bottom: 1rem;
+        }
+
+        b {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+    }
+}

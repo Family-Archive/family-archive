@@ -1,0 +1,28 @@
+.peoplePage {
+    .people {
+        a:not(:last-child) {
+            border-bottom: 1px solid $accent-border-color;
+            display: block;
+        }
+
+        .person {
+            &:hover {
+                background-color: $accent-border-color;
+            }
+
+            padding: 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .profileImage {
+                width: 3rem;
+                height: 3rem;
+                border-radius: 99rem;
+                object-fit: cover;
+            }
+        }
+    }
+}

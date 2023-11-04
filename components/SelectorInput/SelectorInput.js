@@ -35,11 +35,12 @@ const SelectorInput = (props) => {
             <div className={styles.options}>
 
                 {props.options.map(option => {
-                    if (option.value === value) {
+                    if (option.value == value) {
                         return <button
                             className={`${styles.mainButton} ${showMenu ? styles.active : ""}`}
                             onClick={() => updateValue(option.value)}
                             key={option.value}
+                            type="button"
                         >
                             {option.name}
                             <span className="material-icons">expand_less</span>
@@ -52,11 +53,12 @@ const SelectorInput = (props) => {
                     ${showMenu ? styles.active : ""}
                 `}>
                     {props.options.map(option => {
-                        if (option.value !== value) {
+                        if (option.value != value) {
                             return <button
                                 key={option.value}
                                 onClick={() => updateValue(option.value, option?.settable)}
                                 dangerouslySetInnerHTML={{ __html: option.name }}
+                                type="button"
                             />
                         }
                     })}
