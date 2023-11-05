@@ -82,6 +82,20 @@ const FileViewer = ({ initialFiles }) => {
         setfiles(record.data.files)
     }
 
+    /**
+     * Sets the active file programmatically and scrolls the selector to keep it in view
+     * @param {int} activeFileIndex: The index of the new active file
+     */
+    const scrollSelector = (activeFileIndex) => {
+        if (!files[activeFileIndex]) {
+            return
+        }
+
+        setactiveFile(activeFileIndex)
+        const fileInSelector = document.querySelectorAll('.selectorItem')[activeFileIndex]
+        document.querySelector(".fileSelector").scrollTo({ left: 0, top: fileInSelector.offsetTop, behavior: 'smooth' })
+    }
+
     // If caption-editing is enabled, focus the field
     useEffect(() => {
         if (isEditingCaption) {
@@ -92,8 +106,25 @@ const FileViewer = ({ initialFiles }) => {
 
     return (
         <div className={styles.FileViewer}>
-            <FileSelector files={files} setFile={setFile} />
-            <div style={{ marginLeft: "5rem" }}>
+            <div>
+                <FileSelector files={files} setFile={setFile} activeFile={activeFile} />
+                <div style={{ marginTop: '31rem' }}>
+                    <button
+                        className={`tertiary ${styles.galleryNav}`}
+                        onClick={() => scrollSelector(parseInt(activeFile) - 1)}
+                    >
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <button
+                        className={`tertiary ${styles.galleryNav}`}
+                        onClick={() => scrollSelector(parseInt(activeFile) + 1)}
+                    >
+                        <span class="material-icons">arrow_forward</span>
+                    </button>
+
+                </div>
+            </div>
+            <div>
                 <div className={`${styles.fileviewContainer} ${fullscreen ? styles.fullscreen : ""}`}>
                     {generateFileView()}
 
@@ -105,6 +136,7 @@ const FileViewer = ({ initialFiles }) => {
                         Download
                     </a>
                 </div>
+                <span className={styles.title}>{files[activeFile].name}</span>
                 {isEditingCaption ? <div className={styles.captionEditor}>
                     <textarea
                         id='captionEditor'

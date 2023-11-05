@@ -38,7 +38,7 @@ const RecordSelector = () => {
         const fileId = json.data.files[0].id
 
         const recordType = lib.getRecordTypeFromMimeType(file)
-        router.push(`record/create/${recordType}?files=${fileId}`)
+        router.push(`/record/create/${recordType}?files=${fileId}`)
 
         // Hide the modal when we've redirected to the new page,
         // otherwise it will remain open.

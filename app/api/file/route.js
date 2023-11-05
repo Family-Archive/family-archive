@@ -1,9 +1,22 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
 
 // Add a new file
 export async function POST(request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
     const formData = await request.formData()
+    const currFamily = request.cookies.get('familyId').value
 
     // Store records for files that were successfully uploaded.
     let newFiles = []
@@ -15,7 +28,7 @@ export async function POST(request) {
 
     for (const file of files) {
         try {
-            const newFile = await storeFile(file);
+            const newFile = await storeFile(file, currFamily);
             newFiles.push(newFile)
         } catch (error) {
             errorFiles.push({
@@ -53,8 +66,8 @@ export async function POST(request) {
     })
 }
 
-async function storeFile(file) {
+async function storeFile(file, familyId) {
     const fileSystem = FileStorageFactory.instance()
-    const newFile = await fileSystem.store(file)
+    const newFile = await fileSystem.store(file, familyId)
     return newFile
 }

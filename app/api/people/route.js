@@ -18,7 +18,7 @@ export async function GET(request) {
 
     const params = request.nextUrl.searchParams
     let where = params.get('search') ? { fullName: { contains: params.get('search') } } : {}
-    where = lib.limitQueryByFamily(where, request.cookies, session)
+    where = lib.limitQueryByFamily(where, request.cookies, session.familyId)
     const people = await prisma.Person.findMany({
         where: where
     })

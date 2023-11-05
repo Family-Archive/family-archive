@@ -2,6 +2,11 @@
     display: flex;
     gap: 1rem;
 
+    .galleryNav {
+        margin: 0 1rem 0.5rem 0.25rem;
+        border-radius: 99rem;
+    }
+
     .fileviewContainer {
         position: relative;
 
@@ -69,11 +74,17 @@
         }
     }
 
+    .title {
+        margin-top: 1rem;
+        display: inline-block;
+    }
+
     .caption {
         margin-top: 1rem;
         border-left: 2px solid gainsboro;
         padding-left: 1rem;
         margin-bottom: 0.5rem;
+        width: 30rem;
     }
 
     .captionEditor {

@@ -20,7 +20,6 @@ const PronounSelector = ({ value, index, onChange }) => {
   }
 
   useEffect(() => {
-    console.log(value)
     const fetchPronouns = async () => {
       let pronouns = await fetch('/api/pronounset')
       pronouns = await pronouns.json()
