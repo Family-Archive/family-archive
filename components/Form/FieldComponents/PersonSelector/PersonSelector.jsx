@@ -1,361 +1,202 @@
 "use client"
-
-import React, { useState, useEffect, useContext } from 'react'
 import styles from './PersonSelector.module.scss'
+
+import { useEffect, useState, useContext, useRef } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
 
-export default function PersonSelector({ value, onChange, index }) {
-    value = value || '[]'
-
-    // The value of the text field used to enter people.
-    const [input, setInput] = useState('')
-
-    // All of the available people to select from
-    const [people, setPeople] = useState([])
-
-    // The items currently in the dropdown list; mostly
-    // people, but also an item letting you enter a new
-    // person to the system.
-    const [listItems, setListItems] = useState([])
-
-    // Holds the id of a person that needs to be selected
-    // once the list items have been refreshed.
-    const [personToSelect, setPersonToSelect] = useState()
-
-    // The people that have currently been selected.
-    const [selectedPeople, setSelectedPeople] = useState([])
-
-    // Whether the dropdown list is visible or not.
-    const [showDropdown, setShowDropdown] = useState(false)
-
-    // The currently highlighted person in the dropdown list;
-    // a list item is highlighted when a user presses the up
-    // and down keys to select one.
-    const [highlightedPerson, setHighlightedPerson] = useState({})
-
-    // Tracks whether the "add new person" modal is open. Setting
-    // this to true causes the modal to open.
-    const [modalIsOpen, setModalIsOpen] = useState(false)
-
-    // This a string of a JSON array with the ids of currently
-    // selected people. This is used to populate a hidden form
-    // field that actually gets submitted with the rest of the
-    // form.
-    const [peopleToSubmit, setPeopleToSubmit] = useState('[]')
-
-    // This is silly, but in situations where we need to select
-    // multiple people at once (like on initial page load) we have
-    // to track them in this array because the selectPerson function
-    // won't be aware of the updated list of selected people each
-    // time it gets called in a loop.
-    let temporarySelectedPeople = []
-
-    // Tracks whether we have performed the initial update of the
-    // display for people already selected when the page loaded.
-    const [initialPeopleSelected, setInitialPeopleSelected] = useState(false)
-
+const PersonSelector = ({ value, onChange, index }) => {
     const modalFunctions = useContext(ModalContext)
 
+    // Handle clicks outside of component
+    const myRef = useRef();
+    const handleClickOutside = e => {
+        if (!myRef.current.contains(e.target)) {
+            setfieldActive(false)
+        }
+    };
+
+    // The fieldValue is what is getting passed up to the Form component. It is an array of Person IDs.
+    // We have to be careful about when it's being stored as JSON (in the form/database) vs when it's an actual array, in this component here.
+    const [fieldValue, setfieldValue] = useState(value ? JSON.parse(value) : [])
+    // People is a list of all people in the system, so we can match arrays in the fieldValue for more information (names, etc)
+    const [people, setpeople] = useState([])
+    // activePeople are the people appearing in the current dropdown
+    const [activePeople, setactivePeople] = useState([])
+    // fieldActive is whether the dropdown should be shown or not
+    const [fieldActive, setfieldActive] = useState(false)
+    // activePerson is which item in the dropdown is highlighted
+    const [activePersonIndex, setactivePersonIndex] = useState(0)
+
+    /**
+     * Our function for setting the state + passing it up to the parent Form
+     * @param {Array} value: Our array of IDs
+     */
+    const updateValue = (value) => {
+        document.querySelector('#peopleSearch').value = ""
+        setfieldValue(value)
+        onChange({
+            target: {
+                value: JSON.stringify(value),
+                dataset: {
+                    index: index
+                }
+            }
+        })
+    }
+
+    /**
+     * Given a search query, we search our list of all people for matches
+     * @param {string} query: The name to search for
+     */
+    const updateActivePeople = (query) => {
+        let _activePeople = []
+        for (let id of Object.keys(people)) {
+            if (people[id].fullName.toLowerCase().includes(query.toLowerCase()) && !fieldValue.includes(id)) {
+                _activePeople.push(people[id])
+            }
+        }
+        setactivePeople(_activePeople.slice(0, 5))
+    }
+
+    /**
+     * Given an ID, remove it from the fieldValue
+     * @param {string} id: The ID of the person to remove
+     */
+    const removeSelectedPerson = id => {
+        let tempPeople = []
+        for (let person of fieldValue) {
+            if (id != person) {
+                tempPeople.push(person)
+            }
+        }
+        updateValue(tempPeople)
+    }
+
+    /**
+     * Given an ID, add it to the fieldValue
+     * @param {string} id: The ID of the person to add
+     */
+    const addSelectedPerson = async id => {
+        // If the person we're trying to add isn't in our array, they were probably just created via the "Add Person" form
+        // Re-fetch the list of people before adding them to the fieldValue
+        if (!Object.keys(people).includes(id)) {
+            await fetchPeople()
+        }
+
+        if (!fieldValue.includes(id)) {
+            updateValue([...fieldValue, id])
+        }
+    }
+
+    /**
+     * Hit the database to fetch a list of all the people in the system
+     */
+    const fetchPeople = async () => {
+        let _people = {}
+        let people = await fetch('/api/people')
+        people = await people.json()
+        for (let person of people.data.people) {
+            _people[person.id] = person
+        }
+        setpeople(_people)
+    }
+
+    // Fetch a list of all people when the component mounts
     useEffect(() => {
         fetchPeople()
     }, [])
 
+    // Bind listeners for outside clicks and remove when component unmounts
     useEffect(() => {
-        if (listItems.length > 0) {
-            // When "people" gets updated for the first time, update the
-            // component's display to reflect the currently selected people
-            // when the page was loaded.
-            if (!initialPeopleSelected) {
-                // Update the display to reflect the selected people.
-                try {
-                    const people = JSON.parse(value)
-                    for (const person of people) {
-                        selectPerson({
-                            target: {
-                                dataset: {
-                                    id: person
-                                }
-                            }
-                        })
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
-
-                setInitialPeopleSelected(true)
-                setSelectedPeople(temporarySelectedPeople)
-            }
-        }
-    }, [listItems])
-
-    // Get a list of all the people currently in the database.
-    const fetchPeople = async () => {
-        let response = await fetch('/api/people')
-        let people = await response.json()
-        setPeople(people.data.people)
-        setListItems([...people.data.people, { id: 'addNew', fullName: 'Add a new person...' }])
-    }
-
-    useEffect(() => {
-        if (modalIsOpen) {
-            addNewPerson()
-        }
-    }, [modalIsOpen])
-
-    useEffect(() => {
-        setHighlightedPerson({})
-    }, [showDropdown])
-
-    useEffect(() => {
-        if (personToSelect) {
-            selectPerson({
-                target: {
-                    dataset: {
-                        id: personToSelect
-                    }
-                }
-            })
-
-            setPersonToSelect(null)
-        }
-    }, [listItems])
-
-    // Whenever listItems changes, make sure the "add new person"
-    // entry appears last in the list.
-    const getListItemsWithAddNewAtTheEnd = (items) => {
-        const updatedItems = items.filter(item => item.id !== 'addNew')
-
-        return [...updatedItems, { id: 'addNew', fullName: 'Add a new person...' }]
-    }
-
-    // Handles changes to the text input where users enter people's names.
-    const changeHandler = (event) => {
-        setInput(event.target.value)
-
-        // Split the input into search terms where each term is separated by spaces.
-        const searchTerms = event.target.value.split(' ')
-
-        // Filter the people showing in the list to include only those people whose
-        // names contain the search terms.
-        const filteredPeople = people.filter((person) => {
-            const caseInsensitiveName = person.fullName.toLowerCase()
-
-            // If this person's name doesn't contain hits for all search terms, remove
-            // them from the list.
-            for (const searchTerm of searchTerms) {
-                if (!caseInsensitiveName.includes(searchTerm.toLowerCase().trim())) {
-                    return false
-                }
-            }
-            return true
-        });
-
-        setListItems(getListItemsWithAddNewAtTheEnd(filteredPeople))
-    }
-
-    const focusHandler = (event) => {
-        setShowDropdown(true)
-    }
-
-    const blurHandler = (event) => {
-        // Delay hiding the dropdown so if the user clicked
-        // on a dropdown item the event can happen before
-        // it gets hidden.
-        // NOTE: There is almost certainly a better way of
-        // doing this, and we should fix it at some point!
-        setTimeout(() => setShowDropdown(false), 200)
-    }
-
-    // Launch the modal with the "Add new person" form.
-    const addNewPerson = (event) => {
-        modalFunctions.addModal(
-            'Add a new person',
-            <AddPersonForm name={input} afterSubmission={afterNewPersonSubmission} />,
-            styles.addPersonModal
-        )
-    }
-
-    async function afterNewPersonSubmission(newPersonId) {
-        setModalIsOpen(false)
-        modalFunctions.popModal()
-        setPersonToSelect(newPersonId)
-        await fetchPeople()
-    }
-
-    // Add a label for the selected person above the selector and
-    // remove the selected person from the dropdown list.
-    const selectPerson = (event) => {
-        if (event.target.dataset.id === 'addNew') {
-            addNewPerson(event)
-            return
-        }
-
-        // Find the person that was just selected.
-        const selectedPerson = listItems.find(person => {
-            return person.id == event.target.dataset.id
-        })
-
-        if (selectedPerson) {
-            temporarySelectedPeople = [...temporarySelectedPeople, selectedPerson]
-            setSelectedPeople([...selectedPeople, selectedPerson])
-
-            // Remove the selected person from the list of available people.
-            const selectedPersonIndex = listItems.indexOf(selectedPerson)
-            let updatedListItems = listItems
-            updatedListItems.splice(selectedPersonIndex, 1)
-
-            setListItems(getListItemsWithAddNewAtTheEnd(updatedListItems))
-
-            // Add the selected person's id to the array that will ultimately
-            // get submitted with the rest of the form.
-            let updatedPeopleToSubmit = JSON.parse(value)
-            updatedPeopleToSubmit.push(selectedPerson.id)
-
-            // Remove any duplicates from the array.
-            updatedPeopleToSubmit = [... new Set(updatedPeopleToSubmit)]
-
-            // setPeopleToSubmit(JSON.stringify(updatedPeopleToSubmit))
-            onChange({
-                target: {
-                    value: JSON.stringify(updatedPeopleToSubmit),
-                    dataset: {
-                        index: index
-                    }
-                }
-            })
-        }
-    }
-
-    const removePerson = (event) => {
-        let updatedPeople = selectedPeople
-        let personToRemove
-
-        for (let index = 0; index < updatedPeople.length; index++) {
-            if (updatedPeople[index].id == event.target.dataset.id) {
-                personToRemove = updatedPeople[index]
-                break
-            }
-        }
-
-        if (personToRemove) {
-            removePersonFromListItems(personToRemove)
-
-            // Remove the person's id from the array that will ultimately
-            // get submitted with the rest of the form.
-            let updatedPeopleToSubmit = JSON.parse(value)
-            let indexToRemove = updatedPeopleToSubmit.indexOf(personToRemove.id)
-            if (indexToRemove !== -1) {
-                updatedPeopleToSubmit[indexToRemove] = undefined
-                // setPeopleToSubmit(JSON.stringify(updatedPeopleToSubmit))
-                onChange({
-                    target: {
-                        value: JSON.stringify(updatedPeopleToSubmit),
-                        dataset: {
-                            index: index
-                        }
-                    }
-                })
-            }
-        }
-    }
-
-    const removePersonFromListItems = (personToRemove) => {
-        let updatedPeople = selectedPeople
-        let indexToRemove = updatedPeople.indexOf(personToRemove)
-
-        updatedPeople.splice(indexToRemove, 1)
-        setSelectedPeople(updatedPeople)
-        if (!listItems.includes(personToRemove)) {
-            setListItems(getListItemsWithAddNewAtTheEnd([...listItems, personToRemove]))
-        }
-    }
-
-    // This function lets users press up, down, and Enter to navigate the
-    // list of people and select one to add.
-    const keyPressHandler = (event) => {
-        // Default behavior is to highlight the first person in the list.
-        let newHighlightedIndex = 0
-
-        switch (event.key) {
-            case 'Enter':
-                event.preventDefault()
-                console.log(highlightedPerson)
-                if (highlightedPerson.id && highlightedPerson.id !== 'addNew') {
-                    selectPerson({ target: { dataset: { id: highlightedPerson.id } } })
-                } else {
-                    setHighlightedPerson({})
-                    setModalIsOpen(true)
-                    return
-                }
-                break
-            case 'ArrowDown':
-                event.preventDefault()
-                // If there is already a person highlighted, highlight
-                // the next one down in the list.
-                if (highlightedPerson.id) {
-                    newHighlightedIndex = listItems.indexOf(highlightedPerson) + 1
-                    if (newHighlightedIndex >= listItems.length) {
-                        newHighlightedIndex = 0
-                    }
-                }
-                break
-            case 'ArrowUp':
-                event.preventDefault()
-                // If there is already a person highlighted, highlight
-                // the previous one in the list.
-                if (highlightedPerson.id) {
-                    newHighlightedIndex = listItems.indexOf(highlightedPerson) - 1
-                    if (newHighlightedIndex < 0) {
-                        newHighlightedIndex = listItems.length - 1
-                    }
-                }
-                break
-        }
-
-        setHighlightedPerson(listItems[newHighlightedIndex])
-    }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    });
 
     return (
-        <formitem>
-            <div className={styles.selectedPeopleContainer}>
-                {selectedPeople.map(person => <span className={styles.selectedPerson} data-id={person.id} key={person.id}>
-                    <span className={styles.removePerson}><span data-id={person.id} onClick={removePerson} className="material-icons">close</span></span>
-                    {person.fullName}
-                </span>)}
-            </div>
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <span style={{ fontSize: '2.5rem', margin: '-1rem 0 0 -0.5rem' }} className="material-icons">boy</span>
-                <input
-                    id="personSelector"
-                    type="text"
-                    value={input}
-                    onChange={changeHandler}
-                    onFocus={focusHandler}
-                    onBlur={blurHandler}
-                    onKeyDown={keyPressHandler}
-                    autoComplete='off'
-                ></input>
-            </div>
+        <div className={styles.PersonSelector} ref={myRef}>
+
+            {/* Print list of users stored in current value */}
+            {fieldValue.length > 0 && Object.keys(people).length > 0 ?
+                <div className={styles.selectedPeople}>
+                    {fieldValue.map(personId => {
+                        // If user doesn't seem to exist, they may have been deleted
+                        if (!people[personId]) {
+                            return <div className={styles.selectedPerson} key={personId}>
+                                <button type='button' onClick={() => removeSelectedPerson(personId)}>
+                                    Deleted user
+                                    <span className="material-icons">close</span>
+                                </button>
+                            </div>
+                        }
+                        return <div className={styles.selectedPerson} key={personId}>
+                            <button type='button' onClick={() => removeSelectedPerson(personId)}>
+                                <img src={people[personId].profileImageId ? `/api/file/${people[personId].profileImageId}` : '/icons/no-user.png'} />
+                                {people[personId].fullName}
+                                <span className="material-icons">close</span>
+                            </button>
+                        </div>
+                    })}
+                </div>
+                : <span style={{ opacity: 0.5 }}>No users selected</span>
+            }
+
             <input
-                name="people"
-                type="hidden"
-                value={value}
-            ></input>
-            <div className={styles.container}>
-                {showDropdown ? (
-                    <div className={styles.dropdownMenu}>
-                        {listItems.map(person => {
-                            return <div
-                                key={person.id}
-                                data-id={person.id}
-                                className={`${styles.dropdownItem} ${highlightedPerson.id == person.id ? styles.active : ''}`}
-                                onClick={selectPerson}
-                            >{person.fullName}</div>
-                        })}
-                    </div>
-                ) : null}
-            </div>
-        </formitem>
+                type='text'
+                id='peopleSearch'
+                name='peopleSearch'
+                placeholder='Start typing to find people...'
+                onKeyUp={e => updateActivePeople(e.target.value)}
+                onKeyDown={e => {
+                    // Bind key events for navigating dropdown list
+                    if (['ArrowDown', 'ArrowUp', 'Enter'].includes(e.key)) {
+                        if (e.key === 'ArrowDown' && activePersonIndex < activePeople.length) {
+                            setactivePersonIndex(activePersonIndex + 1)
+                        } else if (e.key === 'ArrowUp' && activePersonIndex > 0) {
+                            setactivePersonIndex(activePersonIndex - 1)
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault()
+                            document.querySelector(`.${styles.dropdown} button`).click()
+                        }
+                    }
+                }}
+                onFocus={() => setfieldActive(true)}
+                autoComplete='off'
+                style={{ marginTop: "0.5rem" }}
+            />
+
+            {/* Display the list of matching users if field is active */}
+            {fieldActive ?
+                <div className={styles.dropdown}>
+                    {activePeople.map((person, index) => {
+                        return <button
+                            className={`${styles.person} ${index === activePersonIndex ? 'hovered' : ""} `}
+                            onClick={e => addSelectedPerson(person.id)}
+                            type='button'
+                            key={person.id}
+                        >
+                            {person.fullName}
+                        </button>
+                    })}
+                    <button
+                        onClick={() => modalFunctions.addModal(
+                            'Add a new person',
+                            <AddPersonForm
+                                name={document.querySelector('#peopleSearch').value}
+                                afterSubmission={(newPersonId) => { addSelectedPerson(newPersonId); modalFunctions.clearModalStack() }}
+                            />
+                        )} className={`${styles.person} ${activePersonIndex > activePeople.length - 1 ? 'hovered' : ""}`}
+                        type='button'
+                    >
+                        <span className="material-icons">person_add</span>
+                        Add new person
+                    </button>
+                </div>
+                : ""
+            }
+
+        </div>
     )
 }
+
+export default PersonSelector

@@ -24,7 +24,8 @@ export const BreadcrumbProvider = ({ children }) => {
     // List of paths that should reset the trail
     const resetPaths = [
         '/records/all',
-        '/collection'
+        '/collection',
+        '/people'
     ]
 
     const updateTrail = (pathname) => {

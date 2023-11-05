@@ -9,6 +9,14 @@
         border-radius: 99rem;
         background: $accent-border-color;
         color: black;
+        padding: 0.5rem 0.75rem;
+
+        img {
+            width: 2rem;
+            height: 2rem;
+            object-fit: cover;
+            border-radius: 99rem;
+        }
     }
 
     .icon {

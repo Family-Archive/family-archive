@@ -33,10 +33,10 @@ export async function GET(request) {
 }
 
 export async function POST(request, session) {
-    const parameters = await request.json()
+    const data = await request.formData()
 
     // Validation: we need a full name to add a new person.
-    if (parameters.fullName === '') {
+    if (data.get('fullName') === '') {
         return NextResponse.json({
             status: 'fail',
             data: { "fullName": "A full name is required." }
@@ -48,10 +48,10 @@ export async function POST(request, session) {
     const currFamily = request.cookies.get('familyId').value
     const newPerson = await prisma.Person.create({
         data: {
-            fullName: parameters.fullName,
-            shortName: parameters.shortName,
+            fullName: data.get('fullName'),
+            shortName: data.get('shortName'),
             pronouns: {
-                connect: { id: parameters.pronouns }
+                connect: { id: data.get('pronouns') }
             },
             family: {
                 connect: {

@@ -82,6 +82,7 @@ model File {
   updatedAt DateTime @updatedAt
   record    Record?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId  String?
+  Person    Person[]
 }
 
 model Record {
@@ -125,6 +126,8 @@ model Person {
   indirectRelationships IndirectRelationship[]
   family                Family                 @relation(fields: [familyId], references: [id])
   familyId              String
+  profileImage          File?                  @relation(fields: [profileImageId], references: [id])
+  profileImageId        String?
 }
 
 model PronounSet {

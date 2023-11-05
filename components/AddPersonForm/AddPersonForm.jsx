@@ -19,6 +19,7 @@ export default function AddPersonForm({ name, afterSubmission }) {
     const [pronounSets, setPronounSets] = useState([])
 
     useEffect(() => {
+        document.querySelector('#fullName').focus()
         const getPronounSets = async () => {
             const response = await fetch('/api/pronounset')
             const pronounSets = await response.json()
@@ -55,12 +56,14 @@ export default function AddPersonForm({ name, afterSubmission }) {
             shortName: ''
         })
 
+        const formData = new FormData()
+        formData.append('fullName', fields.fullName)
+        formData.append('shortName', fields.shortName)
+        formData.append('pronouns', fields.pronouns)
+
         const response = await fetch('/api/people', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(fields)
+            body: formData
         })
         const json = await response.json()
 

@@ -1,68 +1,48 @@
-.dropdownMenu {
-    width: 100%;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-radius: 0px 0px 0.5rem 0.5rem;
-    position: absolute;
-    background-color: white;
-    max-height: 410px;
-    overflow-y: scroll;
-}
-
-.container {
+.PersonSelector {
     position: relative;
-}
+    margin-top: 0.5rem;
 
-.dropdownItem {
-    padding: 0.5rem;
-    border-bottom: 2px solid black;
+    .selectedPeople {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
 
-    &:hover {
-        background-color: #e6e6e6;
-        cursor: pointer;
+        .selectedPerson {
+            img {
+                width: 2rem;
+                height: 2rem;
+                border-radius: 99rem;
+                object-fit: cover;
+            }
+
+            button {
+                background-color: $accent-border-color;
+                border-radius: 99rem;
+                color: black;
+            }
+        }
     }
 
-    &:last-child {
-        border-radius: 0px 0px 0.5rem 0.5rem;
-        font-weight: bold;
+    .dropdown {
+        border: 2px solid $accent-secondary-color;
+        border-radius: 0 0 1rem 1rem;
+        position: absolute;
+        top: 100%;
+        margin-top: -1.5rem;
+        width: 100%;
+        background: white;
+
+        .person {
+            &:not(:last-child) {
+                border-bottom: 2px solid $accent-secondary-color;
+                border-radius: 0;
+            }
+
+            width: 100%;
+            background-color: white;
+            color: black;
+            border-radius: 0 0 1rem 1rem;
+            transform: none;
+        }
     }
-}
-
-.active {
-    background-color: #e6e6e6;
-    font-weight: bold;
-}
-
-.selectedPeopleContainer {
-    margin-bottom: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.selectedPerson {
-    padding: 6px 16px 6px 6px;
-    border-radius: 20px;
-    background-color: $accent-border-color;
-    margin-right: 6px;
-    width: max-content;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-}
-
-.removePerson {
-    font-weight: bold;
-    font-size: 18px;
-    cursor: pointer;
-    margin: 0 8px 0 4px;
-}
-
-.newItem {
-    font-weight: bold;
-}
-
-.addPersonModal {
-    width: 75%;
-    max-width: 500px;
 }

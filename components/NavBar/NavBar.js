@@ -45,7 +45,7 @@ const NavBar = () => {
 
                 {session ?
                     <section className={styles.mainButtons}>
-                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Choose record type", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
+                        <button className={styles.addRecord} onClick={() => modalFunctions.addModal("Create new record", <RecordSelector />)}><span className="material-icons">add_circle</span> Add Record</button>
                         <Link className={styles.drafts} href='/drafts'>
                             {draftContext.count > 0 ? <span className={styles.draftCount}>{draftContext.count}</span> : ""}
                             <button className={`${draftContext.count > 0 ? 'secondary' : 'tertiary'}`}><span className="material-icons">design_services</span>Drafts</button>
@@ -60,6 +60,7 @@ const NavBar = () => {
                     <Link className={styles.button} href='/records/timeline'><span className="material-icons">watch_later</span>Timeline</Link>
                     <Link className={styles.button} href='/records/map'><span className="material-icons">public</span>Map</Link>
                     <button><span className="material-icons">account_tree</span>Family tree</button>
+                    <Link className={styles.button} href='/people'><span className="material-icons">people</span>People</Link>
                 </section>
             </section>
 

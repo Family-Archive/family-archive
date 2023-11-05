@@ -26,34 +26,40 @@
             padding: 1rem;
             border-radius: 1rem;
 
-            .record {
-                background-color: white;
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-end;
-                text-align: left;
-                width: 100%;
-                padding: 0.25rem;
-                border-left: 3px solid transparent;
-                border-radius: 0;
-
-                &:hover {
-                    filter: none;
-                    border-left: 3px solid $accent-color;
+            .listRecordContainer {
+                &:not(:last-child) {
+                    border-bottom: 2px solid $accent-border-color;
                 }
 
-                .title {
-                    margin-bottom: 0.25rem;
-                    font-size: 1.25rem;
-                    font-weight: bold;
-                    display: block;
-                }
-
-                .link {
-                    text-decoration: underline;
-
+                .record {
                     &:hover {
-                        color: $accent-color;
+                        filter: none;
+                        background-color: $accent-border-color;
+                    }
+
+                    background-color: white;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    text-align: left;
+                    width: 100%;
+                    padding: 1rem;
+                    border-left: 3px solid transparent;
+                    border-radius: 1rem;
+
+                    .title {
+                        margin-bottom: 0.25rem;
+                        font-size: 1.25rem;
+                        font-weight: bold;
+                        display: block;
+                    }
+
+                    .link {
+                        text-decoration: underline;
+
+                        &:hover {
+                            color: $accent-color;
+                        }
                     }
                 }
             }

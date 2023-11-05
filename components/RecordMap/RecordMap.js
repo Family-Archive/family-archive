@@ -53,7 +53,7 @@ const RecordMap = (props) => {
                 <div className={styles.recordList}>
                     {props.data.length ?
                         props.data.map((record, index) => {
-                            return <>
+                            return <div className={styles.listRecordContainer}>
                                 <button
                                     className={`${styles.record} tertiary`}
                                     onClick={() => {
@@ -66,8 +66,7 @@ const RecordMap = (props) => {
                                     </div>
                                     <Link className={styles.link} href={`/record/${record.id}`}>View record</Link>
                                 </button>
-                                {index >= props.data.length - 1 ? "" : <hr />}
-                            </>
+                            </div>
                         })
                         : "No records found!"
                     }
