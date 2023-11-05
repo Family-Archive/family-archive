@@ -5,6 +5,15 @@ import Timeline from '../../../../components/Timeline/Timeline'
 import lib from "@/lib/lib"
 import ViewFilter from "@/components/ViewFilter/ViewFilter";
 
+/**
+ * This page displays all relevant records on a timeline
+ */
+
+/**
+ * Given an array of records, remove entries that don't have a date field containing a value
+ * @param {Array} records 
+ * @returns {Array}: The filtered array
+ */
 const filterRecordsWithoutDateFields = records => {
     let recordsWithDateFields = []
     for (const record of records) {

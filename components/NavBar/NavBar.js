@@ -13,6 +13,10 @@ import RecordSelector from '../RecordSelector/RecordSelector'
 import SelectorInput from '../SelectorInput/SelectorInput'
 import Dropdown from '../Dropdown/Dropdown'
 
+/**
+ * The main left navbar component
+ */
+
 const NavBar = () => {
     const { data: session, status } = useSession()
     const modalFunctions = useContext(ModalContext)
@@ -70,7 +74,7 @@ const NavBar = () => {
                 {/* Set as default whatever is in the family context; if this isn't anything, use the defaultfamily from the session */}
                 {/* When changed, set the family, unless the value is "addFamily" -- then display the modal */}
                 {session ? <SelectorInput
-                    default={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
+                    defaultOption={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
                     options={familySelectOptions}
                     onChange={(valueToSet) => {
                         if (valueToSet === "addFamily") {

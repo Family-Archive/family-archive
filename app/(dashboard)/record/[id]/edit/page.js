@@ -2,6 +2,10 @@ import EditRecordForm from "@/components/EditRecordForm/EditRecordForm"
 import lib from '@/lib/lib'
 import { cookies } from 'next/dist/client/components/headers'
 
+/**
+ * This page displays a form for editing existing records
+ */
+
 const EditRecord = async ({ params }) => {
     // Fetch the stored data for this record.
     let recordData = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {

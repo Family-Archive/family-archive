@@ -1,5 +1,9 @@
 import Form from "@/components/Form/Form"
 
+/**
+ * This page displays a form for creating a new person
+ */
+
 const createPerson = () => {
     return <div className="column">
         <h1 className="title">Add new person</h1>

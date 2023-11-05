@@ -8,7 +8,12 @@ import MoveToCollectionButton from './MoveToCollectionButton'
 import DeleteButton from './DeleteCollectionButton'
 import RenameButton from './RenameButton'
 
+/**
+ * This page displays the children of a given collection
+ */
+
 const collection = async ({ params, searchParams }) => {
+    // Fetch the child data of this collection
     let data = await fetch(`${process.env.NEXTAUTH_URL}/api/collection/${params.id}`, {
         headers: {
             Cookie: lib.cookieObjectToString(cookies().getAll())
@@ -16,7 +21,7 @@ const collection = async ({ params, searchParams }) => {
     })
     data = await data.json()
 
-    const thisCollection = data.data.collections[0]
+    const thisCollection = data.data.collection
     const children = thisCollection.children ? thisCollection.children : []
     const records = data.data.records
 

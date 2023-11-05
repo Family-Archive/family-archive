@@ -1,5 +1,9 @@
 import Form from '../Form/Form'
 
+/**
+ * Wrapper component for the edit record form
+ */
+
 const EditRecordForm = ({ recordTypeData, recordData }) => {
     const recordTypeOptions = recordTypeData.config.options
     const acceptedFileTypes = recordTypeOptions.acceptedFileTypes

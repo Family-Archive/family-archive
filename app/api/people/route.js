@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
 
+// Fetch people
 export async function GET(request) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -32,10 +33,19 @@ export async function GET(request) {
     })
 }
 
+// Create a new person
 export async function POST(request, session) {
-    const data = await request.formData()
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
     // Validation: we need a full name to add a new person.
+    const data = await request.formData()
     if (data.get('fullName') === '') {
         return NextResponse.json({
             status: 'fail',

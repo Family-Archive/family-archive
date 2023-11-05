@@ -3,6 +3,10 @@
 import React, { useRef } from 'react'
 import styles from './FileUploader.module.scss'
 
+/**
+ * File uploader component that belongs to the Form
+ */
+
 export default function FileUploader({
     files,
     isFilePicked,

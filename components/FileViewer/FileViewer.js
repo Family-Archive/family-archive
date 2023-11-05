@@ -1,16 +1,25 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import styles from './FileViewer.module.scss'
 import FileSelector from './FileSelector/FileSelector'
 
-const FileViewer = (props) => {
-    const [files, setfiles] = useState(props.files)
+/**
+ * File viewer component for browsing files attached to a record
+ * Required param initialFiles: The list of files that we want to display
+ */
+
+const FileViewer = ({ initialFiles }) => {
+    const [files, setfiles] = useState(initialFiles)
     const [activeFile, setactiveFile] = useState(0)
     const [fullscreen, setfullscreen] = useState(false)
     const [isEditingCaption, setisEditingCaption] = useState(false)
 
+    /**
+     * Given a file ID, make that file active in the viewer
+     * @param {string} id: The ID of the file we want to make active
+     */
     const setFile = (id) => {
         setisEditingCaption(false)
         for (let i in files) {
@@ -21,6 +30,9 @@ const FileViewer = (props) => {
         }
     }
 
+    /**
+     * Dynamically generates a file UI based on type
+     */
     const generateFileView = () => {
         const fileDatatype = files[activeFile] ? files[activeFile].mimeType.split('/')[0] : ""
         switch (fileDatatype) {
@@ -44,6 +56,10 @@ const FileViewer = (props) => {
         }
     }
 
+    /**
+     * Saves a given caption into the active file
+     * @param {string} caption: The caption we want to add to the active file
+     */
     const saveCaption = async caption => {
         const formData = new FormData()
         formData.append('caption', caption)
@@ -57,11 +73,22 @@ const FileViewer = (props) => {
         fetchFiles()
     }
 
+    /**
+     * Fetch files attached to the record we're looking at
+     */
     const fetchFiles = async () => {
         let record = await fetch(`/api/record/${window.location.pathname.split('/').slice(-1)[0]}`)
         record = await record.json()
         setfiles(record.data.files)
     }
+
+    // If caption-editing is enabled, focus the field
+    useEffect(() => {
+        if (isEditingCaption) {
+            document.querySelector('#captionEditor').focus()
+        }
+    }, [isEditingCaption])
+
 
     return (
         <div className={styles.FileViewer}>

@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from "../../../lib/lib"
 
+// Fetch all drafts from DB
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {

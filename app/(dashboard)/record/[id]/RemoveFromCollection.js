@@ -1,13 +1,15 @@
 "use client"
 
-// This needs to be a separate component because it's client-side.
-// Since it's bespoke, I'm just putting it here
-
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import CollectionSelector from '@/components/CollectionSelector/CollectionSelector'
 
-const RemoveFromCollectionButton = (props) => {
+/**
+ * A helper button component for removing a record from a collection
+ * @param {string} id: The ID of the record
+ */
+
+const RemoveFromCollectionButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
 
     return (
@@ -15,12 +17,14 @@ const RemoveFromCollectionButton = (props) => {
             onClick={() => modalFunctions.addModal(
                 "Remove from collection",
                 <>
-                    <CollectionSelector recordId={props.id} /><br />
+                    {/* Once again, we only pass to this component the ID of the record */}
+                    {/* The collection ID comes from this component here*/}
+                    <CollectionSelector recordId={id} /><br />
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {
                                 const collectionId = document.querySelector('#collectionParentId').value
-                                fetch(`/api/record/${props.id}/collection/${collectionId}`, {
+                                fetch(`/api/record/${id}/collection/${collectionId}`, {
                                     method: "DELETE",
                                 })
                                     .then(response => response.json())

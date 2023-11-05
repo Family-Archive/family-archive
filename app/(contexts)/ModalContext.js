@@ -4,6 +4,11 @@ import { useState } from "react"
 import { createContext } from "react"
 import ModalContainer from "@/components/ModalContainer/ModalContainer"
 
+/**
+ * This context provides global functions for creating and managing modals
+ * Any client component can create modals by invoking this context
+ */
+
 // To use the Modal Context anywhere in the app, we import this context object
 export const ModalContext = createContext()
 

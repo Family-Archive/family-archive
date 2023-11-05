@@ -3,18 +3,23 @@ import styles from './ModalContainer.module.scss'
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 
-const ModalContainer = (props) => {
-    const modals = props.modals
+/**
+ * A container that wraps the entire app, allowing any client component to display modals
+ * modals: A list of modals to be displayed
+ */
+
+const ModalContainer = ({ modals }) => {
+    const _modals = modals
     const modalFunctions = useContext(ModalContext)
 
     return (
         <div
             className={`
                 ${styles.ModalContainer}
-                ${props.modals.length > 0 ? styles.active : ''}
+                ${modals.length > 0 ? styles.active : ''}
             `}
         >
-            {modals.map(modal =>
+            {_modals.map(modal =>
                 <div
                     className={`${styles.modal} ${modal.styles}`}
                     key={modal.id}

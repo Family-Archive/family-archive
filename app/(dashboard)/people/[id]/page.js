@@ -8,7 +8,12 @@ import Dropdown from '@/components/Dropdown/Dropdown'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import DeleteUserButton from './DeleteUserButton'
 
+/**
+ * This page displays information relating to a person
+ */
+
 const personView = async ({ params }) => {
+    // Get the data for the person
     const getPerson = async () => {
         let person = await fetch(`${process.env.NEXTAUTH_URL}/api/people/${params.id}`,
             {

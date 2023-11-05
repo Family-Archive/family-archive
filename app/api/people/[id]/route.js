@@ -5,6 +5,7 @@ import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory';
 
+// Fetch a person's information
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -16,12 +17,22 @@ export async function GET(request, { params }) {
         })
     }
 
-    const where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const person = await prisma.Person.findFirst({
-        where: where
+    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
+    const person = await prisma.Person.findUnique({
+        where: {
+            id: params.id
+        }
     })
 
-    const pronouns = await prisma.PronounSet.findFirst({
+    const pronouns = await prisma.PronounSet.findUnique({
         where: {
             id: person.pronounsId
         }
@@ -58,9 +69,19 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    const where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const person = await prisma.Person.deleteMany({
-        where: where
+    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
+    const person = await prisma.Person.delete({
+        where: {
+            id: params.id
+        }
     })
 
     return NextResponse.json({
@@ -73,6 +94,7 @@ export async function DELETE(request, { params }) {
     })
 }
 
+// Update a person
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -81,6 +103,15 @@ export async function PUT(request, { params }) {
             'message': 'Not authorized'
         }, {
             status: 401
+        })
+    }
+
+    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
         })
     }
 
@@ -104,8 +135,7 @@ export async function PUT(request, { params }) {
     // In order to disallow users from accessing records belonging to other families,
     // we limit queries like {where: AND [id: value, familyId: value]}
     // In order to use AND in an update query, we have to use updateMany even though we're only updating one record
-    const where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const person = await prisma.Person.updateMany({
+    const person = await prisma.Person.update({
         data: {
             fullName: formData.get('fullName'),
             shortName: formData.get('shortName'),
@@ -114,7 +144,9 @@ export async function PUT(request, { params }) {
             died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
             profileImageId: profileImage
         },
-        where: where
+        where: {
+            id: params.id
+        }
     })
 
     return Response.json({ status: "success", data: { person: person } })

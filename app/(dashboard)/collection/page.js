@@ -3,6 +3,10 @@ import lib from '@/lib/lib'
 import Collections from '@/components/Collections/Collections'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 
+/**
+ * This page displays all top-level collections
+ */
+
 const allCollections = async ({ searchParams }) => {
     let collections = await fetch(`${process.env.NEXTAUTH_URL}/api/collection`, {
         headers: {

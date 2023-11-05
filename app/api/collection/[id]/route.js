@@ -2,6 +2,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 
+// Fetch the information for a single collection
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -13,22 +14,36 @@ export async function GET(request, { params }) {
         })
     }
 
-    let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const collections = await prisma.collection.findMany({
-        where: where
+    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
+    const collection = await prisma.collection.findUnique({
+        where: {
+            id: params.id
+        }
     })
 
-    where = lib.limitQueryByFamily({ parentId: params.id }, request.cookies, session)
     const childCollections = await prisma.collection.findMany({
-        where: where
+        where: {
+            parentId: params.id
+        }
     })
 
-    where = lib.limitQueryByFamily({ collections: { some: { id: params.id } } }, request.cookies, session)
     const records = await prisma.record.findMany({
         include: {
             RecordField: true
         },
-        where: where
+        where: {
+            collections: {
+                some: { id: params.id }
+            }
+        }
     })
 
     // Reformat records with important recordFields on the top level for easy access
@@ -44,12 +59,31 @@ export async function GET(request, { params }) {
         }
     }
 
-    collections[0]['children'] = childCollections
-    return Response.json({ status: "success", data: { collections: collections, records: records } })
+    collection['children'] = childCollections
+    return Response.json({ status: "success", data: { collection: collection, records: records } })
 }
 
+// Update an existing collection
+// Expects formData with name or parentId
 export async function PUT(request, { params }) {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
+    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
 
     let formData = await request.formData()
     formData = Object.fromEntries(formData)
@@ -76,12 +110,31 @@ export async function PUT(request, { params }) {
     return Response.json({ status: "success", data: { record: record } })
 }
 
+// Delete a collection (moves children to top level atm)
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
 
-    let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const collection = await prisma.collection.deleteMany({
-        where: where
+    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
+    const collection = await prisma.collection.delete({
+        where: {
+            id: params.id
+        }
     })
 
     return Response.json({ status: "success", data: { message: "Collection deleted" } })

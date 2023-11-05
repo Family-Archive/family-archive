@@ -3,7 +3,12 @@
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 
-const RenameButton = (props) => {
+/**
+ * This is a helper button component for renaming a collection
+ * @param {string} id: The ID of the collection that should be renamed
+ */
+
+const RenameButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
 
     return (
@@ -21,12 +26,12 @@ const RenameButton = (props) => {
                                 const formData = new FormData()
                                 const name = document.querySelector('#name').value
                                 formData.append('name', name)
-                                fetch(`/api/collection/${props.id}`, {
+                                fetch(`/api/collection/${id}`, {
                                     method: "PUT",
                                     body: formData
                                 })
                                     .then(response => response.json())
-                                    .then(data => { window.location = `/collection/${props.id}` })
+                                    .then(data => { window.location = `/collection/${id}` })
                             }}
                         >
                             Ok

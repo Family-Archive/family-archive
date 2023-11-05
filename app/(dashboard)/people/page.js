@@ -4,10 +4,15 @@ import styles from './peoplePage.module.scss'
 
 import Link from 'next/link'
 
+/**
+ * This page displays all of the people in the system
+ */
+
 const peoplePage = () => {
     const [people, setpeople] = useState([])
     const [query, setquery] = useState("")
 
+    // Since this is a client component, ask the API for the list of people when the component mounts
     useEffect(() => {
         const fetchPeople = async () => {
             let people = await fetch(`/api/people`)
@@ -41,8 +46,6 @@ const peoplePage = () => {
             </div><br />
             <div className={styles.people}>
                 {people.map(person => {
-                    console.log(query)
-                    console.log(person.fullName)
                     if (query.toLowerCase() && !person.fullName.toLowerCase().includes(query)) {
                         return
                     }

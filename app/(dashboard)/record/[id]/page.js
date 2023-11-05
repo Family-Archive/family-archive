@@ -11,8 +11,16 @@ import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
 
-const fetchRecord = async (params) => {
-    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${params.id}`, {
+/**
+ * This page displays a record's information
+ */
+
+/**
+ * Feth the data for a record
+ * @param {Object} id: The ID of the record to fetch
+ */
+const fetchRecord = async (id) => {
+    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/record/${id}`, {
         headers: {
             Cookie: lib.cookieObjectToString(cookies().getAll())
         }
@@ -20,8 +28,12 @@ const fetchRecord = async (params) => {
     return await record.json()
 }
 
-const fetchCollections = async (params) => {
-    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/collection?recordId=${params.id}`, {
+/**
+ * Fetch the collections that this record belongs to
+ * @param {string} id: The ID of the record
+ */
+const fetchCollections = async (id) => {
+    const record = await fetch(`${process.env.NEXTAUTH_URL}/api/collection?recordId=${id}`, {
         headers: {
             Cookie: lib.cookieObjectToString(cookies().getAll())
         }
@@ -30,6 +42,13 @@ const fetchCollections = async (params) => {
 }
 
 const ViewRecord = async ({ params }) => {
+
+    /**
+     * FieldComponents may include a render.js file that defines a custom method for rendering the field in a bespoke way.
+     * This function allows us to fetch that render function for any given FieldComponent
+     * @param {string} name: The name of the FieldComponent type
+     * @returns {function|boolean}: If a function is found, return said function. Otherwise, return false
+     */
     const fetchFieldRenderFunction = (name) => {
         for (let field of recordType.fields) {
             if (field.name === name) {
@@ -40,13 +59,17 @@ const ViewRecord = async ({ params }) => {
         return false
     }
 
-    const recordData = await fetchRecord(params);
+    // Fetch Record data
+    const recordData = await fetchRecord(params.id);
     const record = recordData.data.record
+
+    // Instantiate RecordType object, and get the icon from this
     const RecordType = require(`/recordtypes/${record.type}/record.js`)
     const recordType = new RecordType()
     const recordIcon = clientLib.renderIconFromData(recordData.data.icon)
 
-    const collectionsData = await fetchCollections(params)
+    // Fetch collections this record belongs to
+    const collectionsData = await fetchCollections(params.id)
     const collections = collectionsData.data.collections
 
     return (
@@ -77,13 +100,19 @@ const ViewRecord = async ({ params }) => {
 
                 <div className={styles.content}>
                     <div className={styles.file}>
-                        {recordData.data.files.length > 0 ? <FileViewer files={recordData.data.files} /> : ""}
+                        {recordData.data.files.length > 0 ? <FileViewer initialFiles={recordData.data.files} /> : ""}
                     </div>
                     <div className={styles.info}>
                         <strong>Description</strong>
                         <p>{record.description}</p>
 
                         {recordData.data.fields.map(field => {
+                            // For each field attached to this record,
+                            // check if the field has a value, and if so,
+                            // attempt to fetch a custom render function
+                            // If this exists, use it; otherwise, just print out the name and value of the field
+
+                            // Note that the field value is always passed to render() - the function must expect the data as an argument
                             if (field.value) {
                                 const renderFunction = fetchFieldRenderFunction(field.name)
                                 if (renderFunction) {

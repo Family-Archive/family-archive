@@ -38,7 +38,7 @@ const PronounSelector = ({ value, index, onChange }) => {
             const pronounString = `${pronounSet.subject} / ${pronounSet.object} / ${pronounSet.possessive}`
             return { value: pronounSet.id, name: pronounString }
           })}
-          default={fieldValue}
+          defaultOption={fieldValue}
           onChange={e => updateValue(e)}
         />
         : ""

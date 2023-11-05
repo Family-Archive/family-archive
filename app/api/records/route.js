@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from "../../../lib/lib"
 
+// Fetch all records. Parameters can be passed to sort + filter
 export async function GET(request) {
     const params = request.nextUrl.searchParams
     const session = await getServerSession(authOptions);

@@ -11,6 +11,7 @@ import { cookies } from 'next/dist/client/components/headers'
  * This component displays records. Despite the name "AllRecords," it also can take an explicit list of record objects to display
  * Optional prop {Array} records: A list of record objects to display
  * Optional prop {Bool} showOptions: Whether or not to show the sorting/filtering option sidebar. Defaults to false
+ * Optional prop {searchParams} params: A searchParams object passed down from the page that is loading this component
  */
 
 /**
@@ -68,14 +69,14 @@ const findFirstPhoto = (fileArray) => {
     return null
 }
 
-const AllRecords = async (props) => {
+const AllRecords = async ({ records, params, showOptions }) => {
 
     // If no record list was passed, use the fetchRecords method
     let recordList
-    if (!props.records) {
-        recordList = await fetchRecords(props.params)
+    if (!records) {
+        recordList = await fetchRecords(params)
     } else {
-        recordList = props.records
+        recordList = records
     }
 
     return (
@@ -107,10 +108,10 @@ const AllRecords = async (props) => {
                 })}
             </section>
 
-            {props.showOptions ?
+            {showOptions ?
                 <section className={styles.viewOptions}>
-                    <ViewFilter params={props.params} sortOptions={true} />
-                    <PageSelector page={props.params.page} />
+                    <ViewFilter params={params} sortOptions={true} />
+                    <PageSelector page={params.page} />
                 </section>
                 : ""}
         </div>

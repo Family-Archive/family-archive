@@ -6,6 +6,10 @@ import { useEffect, useState, useContext } from 'react'
 import Link from 'next/link'
 import { BreadcrumbContext } from '@/app/(contexts)/BreadcrumbContext'
 
+/**
+ * This component displays the current breadcrumb trail, using the context
+ */
+
 const BreadcrumbTrail = () => {
     const breadcrumbContext = useContext(BreadcrumbContext)
     const [trail, settrail] = useState([])

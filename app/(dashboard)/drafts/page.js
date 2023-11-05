@@ -3,6 +3,10 @@ import lib from '@/lib/lib';
 
 import AllRecords from '@/components/AllRecords/AllRecords'
 
+/**
+ * This page displays all draft files
+ */
+
 const draftView = async () => {
     let drafts = await fetch(`${process.env.NEXTAUTH_URL}/api/drafts`, {
         headers: {

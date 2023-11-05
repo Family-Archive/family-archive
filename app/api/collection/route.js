@@ -47,6 +47,7 @@ export async function GET(request) {
     return Response.json({ status: "success", data: { collections: collections } })
 }
 
+// Add a new collection
 export async function POST(request) {
     const headersList = headers()
     const referer = headersList.get('referer')
@@ -84,6 +85,5 @@ export async function POST(request) {
     }
 
     const collection = await prisma.collection.create(creationObj)
-
     return Response.redirect(new URL(referer))
 }

@@ -1,12 +1,14 @@
 "use client"
 
-// This needs to be a separate component because it's client-side.
-// Since it's bespoke, I'm just putting it here
-
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 
-const DeleteButton = (props) => {
+/**
+ * This is a helper component for deleting a record
+ * @param {string} id: The ID of the record to delete
+ */
+
+const DeleteButton = ({ id }) => {
   const modalFunctions = useContext(ModalContext)
 
   return (
@@ -18,7 +20,7 @@ const DeleteButton = (props) => {
           <p>Are you sure you want to delete this record?</p>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button
-              onClick={() => fetch(`/api/record/${props.id}`, { method: "DELETE" })
+              onClick={() => fetch(`/api/record/${id}`, { method: "DELETE" })
                 .then(response => response.json())
                 .then(data => { window.location = '/records/all' })
               }

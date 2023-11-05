@@ -6,7 +6,11 @@ import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import CollectionSelector from '../../../components/CollectionSelector/CollectionSelector'
 
-const CreateCollectionButton = (props) => {
+/**
+ * This is a helper button component for creating a new collection
+ */
+
+const CreateCollectionButton = () => {
     const modalFunctions = useContext(ModalContext)
 
     return (

@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 import NavBar from "@/components/NavBar/NavBar"
 
 const DashboardLayout = async ({ children }) => {
+    // For every page under the "Dashboard," redirect back home if the user isn't logged in
     const session = await getServerSession(authOptions);
-
     if (!session) {
         redirect('/')
     }

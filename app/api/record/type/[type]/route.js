@@ -7,12 +7,15 @@ import { revalidateTag } from 'next/cache'
 // When a specific record is queried at, ie, api/record/recipe (note the dynamic route),
 // it hits this page which dynamically includes the matching file from the types directory
 
+// Fetch the structure of a recordtype
+// Not limited by family
 export async function GET(request, { params }) {
     const RecordType = require(`/recordtypes/${params.type}/record.js`)
     const recordType = new RecordType()
     return Response.json(recordType.getStructure())
 }
 
+// This function is used to add a record
 export async function POST(request, { params }) {
     // Session is included here and passed, because NextAuth can't get the session in the dynamic file
     const tag = request.nextUrl.searchParams.get('records')
