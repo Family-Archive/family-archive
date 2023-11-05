@@ -84,7 +84,10 @@ const FileViewer = (props) => {
                         defaultValue={files[activeFile].caption}
                         onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); saveCaption(e.target.value) } }}
                     />
-                    <button onClick={() => saveCaption(document.querySelector('#captionEditor').value)}>Save</button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={() => saveCaption(document.querySelector('#captionEditor').value)}>Save</button>
+                        <button className="tertiary" onClick={() => setisEditingCaption(false)}>Cancel</button>
+                    </div>
                 </div>
                     : <div onClick={() => setisEditingCaption(true)}>
                         <div className={styles.caption}>
@@ -92,7 +95,9 @@ const FileViewer = (props) => {
                                 {files[activeFile].caption}
                             </a>
                         </div>
-                        <i style={{ opacity: 0.5 }}>Click {files[activeFile].caption ? 'on caption' : 'here'} to add a caption</i>
+                        <i style={{ opacity: 0.5 }}>
+                            Click {files[activeFile].caption ? 'on caption' : 'here'} to {files[activeFile].caption ? 'edit' : 'add a caption'}
+                        </i>
                     </div>
                 }
             </div>
