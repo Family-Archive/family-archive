@@ -70,6 +70,7 @@ model Family {
   relationshipTypes     RelationshipType[]
   defaultUsers          User[]                 @relation("defaultFamily")
   collections           Collection[]
+  File                  File[]
 }
 
 model File {
@@ -83,6 +84,9 @@ model File {
   record    Record?  @relation(fields: [recordId], references: [id], onDelete: Cascade)
   recordId  String?
   Person    Person[]
+  caption   String?  @db.Text
+  family    Family   @relation(fields: [familyId], references: [id])
+  familyId  String
 }
 
 model Record {

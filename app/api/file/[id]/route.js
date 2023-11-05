@@ -31,3 +31,27 @@ export async function GET(request, { params }) {
         }
     })
 }
+
+export async function PUT(request, { params }) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
+    let formData = await request.formData()
+
+    const where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
+    const file = await prisma.File.updateMany({
+        data: {
+            caption: formData.get('caption')
+        },
+        where: where
+    })
+
+    return Response.json({ status: "success", data: { file: file } })
+}

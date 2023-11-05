@@ -60,6 +60,7 @@ export async function PUT(request, { params }) {
         }
     })
     const oldRecordFileIds = oldRecordWithFiles.files.map(file => file.id)
+    const currFamily = request.cookies.get('familyId').value
 
     // List of file ids that are currently connected to the record.
     let connectedFiles = []
@@ -78,7 +79,7 @@ export async function PUT(request, { params }) {
         if (file instanceof File) {
             // Store the file and connect it to the record.
             const fileSystem = FileStorageFactory.instance()
-            const newFile = await fileSystem.store(file, params.id)
+            const newFile = await fileSystem.store(file, currFamily, params.id)
 
             // Add the new file id to the list of connected files.
             connectedFiles.push(newFile.id)

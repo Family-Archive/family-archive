@@ -84,6 +84,7 @@ export async function PUT(request, { params }) {
         })
     }
 
+    const currFamily = request.cookies.get('familyId').value
     let formData = await request.formData()
 
     let profileImage
@@ -91,7 +92,7 @@ export async function PUT(request, { params }) {
     if (files[0] instanceof File) {
         // Store the file and connect it to the person.
         const fileSystem = FileStorageFactory.instance()
-        const newFile = await fileSystem.store(files[0], params.id, 'person')
+        const newFile = await fileSystem.store(files[0], currFamily, params.id, 'person')
 
         // Add the new file id to the list of connected files.
         profileImage = newFile.id
