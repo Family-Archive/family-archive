@@ -94,7 +94,7 @@ const NavBar = () => {
                     }}
                 /> : ""}
 
-                {session ? <span className={`material-icons ${styles.settings}`}>settings</span> : ""}
+                {session ? <Link href='/users'><span className={`material-icons ${styles.settings}`}>settings</span></Link> : ""}
             </section>
         </nav>
     )
