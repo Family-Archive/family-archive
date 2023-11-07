@@ -6,7 +6,12 @@
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 
-const DeleteButton = (props) => {
+/**
+ * This is a helper button component for deleting collections
+ * @param {string} id: The ID of the collection to delete
+ */
+
+const DeleteButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
 
     return (
@@ -18,7 +23,7 @@ const DeleteButton = (props) => {
                     <p>Are you sure you want to delete this collection?</p>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
-                            onClick={() => fetch(`/api/collection/${props.id}`, { method: "DELETE" })
+                            onClick={() => fetch(`/api/collection/${id}`, { method: "DELETE" })
                                 .then(response => response.json())
                                 .then(data => { window.location = '/collection' })
                             }

@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import styles from './PageSelector.module.scss'
 
+/**
+ * This component maintains a page number state and allows us to increase or decrease the page number.
+ * Number changes are reflected in the URL
+ */
+
 const PageSelector = () => {
     const router = useRouter();
     const pathname = usePathname()

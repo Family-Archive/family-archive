@@ -1,13 +1,23 @@
 import styles from './FIleSelector.module.scss'
 
-const FileSelector = (props) => {
+/**
+ * Helper component for the overall viewer that gives us a little file selector bar
+ * files: The list of files in the viewer
+ * setFile: A callback function to call when a file is selected
+ */
+
+const FileSelector = ({ files, setFile, activeFile }) => {
     return (
-        <div className={styles.FileSelector}>
-            {props.files.map(file => {
+        <div className={`${styles.FileSelector} fileSelector`}>
+            {files.map(file => {
                 return <button
                     key={file.id}
-                    onClick={() => props.setFile(file.id)}
-                    className={styles.file}
+                    onClick={() => setFile(file.id)}
+                    className={`
+                        selectorItem
+                        ${styles.file}
+                        ${files[activeFile].id == file.id ? styles.active : ""}
+                    `}
                 >
                     {file.mimeType.includes("image") ?
                         <img src={`/api/file/${file.id}`} /> :

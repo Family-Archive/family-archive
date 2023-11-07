@@ -1,10 +1,14 @@
 import styles from './Collections.module.scss'
 import Link from 'next/link'
 
-const Collections = (props) => {
+/**
+ * This component displays collections
+ */
+
+const Collections = ({ collections }) => {
     return (
         <div className={styles.collections}>
-            {props.collections.map(collection => {
+            {collections.map(collection => {
                 return <div className={styles.collectionContainer}>
                     <Link href={`/collection/${collection.id}`}>
                         <div className={styles.collection}>

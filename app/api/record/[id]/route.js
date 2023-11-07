@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import lib from '../../../../lib/lib'
 import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
 
+// Fetch info for a single record
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -15,9 +16,19 @@ export async function GET(request, { params }) {
         })
     }
 
-    let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
-    const recordData = await prisma.record.findFirst({
-        where: where
+    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
+    const recordData = await prisma.record.findUnique({
+        where: {
+            id: params.id
+        }
     })
 
     const RecordType = require(`/recordtypes/${recordData.type}/record.js`)
@@ -40,6 +51,7 @@ export async function GET(request, { params }) {
     return Response.json({ status: "success", data: { icon: icon, recordType: recordConfig, record: recordData, files: files, fields: extraFields } })
 }
 
+// Update a single record
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -48,6 +60,15 @@ export async function PUT(request, { params }) {
             'message': 'Not authorized'
         }, {
             status: 401
+        })
+    }
+
+    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
         })
     }
 
@@ -60,6 +81,7 @@ export async function PUT(request, { params }) {
         }
     })
     const oldRecordFileIds = oldRecordWithFiles.files.map(file => file.id)
+    const currFamily = request.cookies.get('familyId').value
 
     // List of file ids that are currently connected to the record.
     let connectedFiles = []
@@ -78,7 +100,7 @@ export async function PUT(request, { params }) {
         if (file instanceof File) {
             // Store the file and connect it to the record.
             const fileSystem = FileStorageFactory.instance()
-            const newFile = await fileSystem.store(file, params.id)
+            const newFile = await fileSystem.store(file, currFamily, params.id)
 
             // Add the new file id to the list of connected files.
             connectedFiles.push(newFile.id)
@@ -178,6 +200,7 @@ export async function PUT(request, { params }) {
     return Response.json({ status: "success", data: { record: record } })
 }
 
+// Delete a single record
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -189,9 +212,19 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    let where = lib.limitQueryByFamily({ id: params.id }, request.cookies, session)
+    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+        return Response.json({
+            status: "error",
+            message: "User does not have permission to access this resource"
+        }, {
+            status: 403
+        })
+    }
+
     const record = await prisma.record.deleteMany({
-        where: where
+        where: {
+            id: params.id
+        }
     })
 
     return Response.json({ status: "success", data: { message: "Record deleted" } })

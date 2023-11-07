@@ -4,6 +4,15 @@ import lib from "@/lib/lib"
 
 import styles from './mapPage.module.scss'
 
+/**
+ * This page displays all relevant records in a map view
+ */
+
+/**
+ * Given an array of records, remove entries that don't have a location field containing a value
+ * @param {Array} records 
+ * @returns {Array}: The filtered array
+ */
 const filterRecordsWithoutLocationFields = records => {
     let recordsWithLocationFields = []
     for (const record of records) {

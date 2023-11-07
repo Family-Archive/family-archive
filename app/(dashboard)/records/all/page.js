@@ -1,5 +1,9 @@
 import AllRecords from "../../../../components/AllRecords/AllRecords"
 
+/**
+ * This page displays all the records in the system
+ */
+
 const allRecords = async ({ searchParams }) => {
     return (
         <>

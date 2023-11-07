@@ -1,8 +1,22 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
 
+// Add a new file
 export async function POST(request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Not authorized'
+        }, {
+            status: 401
+        })
+    }
+
     const formData = await request.formData()
+    const currFamily = request.cookies.get('familyId').value
 
     // Store records for files that were successfully uploaded.
     let newFiles = []
@@ -14,7 +28,7 @@ export async function POST(request) {
 
     for (const file of files) {
         try {
-            const newFile = await storeFile(file);
+            const newFile = await storeFile(file, currFamily);
             newFiles.push(newFile)
         } catch (error) {
             errorFiles.push({
@@ -52,41 +66,8 @@ export async function POST(request) {
     })
 }
 
-export async function GET(request) {
-    // const { searchParams } = new URL(request.url)
-    // const fileId = searchParams.get('id')
-    // console.log('File id', fileId)
-
-    // const fileSystem = FileStorageFactory.instance()
-    // const filePath = await fileSystem.getPath(fileId)
-
-    // const file = await prisma.File.findUnique({
-    //     where: {
-    //         id: fileId
-    //     }
-    // })
-
-    // return NextResponse.json({
-    //     status: 'success',
-    //     data: {
-    //         file: {
-    //             id: fileId,
-    //             url: filePath,
-    //             name: file.name
-    //         }
-    //     }
-    // }, {
-    //     status: 200
-    // })
-    // const fileBuffer = fileSystem.loadFile(json.id)
-
-    // const response = new NextResponse(fileBuffer)
-    // response.headers.set('content-type', file.mimeType)
-    // return response
-}
-
-async function storeFile(file) {
+async function storeFile(file, familyId) {
     const fileSystem = FileStorageFactory.instance()
-    const newFile = await fileSystem.store(file)
+    const newFile = await fileSystem.store(file, familyId)
     return newFile
 }

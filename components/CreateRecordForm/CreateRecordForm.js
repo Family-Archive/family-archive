@@ -1,5 +1,9 @@
 import Form from '../Form/Form'
 
+/**
+ * Wrapper component for creating a record
+ */
+
 const CreateRecordForm = async (props) => {
     const recordType = props.recordTypeClass
     const recordTypeData = recordType.getStructure()

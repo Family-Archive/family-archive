@@ -2,6 +2,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import { headers } from 'next/headers';
 
+// Create a new family
 export async function POST(request) {
     const headersList = headers()
     const referer = headersList.get('referer')

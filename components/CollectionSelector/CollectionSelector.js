@@ -11,43 +11,54 @@ import { useParams } from 'next/navigation'
  * Optional prop: {string} recordId: If a recordId is passed, the component will disable the search bar 
  * and only show collections of which the record belongs
  */
-const CollectionSelector = (props) => {
+const CollectionSelector = ({ recordId }) => {
     const params = useParams()
 
     const [collections, setcollections] = useState([]) // List of collections we want to make selectable
     const [activeCollection, setactiveCollection] = useState(null) // The parent collection of the children we are currently looking at (if applicable)
     const [selectedCollection, setselectedCollection] = useState(null) // The actual, highlighted selection
-    const [loading, setloading] = useState(true)
-    const [isSearching, setisSearching] = useState(false)
+    const [loading, setloading] = useState(true) // If we're currently waiting for an API call to finish
+    const [isSearching, setisSearching] = useState(false) // If the user is searching for collections
 
+    /**
+     * Get child collections of a parent if an ID was passed -- otherwise, get top-level collections
+     * @param {string} id: The optional ID of the parent collection we want children of
+     */
     const getChildren = async (id = null) => {
         setloading(true)
         let collectionsData = await fetch(`/api/collection/${id ? id : ''}`)
         collectionsData = await collectionsData.json()
         setloading(false)
 
-        if (collectionsData.data.collections[0] && collectionsData.data.collections[0].children !== undefined) {
-            setcollections(collectionsData.data.collections[0].children)
-            setactiveCollection(collectionsData.data.collections[0])
+        if (collectionsData.data.collection && collectionsData.data.collection.children !== undefined) {
+            setcollections(collectionsData.data.collection.children)
+            setactiveCollection(collectionsData.data.collection)
         } else {
             setcollections(collectionsData.data.collections)
             setactiveCollection(null)
         }
     }
 
+    /**
+     * Fetch collections that own a record ID, passed via prop
+     */
     const getCollectionsFromRecordId = async () => {
-        let collectionsData = await fetch(`/api/collection?recordId=${props.recordId}`)
+        let collectionsData = await fetch(`/api/collection?recordId=${recordId}`)
         collectionsData = await collectionsData.json()
         setcollections(collectionsData.data.collections)
         setloading(false)
     }
 
+    /**
+     * Given a query, search all collections that match
+     * @param {string} name
+     */
     const searchCollections = async (name) => {
         let collectionsData = await fetch(`/api/collection?name=${name}`)
         collectionsData = await collectionsData.json()
         setactiveCollection(null)
         setselectedCollection(null)
-        setcollections(collectionsData.data.collections)
+        setcollections(collectionsData.data.collection)
     }
 
     useEffect(() => {
@@ -68,8 +79,8 @@ const CollectionSelector = (props) => {
             }
         }
 
-        if (props.recordId) {
-            getCollectionsFromRecordId(props.recordId)
+        if (recordId) {
+            getCollectionsFromRecordId(recordId)
         } else {
             activateCurrentCollection()
         }
@@ -82,7 +93,7 @@ const CollectionSelector = (props) => {
             {loading ? <span className={styles.loading}>Loading...</span>
                 : <>
                     <div className={styles.formControl}>
-                        {!props.recordId ?
+                        {!recordId ?
                             <input
                                 type='text'
                                 id='collectionSearch'
@@ -128,7 +139,7 @@ const CollectionSelector = (props) => {
                             key={collection.id}
                         >
                             {collection.name}
-                            {isSearching || props.recordId ? "" :
+                            {isSearching || recordId ? "" :
                                 <span
                                     className="material-icons levelDown"
                                     onClick={(e) => { getChildren(collection.id) }}

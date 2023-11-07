@@ -5,6 +5,10 @@ import { usePathname } from "next/navigation"
 
 export const BreadcrumbContext = createContext()
 
+/**
+ * This context displays provides us a persistent breadcrumb trail representing the user's navigation.
+ */
+
 export const BreadcrumbProvider = ({ children }) => {
     const pathname = usePathname()
     const [trail, settrail] = useState([{ name: 'Home', path: '/' }])
@@ -16,8 +20,7 @@ export const BreadcrumbProvider = ({ children }) => {
     // Home > Timeline > Record, or the same record could be reached through Home > Collection > Collection Name > Subcollection Name > Record
 
     // So basically the way we're dealing with this is that we have a route listener on the breadcrumb context that updates the trail contextually when the page changes.
-    // Firstly, we have a list of paths that should always cause the trail to reset. Like if a user goes to the All Records page or the Timeline, we always reset the trail
-    // to Home > Timeline (or whatever).
+    // Firstly, we have a list of paths that should always cause the trail to reset. Like if a user goes to the All Records, we always reset the trail to Home > All Records.
     // Secondly, if that doesn't apply, we check if any of the existing nodes contain the current path. If so, we split the breadcrumb trail there -- we went backwards.
     // Finally, if these conditions don't apply, we just append a new node to the end of the trail.
 
@@ -28,6 +31,11 @@ export const BreadcrumbProvider = ({ children }) => {
         '/people'
     ]
 
+    /**
+     * Given a path that the user has navigated to, alter the breadcrumb path accordingly
+     * @param {string} pathname: The page the user has navigated to
+     * @returns {null}
+     */
     const updateTrail = (pathname) => {
         // Use the last split of the URL as the page name,
         // unless there's an h1.title element on the page -- then use that
@@ -58,6 +66,7 @@ export const BreadcrumbProvider = ({ children }) => {
         settrail(trail)
     }
 
+    // Watch for path changes and update the breadcrumb trail accordingly
     useEffect(() => {
         updateTrail(pathname)
     }, [pathname])

@@ -1,13 +1,16 @@
 "use client"
 
-// This needs to be a separate component because it's client-side.
-// Since it's bespoke, I'm just putting it here
-
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import CollectionSelector from '@/components/CollectionSelector/CollectionSelector'
 
-const MoveToCollectionButton = (props) => {
+/**
+ * This is a helper button component for adding a record to a collection
+ * @param {string} id: The ID of the record 
+ * @returns 
+ */
+
+const MoveToCollectionButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
 
     return (
@@ -20,7 +23,7 @@ const MoveToCollectionButton = (props) => {
                         <button
                             onClick={() => {
                                 const collectionId = document.querySelector('#collectionParentId').value
-                                fetch(`/api/record/${props.id}/collection/${collectionId}`, {
+                                fetch(`/api/record/${id}/collection/${collectionId}`, {
                                     method: "POST"
                                 })
                                     .then(response => response.json())

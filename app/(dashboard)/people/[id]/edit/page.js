@@ -2,7 +2,12 @@ import Form from "@/components/Form/Form"
 import { cookies } from 'next/dist/client/components/headers'
 import lib from '@/lib/lib'
 
+/**
+ * This page allows the editing of a person
+ */
+
 const editPerson = async ({ params }) => {
+    // Fetch the data for the person we're looking at
     const getPerson = async () => {
         let person = await fetch(`${process.env.NEXTAUTH_URL}/api/people/${params.id}`,
             {
@@ -20,6 +25,7 @@ const editPerson = async ({ params }) => {
     return (
         <div className="column">
             <h1 className="title">Edit person</h1>
+            {/* Create a form for this user and fill in existing data */}
             <Form
                 method="PUT"
                 action={`/api/people/${params.id}`}

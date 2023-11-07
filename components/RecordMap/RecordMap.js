@@ -15,7 +15,13 @@ const icon = L.icon({
     iconAnchor: [12, 40]
 });
 
-const RecordMap = (props) => {
+/**
+ * This component displays records in a map view
+ * data: A list of records passed to the component
+ * params: The search params from the page that hosts this component, which gets passed to the child ViewFilter
+ */
+
+const RecordMap = ({ data, params }) => {
     const [map, setmap] = useState(null)
 
     return (
@@ -34,7 +40,7 @@ const RecordMap = (props) => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-                    {props.data.map(record => {
+                    {data.map(record => {
                         return <Marker icon={icon} position={[record.location.lat, record.location.lng]}>
                             <Popup>
                                 <b>{record.name}</b><br />
@@ -49,10 +55,10 @@ const RecordMap = (props) => {
             </div>
 
             <div class={styles.sidebar}>
-                <ViewFilter params={props.params} sortOptions={false} />
+                <ViewFilter params={params} sortOptions={false} />
                 <div className={styles.recordList}>
-                    {props.data.length ?
-                        props.data.map((record, index) => {
+                    {data.length ?
+                        data.map((record, index) => {
                             return <div className={styles.listRecordContainer}>
                                 <button
                                     className={`${styles.record} tertiary`}

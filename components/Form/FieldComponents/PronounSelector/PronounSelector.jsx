@@ -20,7 +20,6 @@ const PronounSelector = ({ value, index, onChange }) => {
   }
 
   useEffect(() => {
-    console.log(value)
     const fetchPronouns = async () => {
       let pronouns = await fetch('/api/pronounset')
       pronouns = await pronouns.json()
@@ -38,7 +37,7 @@ const PronounSelector = ({ value, index, onChange }) => {
             const pronounString = `${pronounSet.subject} / ${pronounSet.object} / ${pronounSet.possessive}`
             return { value: pronounSet.id, name: pronounString }
           })}
-          default={fieldValue}
+          defaultOption={fieldValue}
           onChange={e => updateValue(e)}
         />
         : ""

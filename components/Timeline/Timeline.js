@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Timeline.module.scss'
 
+/**
+ * A component displaying records on a timeline
+ * data: The list of records to display
+ */
+
 const Timeline = (props) => {
 
     const [fontSize, setfontSize] = useState(55)
