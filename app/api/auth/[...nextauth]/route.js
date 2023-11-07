@@ -9,6 +9,10 @@ export const authOptions = {
         GithubProvider({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
+
+            // With the following option, users logging in with OAuth can connect to existing User accounts
+            allowDangerousEmailAccountLinking: true,
+
             async profile(profile) {
                 const family = await prisma.family.findFirst({
                     where: { name: 'Default' },
