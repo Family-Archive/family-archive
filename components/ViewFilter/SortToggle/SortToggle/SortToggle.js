@@ -26,7 +26,7 @@ const SortToggle = (props) => {
             onClick={() => props.updateSortSettings(getSortSettings())}
             className={`${styles.SortToggle} secondary`}
         >
-            {props.label ? props.label : props.option}
+            {props.label || props.option}
             <span
                 className={`
                     material-icons

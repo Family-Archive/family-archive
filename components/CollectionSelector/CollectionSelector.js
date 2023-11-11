@@ -26,7 +26,7 @@ const CollectionSelector = ({ recordId }) => {
      */
     const getChildren = async (id = null) => {
         setloading(true)
-        let collectionsData = await fetch(`/api/collection/${id ? id : ''}`)
+        let collectionsData = await fetch(`/api/collection/${id || ''}`)
         collectionsData = await collectionsData.json()
         setloading(false)
 
@@ -88,7 +88,7 @@ const CollectionSelector = ({ recordId }) => {
 
     return (
         <div className={styles.CollectionSelector}>
-            <input type='hidden' name="collectionParentId" id="collectionParentId" value={selectedCollection ? selectedCollection : ""} />
+            <input type='hidden' name="collectionParentId" id="collectionParentId" value={selectedCollection || ""} />
 
             {loading ? <span className={styles.loading}>Loading...</span>
                 : <>

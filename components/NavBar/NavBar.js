@@ -40,6 +40,7 @@ const NavBar = () => {
                             icon="account_circle"
                             title=""
                             options={[
+                                <Link href={`/users/${session.user.id}`}><button>My account</button></Link>,
                                 <button onClick={signOut}>Log Out</button>,
                             ]}
                         />
@@ -74,7 +75,7 @@ const NavBar = () => {
                 {/* Set as default whatever is in the family context; if this isn't anything, use the defaultfamily from the session */}
                 {/* When changed, set the family, unless the value is "addFamily" -- then display the modal */}
                 {session ? <SelectorInput
-                    defaultOption={familyContext.family ? familyContext.family : session.user.defaultFamily.id}
+                    defaultOption={familyContext.family || session.user.defaultFamily.id}
                     options={familySelectOptions}
                     onChange={(valueToSet) => {
                         if (valueToSet === "addFamily") {

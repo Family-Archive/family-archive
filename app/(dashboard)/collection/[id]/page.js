@@ -22,7 +22,7 @@ const collection = async ({ params, searchParams }) => {
     data = await data.json()
 
     const thisCollection = data.data.collection
-    const children = thisCollection.children ? thisCollection.children : []
+    const children = thisCollection.children || []
     const records = data.data.records
 
     return (

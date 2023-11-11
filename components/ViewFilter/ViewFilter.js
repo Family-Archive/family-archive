@@ -22,17 +22,17 @@ const ViewFilter = (props) => {
 
     // If this stuff is set in the URL, set the state to those values. Otherwise leave it blank.
     const [sortSettings, setsortSettings] = useState({
-        option: props.params.sort ? props.params.sort : "",
-        direction: props.params.dir ? props.params.dir : ""
+        option: props.params.sort || "",
+        direction: props.params.dir || ""
     })
     const [filters, setfilters] = useState({
-        "name": filterJSON.name ? filterJSON.name : [],
-        "type": filterJSON.age ? filterJSON.age : [],
+        "name": filterJSON.name || [],
+        "type": filterJSON.age || [],
     })
     const [extraParams, setextraParams] = useState({
-        "startdate": props.params.startdate ? props.params.startdate : "",
-        "enddate": props.params.enddate ? props.params.enddate : "",
-        "people": props.params.people ? props.params.people : ""
+        "startdate": props.params.startdate || "",
+        "enddate": props.params.enddate || "",
+        "people": props.params.people || ""
     })
     const [hasLoaded, sethasLoaded] = useState(false)
 

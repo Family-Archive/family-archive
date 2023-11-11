@@ -3,7 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
-import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory';
+import bcrypt from 'bcrypt'
 
 // Fetch a user's information
 export async function GET(request, { params }) {
@@ -93,7 +93,7 @@ export async function DELETE(request, { params }) {
     })
 }
 
-// Update a person
+// Update a user
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -106,11 +106,16 @@ export async function PUT(request, { params }) {
     }
 
     let formData = await request.formData()
+    let data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+    }
+    if (formData.get('password')) {
+        data['password'] = bcrypt.hashSync(formData.get('password'), 10)
+    }
+
     const user = await prisma.User.update({
-        data: {
-            name: formData.get('name'),
-            email: formData.get('email'),
-        },
+        data: data,
         where: {
             id: params.id
         }

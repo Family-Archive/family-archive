@@ -3,6 +3,11 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server'
 
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
+import nodemailer from "nodemailer"
+import lib from '@/lib/lib';
+
 // Fetch people
 export async function GET(request) {
     const session = await getServerSession(authOptions);
@@ -31,7 +36,7 @@ export async function GET(request) {
     })
 }
 
-// Create a new person
+// Create a new user
 export async function POST(request, session) {
     if (!session) {
         return Response.json({
@@ -42,36 +47,55 @@ export async function POST(request, session) {
         })
     }
 
-    // Validation: we need a full name to add a new person.
     const data = await request.formData()
-    if (data.get('fullName') === '') {
-        return NextResponse.json({
-            status: 'fail',
-            data: { "fullName": "A full name is required." }
-        }, {
-            status: 400
+    const familiesData = JSON.parse(data.get('families'))
+    const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
+    const shouldGeneratePassword = parseInt(data.get('emailpassword')) === 1 ? true : false
+
+    let password = data.get('password')
+    if (shouldGeneratePassword) {
+        password = crypto.randomBytes(64).toString('hex')
+    }
+
+    const newUser = await prisma.User.create({
+        data: {
+            name: data.get('name'),
+            email: data.get('email'),
+            password: bcrypt.hashSync(password, 10),
+            defaultFamily: {
+                connect: {
+                    id: familiesData.defaultFamily
+                }
+            },
+            families: {
+                connect: familiesIdList
+            }
+        }
+    })
+
+    if (shouldGeneratePassword) {
+        const transporter = nodemailer.createTransport({
+            host: (await lib.getSetting('smtphost')).split(':')[0],
+            port: (await lib.getSetting('smtphost')).split(':')[1],
+            secure: (await lib.getSetting('smtpauthtype')) === 'true' ? true : false,
+            auth: {
+                user: await lib.getSetting('smtpusername'),
+                pass: await lib.getSetting('smtppassword'),
+            },
+        })
+
+        const info = await transporter.sendMail({
+            from: '"Family Archive" <familyarchive@bryceyoder.com>',
+            to: data.get('email'),
+            subject: "A Family Archive account has been created for you",
+            html: `<b>Hi ${data.get('name')},</b> a new Family Archive account has been created for you at <a href='${process.env.NEXTAUTH_URL}'>${process.env.NEXTAUTH_URL}</a>.<br /><br />You can login with the password "<b>${password}</b>" and your email. Please set a new password after logging in.`,
         })
     }
 
-    const currFamily = request.cookies.get('familyId').value
-    const newPerson = await prisma.Person.create({
-        data: {
-            fullName: data.get('fullName'),
-            shortName: data.get('shortName'),
-            pronouns: {
-                connect: { id: data.get('pronouns') }
-            },
-            family: {
-                connect: {
-                    id: currFamily
-                }
-            },
-        }
-    })
     return NextResponse.json({
         status: 'success',
         data: {
-            people: [newPerson]
+            user: newUser
         }
     }, {
         status: 201

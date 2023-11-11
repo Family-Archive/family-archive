@@ -17,13 +17,13 @@ export async function GET(request) {
     }
 
     // Pull out explicit params
-    const sortField = params.get('sort') ? params.get('sort') : 'name'
-    const direction = params.get('dir') ? params.get('dir') : 'asc'
-    const startdate = params.get('startdate') ? params.get('startdate') : null
-    const enddate = params.get('enddate') ? params.get('enddate') : null
-    const people = params.get('people') ? params.get('people') : null
+    const sortField = params.get('sort') || 'name'
+    const direction = params.get('dir') || 'asc'
+    const startdate = params.get('startdate') || null
+    const enddate = params.get('enddate') || null
+    const people = params.get('people') || null
 
-    const page = params.get('page') ? params.get('page') : '1'
+    const page = params.get('page') || '1'
     const take = page * 20
     const skip = take - 20
 

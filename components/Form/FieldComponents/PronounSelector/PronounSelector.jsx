@@ -24,7 +24,7 @@ const PronounSelector = ({ value, index, onChange }) => {
       let pronouns = await fetch('/api/pronounset')
       pronouns = await pronouns.json()
       setpronouns(pronouns.data.pronounSets)
-      updateValue(fieldValue ? fieldValue : pronouns.data.pronounSets[0].id)
+      updateValue(fieldValue || pronouns.data.pronounSets[0].id)
     }
     fetchPronouns()
   }, [])

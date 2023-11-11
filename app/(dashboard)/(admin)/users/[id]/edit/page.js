@@ -31,17 +31,28 @@ const editUser = async ({ params }) => {
                 action={`/api/users/${params.id}`}
                 fields={[
                     {
+                        name: 'email',
+                        label: 'Email',
+                        type: 'email',
+                        value: user.email
+                    },
+                    {
                         name: 'name',
                         label: 'Name',
                         type: 'text',
                         value: user.name
                     },
                     {
-                        name: 'email',
-                        label: 'Email',
-                        type: 'text',
-                        value: user.email
-                    }
+                        name: 'password',
+                        label: 'Password',
+                        type: 'password'
+                    },
+                    {
+                        name: 'families',
+                        label: 'Add user to families',
+                        type: 'FamilySelector',
+                        value: JSON.stringify({ families: user.families, defaultFamily: user.defaultFamilyId })
+                    },
                 ]}
                 allowFileUpload={false}
             />

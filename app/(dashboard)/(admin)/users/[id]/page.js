@@ -27,7 +27,6 @@ const userView = async ({ params }) => {
     }
 
     const user = await getuser()
-    console.log(user)
 
     return (
         <div className={`${styles.userView} column`}>
@@ -49,8 +48,8 @@ const userView = async ({ params }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
                 <div>
                     <div className={styles.info}>
+                        <span><b>Username/email</b>{user.email}</span>
                         <span><b>Name</b>{user.name}</span>
-                        <span><b>Email</b>{user.email}</span>
                     </div>
                     <div className={styles.accounts}>
                         <h2>Connected authentication methods</h2>

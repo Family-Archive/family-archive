@@ -38,7 +38,7 @@ const Dropdown = ({ icon, title, options }) => {
             ref={myRef}
         >
             <button className={`${styles.title} tertiary`} onClick={() => setactive(!active)}>
-                <span className="material-icons">{icon ? icon : "expand_more"}</span>{title}
+                <span className="material-icons">{icon || "expand_more"}</span>{title}
             </button>
             <div className={styles.options} >
                 {options.map((option, index) => {

@@ -13,6 +13,44 @@
     }
 
     .options {
+        pointer-events: none;
+
+        &.down {
+            flex-direction: column;
+            top: 0;
+            bottom: unset;
+
+            .mainButton {
+                span {
+                    transform: rotate(180deg);
+                }
+
+                &.active {
+                    border-radius: 7.5px 7.5px 0 0;
+                    border-bottom-width: 0.075rem;
+
+                    span {
+                        transform: rotate(0deg);
+                    }
+                }
+            }
+
+            .menu {
+                transform: scale(0.98) translateY(-1rem);
+
+                button {
+                    &:first-child {
+                        border-radius: 0;
+                    }
+
+                    &:last-child {
+                        border-radius: 0 0 7.5px 7.5px;
+                        border-bottom-width: 0.15rem;
+                    }
+                }
+            }
+        }
+
         display: flex;
         flex-direction: column-reverse;
         position: absolute;
@@ -24,6 +62,7 @@
 
         .mainButton {
             z-index: 1;
+            pointer-events: all;
 
             span {
                 transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -41,9 +80,9 @@
 
         .menu {
             opacity: 0;
-            pointer-events: none;
             transform: scale(0.98) translateY(1rem);
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 3;
 
             &.active {
                 opacity: 1;

@@ -44,7 +44,7 @@ const RecordMap = ({ data, params }) => {
                         return <Marker icon={icon} position={[record.location.lat, record.location.lng]}>
                             <Popup>
                                 <b>{record.name}</b><br />
-                                {record.location.name ? record.location.name : <span>{record.location.lat}<br />{record.location.lng}</span>}<br />
+                                {record.location.name || <span>{record.location.lat}<br />{record.location.lng}</span>}<br />
                                 <Link href={`/record/${record.id}`}>View record</Link>
                             </Popup>
                         </Marker>
@@ -67,8 +67,8 @@ const RecordMap = ({ data, params }) => {
                                     }}
                                 >
                                     <div>
-                                        <span className={styles.title}>{record.name ? record.name : "{no title}"}</span>
-                                        <span>{record.location.name ? record.location.name : <>{record.location.lat}<br />{record.location.lng}</>}</span>
+                                        <span className={styles.title}>{record.name || "{no title}"}</span>
+                                        <span>{record.location.name || <>{record.location.lat}<br />{record.location.lng}</>}</span>
                                     </div>
                                     <Link className={styles.link} href={`/record/${record.id}`}>View record</Link>
                                 </button>
