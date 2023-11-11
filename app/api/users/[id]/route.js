@@ -106,9 +106,20 @@ export async function PUT(request, { params }) {
     }
 
     let formData = await request.formData()
+    const familiesData = JSON.parse(formData.get('families'))
+    const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
+
     let data = {
         name: formData.get('name'),
         email: formData.get('email'),
+        defaultFamily: {
+            connect: {
+                id: familiesData.defaultFamily
+            }
+        },
+        families: {
+            connect: familiesIdList
+        }
     }
     if (formData.get('password')) {
         data['password'] = bcrypt.hashSync(formData.get('password'), 10)
