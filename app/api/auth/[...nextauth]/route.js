@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "../../../db/prisma"
 import bcrypt from 'bcrypt'
+import lib from "@/lib/lib"
 
 export const authOptions = {
     adapter: PrismaAdapter(prisma),
@@ -12,7 +13,8 @@ export const authOptions = {
     },
     providers: [
         CredentialsProvider({
-            name: "credentials",
+            id: "login",
+            name: "credentialsLogin",
             credentials: {
                 email: { label: "Email", type: "text", placeholder: "" },
                 password: { label: "Password", type: "password" }
@@ -24,17 +26,48 @@ export const authOptions = {
                 })
 
                 if (user && bcrypt.compareSync(credentials.password, user.password)) {
-                    // Any object returned will be saved in `user` property of the JWT
-                    return user
-                } else {
-                    // If you return null then an error will be displayed advising the user to check their details.
-                    console.log('nah')
-                    return null
 
-                    // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+                    console.log(await lib.getSetting('requireemailverification'))
+                    if ((await lib.getSetting('requireemailverification')) === 'no' && user.emaiVerified !== 'yes') {
+                        return user
+                    }
+
+                    return null
+                } else {
+                    return null
                 }
             }
         }),
+
+        CredentialsProvider({
+            id: "signup",
+            name: "credentialsSignup",
+            credentials: {
+                email: { label: "Email", type: "text", placeholder: "" },
+                name: { label: "Name", type: "text", placeholder: "" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, req) {
+
+                const family = await prisma.family.findFirst()
+                const user = await prisma.User.create({
+                    data: {
+                        email: credentials.email,
+                        name: credentials.name,
+                        password: bcrypt.hashSync(credentials.password, 10),
+                        defaultFamilyId: family.id,
+                        families: { connect: { id: family.id } }
+                    }
+                })
+
+                if ((await lib.getSetting('requireemailverification')) === 'no') {
+                    return user
+                }
+
+                return null
+            }
+        }),
+
         GithubProvider({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
@@ -43,9 +76,7 @@ export const authOptions = {
             allowDangerousEmailAccountLinking: true,
 
             async profile(profile) {
-                const family = await prisma.family.findFirst({
-                    where: { name: 'Default' },
-                })
+                const family = await prisma.family.findFirst()
 
                 return {
                     id: profile.id,
@@ -63,7 +94,6 @@ export const authOptions = {
     callbacks: {
         session: async ({ session, token, user }) => {
             if (session?.user) {
-
                 let fetchedUser
                 if (!user) {
                     fetchedUser = await prisma.User.findUnique({

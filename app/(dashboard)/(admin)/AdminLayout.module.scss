@@ -11,9 +11,25 @@
 
         a {
             padding-bottom: 1rem;
+            text-transform: capitalize;
 
             &:not(:last-child) {
                 border-bottom: 1px solid $accent-border-color;
+            }
+
+            &.active {
+                &::before {
+                    content: "";
+                    width: 0.75rem;
+                    height: 0.75rem;
+                    background-color: $accent-color;
+                    position: absolute;
+                    border-radius: 99rem;
+                    margin-left: -1.25rem;
+                    margin-top: 0.5rem;
+                }
+
+                color: $accent-color;
             }
         }
     }

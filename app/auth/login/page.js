@@ -4,6 +4,7 @@ import { getProviders } from "next-auth/react"
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import lib from '@/lib/lib';
 
 import LoginForm from '/components/LoginForm/LoginForm.js'
 
@@ -15,10 +16,12 @@ const page = async () => {
         redirect('/')
     }
 
+    const allowSelfRegistration = await lib.getSetting('allowselfregistration')
+
     return (
         <>
             <main className={styles.loginpage}>
-                <LoginForm providers={providers} />
+                <LoginForm providers={providers} allowSelfRegistration={allowSelfRegistration} />
             </main>
         </>
     )

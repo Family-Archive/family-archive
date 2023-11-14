@@ -1,7 +1,8 @@
 "use client"
-import { useEffect, useState } from 'react'
 import styles from './usersPage.module.scss'
+import Form from '@/components/Form/Form'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 /**
@@ -23,9 +24,9 @@ const usersPage = () => {
     }, [])
 
     return (
-        <div className={styles.usersPage}>
+        <div className={`${styles.usersPage} column`}>
             <div className="topBar">
-                <h1 className='title'>Users</h1>
+                <h1 className='title'>All Users</h1>
                 <div className='pageOptions'>
                     <Link href='/users/add'>
                         <button><span className="material-icons">person_add</span>Add user</button>

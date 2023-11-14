@@ -58,13 +58,24 @@ const userView = async ({ params }) => {
                                 <span className={styles.accountId}>{account.id}</span>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <span>{account.type}</span>
-                                    <div>
+                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                         <img src={`/icons/logos/${account.provider}.svg`} />
                                         <span>{account.provider}</span>
                                     </div>
                                 </div>
                             </div>
                         })}
+                        {user.password ? <div className={styles.account}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span>manual</span>
+                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    <span className="material-icons">key</span>
+                                    <span>Email and password</span>
+                                </div>
+                            </div>
+                        </div>
+                            : ""
+                        }
                     </div>
                 </div>
                 <div className={styles.extraInfo}>

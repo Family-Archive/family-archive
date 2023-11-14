@@ -118,7 +118,7 @@ export async function PUT(request, { params }) {
             }
         },
         families: {
-            connect: familiesIdList
+            set: familiesIdList
         }
     }
     if (formData.get('password')) {

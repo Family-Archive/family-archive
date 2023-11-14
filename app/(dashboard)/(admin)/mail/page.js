@@ -5,7 +5,6 @@ const mailPage = async () => {
 
     const smtphost = await lib.getSetting('smtphost')
     const smtpauthtype = await lib.getSetting('smtpauthtype')
-    const smtpsecurity = await lib.getSetting('smtpsecurity')
     const smtpusername = await lib.getSetting('smtpusername')
     const smtppassword = await lib.getSetting('smtppassword')
 
