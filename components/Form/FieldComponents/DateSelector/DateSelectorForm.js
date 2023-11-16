@@ -15,7 +15,7 @@ const DateSelector = (props) => {
     const [enddate, setenddate] = useState(null)
 
     useEffect(() => {
-        props.updateValue({ startdate: startdate, enddate: enddate, unit: unit ? unit : 'days' })
+        props.updateValue({ startdate: startdate, enddate: enddate, unit: unit || 'days' })
     }, [startdate, enddate])
 
     const setDate = (date, type) => {

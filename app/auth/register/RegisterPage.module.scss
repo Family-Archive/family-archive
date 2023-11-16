@@ -1,0 +1,19 @@
+.RegisterPage {
+    width: 20rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border: $accent-border;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    img {
+        max-width: 15rem;
+        margin-bottom: 2rem;
+    }
+}

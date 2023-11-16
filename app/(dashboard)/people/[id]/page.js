@@ -29,7 +29,7 @@ const personView = async ({ params }) => {
     const person = await getPerson()
 
     return (
-        <div className={styles.personView}>
+        <div className={`${styles.personView} column`}>
             <div className="topBar">
                 <h1 className='title'>{person.fullName}</h1>
                 <div className='pageOptions'>
@@ -47,8 +47,8 @@ const personView = async ({ params }) => {
 
             <BreadcrumbTrail name={person.fullName} />
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3rem' }}>
-                <div style={{ display: 'flex', gap: '4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3rem', gap: '3rem' }}>
+                <div style={{ display: 'flex', gap: '3rem' }}>
                     <div className={styles.profileImage}>
                         <img src={person.profileImageId ? `/api/file/${person.profileImageId}` : '/icons/no-user.png'} />
                         <h2 className={styles.dates}>
@@ -64,9 +64,6 @@ const personView = async ({ params }) => {
                             {person.born ? <span><b>Birth date</b>{clientLib.renderSingleDate(person.born)}</span> : ""}
                             {person.died ? <span><b>Death date</b>{clientLib.renderSingleDate(person.died)}</span> : ""}
                         </div>
-                        <Link href={`/records/all?people=${person.id}`}>
-                            <button className='secondary'>See records connected to this person <span className="material-icons">arrow_right_alt</span></button>
-                        </Link>
                     </div>
 
                 </div>
@@ -74,8 +71,12 @@ const personView = async ({ params }) => {
                     <h2>More details</h2>
                     <span><b>Created on</b>{person.createdAt}</span>
                     <span><b>Last updated</b>{person.updatedAt}</span>
-                    <span><b>User ID</b>{person.id}</span>
+                    <span><b>ID</b>{person.id}</span>
                     <span><b>Family ID</b>{person.familyId}</span>
+                    <Link href={`/records/all?people=${person.id}`}>
+                        <br />
+                        <button className='secondary'>See records connected to this person <span className="material-icons">arrow_right_alt</span></button>
+                    </Link>
                 </div>
             </div>
 

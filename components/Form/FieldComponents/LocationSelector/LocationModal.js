@@ -133,7 +133,7 @@ const LocationModal = (props) => {
                 <formitem>
                     <label htmlFor='customName'>Name</label>
                     <input
-                        defaultValue={value.name ? value.name : ""}
+                        defaultValue={value.name || ""}
                         onChange={(e) => setvalue({ ...value, name: e.target.value })}
                         type='text'
                         id='customName'

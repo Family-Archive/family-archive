@@ -19,7 +19,8 @@ export default function Form({
     recordType,
     editMode,
     fileIds,
-    loadFilesFromUrl
+    loadFilesFromUrl,
+    allowFileUpload = true
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
@@ -359,21 +360,24 @@ export default function Form({
             className={styles.form}
             onSubmit={submissionHandler}
         >
-            <div className={styles.fileArea}>
-                <FileUploader
-                    files={files}
-                    isFilePicked={isFilePicked}
-                    fileChangeHandler={fileChangeHandler}
-                    removeFile={removeFile}
-                    dragOver={handleDragOver}
-                    dragEnter={handleDragEnter}
-                    dragLeave={handleDragLeave}
-                    drop={handleDrop}
-                    hovered={hovered}
-                    error={fileError}
-                    allowMultiple={allowMultipleFiles}
-                />
-            </div>
+            {allowFileUpload ?
+                <div className={styles.fileArea}>
+                    <FileUploader
+                        files={files}
+                        isFilePicked={isFilePicked}
+                        fileChangeHandler={fileChangeHandler}
+                        removeFile={removeFile}
+                        dragOver={handleDragOver}
+                        dragEnter={handleDragEnter}
+                        dragLeave={handleDragLeave}
+                        drop={handleDrop}
+                        hovered={hovered}
+                        error={fileError}
+                        allowMultiple={allowMultipleFiles}
+                    />
+                </div>
+                : ""
+            }
             {/* Only display the rest of the form if we're ready to. */}
             {!requireFileUploadFirst || (requireFileUploadFirst && readyToDisplayForm) ?
                 <div className={styles.formArea}>

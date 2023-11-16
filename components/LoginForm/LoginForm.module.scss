@@ -1,14 +1,41 @@
 .container {
     display: flex;
     flex-direction: column;
-    width: 20rem;
-    padding: 2rem;
+    width: 22rem;
+    padding: 2rem 3rem;
     border-radius: 1rem;
-    background: $accent-bg-color;
+    background: white;
     border: $accent-border;
+
+    input {
+        width: 100%;
+    }
 
     button {
         margin-top: 2rem;
         width: 100%;
+
+        img {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    }
+
+    .manualLogin {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 2rem 0;
+
+        button {
+            margin: 0;
+        }
+    }
+
+    .selfReg {
+        margin-top: 2rem;
+        text-align: center;
+        text-decoration: underline;
     }
 }

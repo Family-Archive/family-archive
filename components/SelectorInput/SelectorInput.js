@@ -8,9 +8,10 @@ import { useState, useRef, useEffect } from 'react'
  * defaultOption: The default option that should be selected when the component loads (this must EXACTLY match one of the values of the options array)
  * onChange: A function callback to run when an option is changed
  * options: The array of options to display
+ * direction: Which direction the options should expand. "up" or "down"
  */
 
-const SelectorInput = ({ defaultOption, onChange, options }) => {
+const SelectorInput = ({ defaultOption, onChange, options, direction }) => {
     const [value, setvalue] = useState(defaultOption)
     const [showMenu, setshowMenu] = useState(false)
 
@@ -44,7 +45,7 @@ const SelectorInput = ({ defaultOption, onChange, options }) => {
 
     return (
         <div className={styles.SelectorInput} ref={myRef}>
-            <div className={styles.options}>
+            <div className={`${styles.options} ${direction ? styles[direction] : ""}`}>
 
                 {options.map(option => {
                     if (option.value == value) {

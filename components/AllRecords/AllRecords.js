@@ -51,7 +51,6 @@ const fetchExtraRecordData = async (recordId) => {
         }
     )
     record = await record.json()
-
     return record.data
 }
 
