@@ -1,7 +1,7 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server'
-import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
+import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory'
 
 // Add a new file
 export async function POST(request) {

@@ -2,7 +2,7 @@ import { prisma } from "../../../db/prisma"
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '../../../../lib/lib'
-import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory'
+import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory'
 
 // Fetch info for a single record
 export async function GET(request, { params }) {

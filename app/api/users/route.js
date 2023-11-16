@@ -74,21 +74,11 @@ export async function POST(request, session) {
     })
 
     if (shouldGeneratePassword) {
-        const transporter = nodemailer.createTransport({
-            host: (await lib.getSetting('smtphost')).split(':')[0],
-            port: (await lib.getSetting('smtphost')).split(':')[1],
-            secure: (await lib.getSetting('smtpauthtype')) === 'true' ? true : false,
-            auth: {
-                user: await lib.getSetting('smtpusername'),
-                pass: await lib.getSetting('smtppassword'),
-            },
-        })
-
-        const info = await transporter.sendMail({
+        lib.sendEmail({
             from: '"Family Archive" <familyarchive@bryceyoder.com>',
             to: data.get('email'),
             subject: "A Family Archive account has been created for you",
-            html: `<b>Hi ${data.get('name')},</b> a new Family Archive account has been created for you at <a href='${process.env.NEXTAUTH_URL}'>${process.env.NEXTAUTH_URL}</a>.<br /><br />You can login with the password "<b>${password}</b>" and your email. Please set a new password after logging in.`,
+            html: `<b>Hi ${data.get('name')},</b> a new Family Archive account has been created for you at <a href='${process.env.NEXTAUTH_URL}'>${process.env.NEXTAUTH_URL}</a>.<br /><br />You can login with the password "<b>${password}</b>" and your email. Please set a new password after logging in.`
         })
     }
 

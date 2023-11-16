@@ -1,4 +1,4 @@
-import Record from '@/lib/RecordTypes/record'
+import Record from '@/lib/classes/RecordTypes/record'
 
 class Basic extends Record {
     constructor() {

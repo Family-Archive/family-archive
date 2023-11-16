@@ -4,7 +4,9 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "../../../db/prisma"
 import bcrypt from 'bcrypt'
+
 import lib from "@/lib/lib"
+import authLib from "@/lib/auth/lib"
 
 export const authOptions = {
     adapter: PrismaAdapter(prisma),
@@ -25,17 +27,18 @@ export const authOptions = {
                     where: { email: credentials.email },
                 })
 
+                // If a user with email exists and pw matches,
+                // check that either email verification is turned off OR their email has been verified
+                // if one of these cases fail then instead of logging in the user, send the verification email
                 if (user && bcrypt.compareSync(credentials.password, user.password)) {
-
-                    console.log(await lib.getSetting('requireemailverification'))
-                    if ((await lib.getSetting('requireemailverification')) === 'no' && user.emaiVerified !== 'yes') {
+                    if ((await lib.getSetting('requireemailverification')) === 'no' || user.emailVerified === 'yes') {
                         return user
+                    } else {
+                        await authLib.sendVerificationEmail(user.email)
                     }
-
-                    return null
-                } else {
-                    return null
                 }
+
+                return null
             }
         }),
 
@@ -49,6 +52,7 @@ export const authOptions = {
             },
             async authorize(credentials, req) {
 
+                // Create the user
                 const family = await prisma.family.findFirst()
                 const user = await prisma.User.create({
                     data: {
@@ -60,6 +64,7 @@ export const authOptions = {
                     }
                 })
 
+                // If email verification is not required, they can login right away. Otherwise return null
                 if ((await lib.getSetting('requireemailverification')) === 'no') {
                     return user
                 }
@@ -76,8 +81,19 @@ export const authOptions = {
             allowDangerousEmailAccountLinking: true,
 
             async profile(profile) {
-                const family = await prisma.family.findFirst()
 
+                // If allow self reg is not enabled, check an account already exists
+                const allowSelfRegistration = (await lib.getSetting('allowselfregistration'))
+                if (allowSelfRegistration !== 'yes') {
+                    const user = await prisma.User.findUnique({
+                        where: { email: profile.email }
+                    })
+                    if (!user) {
+                        return null
+                    }
+                }
+
+                const family = await prisma.family.findFirst()
                 return {
                     id: profile.id,
                     name: profile.name,
@@ -117,6 +133,7 @@ export const authOptions = {
                 session.user.id = fetchedUser.id
                 session.user.families = fetchedUser.families
                 session.user.defaultFamily = defaultFamily
+                session.user.isAdmin = fetchedUser.isAdmin
             }
 
             return session

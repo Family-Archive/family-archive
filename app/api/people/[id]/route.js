@@ -3,7 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
-import FileStorageFactory from '@/lib/FileStorage/FileStorageFactory';
+import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory';
 
 // Fetch a person's information
 export async function GET(request, { params }) {
@@ -132,9 +132,6 @@ export async function PUT(request, { params }) {
         profileImage = files[0]
     }
 
-    // In order to disallow users from accessing records belonging to other families,
-    // we limit queries like {where: AND [id: value, familyId: value]}
-    // In order to use AND in an update query, we have to use updateMany even though we're only updating one record
     const person = await prisma.Person.update({
         data: {
             fullName: formData.get('fullName'),

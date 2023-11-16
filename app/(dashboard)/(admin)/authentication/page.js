@@ -30,7 +30,7 @@ const authPage = async () => {
                 },
                 {
                     name: 'requireemailverification',
-                    label: 'Require users to verify their email before accessing the site?',
+                    label: 'Require users to verify their email before logging in manually',
                     type: 'Selector',
                     value: {
                         options: [

@@ -95,7 +95,7 @@ const NavBar = () => {
                     }}
                 /> : ""}
 
-                {session ? <Link href='/users'><span className={`material-icons ${styles.settings}`}>settings</span></Link> : ""}
+                {session?.user.isAdmin ? <Link href='/users'><span className={`material-icons ${styles.settings}`}>settings</span></Link> : ""}
             </section>
         </nav>
     )

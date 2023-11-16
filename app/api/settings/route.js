@@ -4,8 +4,9 @@ import { NextResponse } from 'next/server'
 import lib from '@/lib/lib';
 
 // Update DB settings
-export async function POST(request, session) {
-    if (!session) {
+export async function POST(request) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user.isAdmin) {
         return Response.json({
             'status': 'error',
             'message': 'Not authorized'
