@@ -20,4 +20,11 @@
         font-size: 155px;
         color: #333;
     }
+
+    .fieldError {
+        color: red;
+        display: block;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+    }
 }

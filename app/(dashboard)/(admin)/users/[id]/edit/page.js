@@ -34,13 +34,15 @@ const editUser = async ({ params }) => {
                         name: 'email',
                         label: 'Email',
                         type: 'email',
-                        value: user.email
+                        value: user.email,
+                        required: true
                     },
                     {
                         name: 'name',
                         label: 'Name',
                         type: 'text',
-                        value: user.name
+                        value: user.name,
+                        required: true
                     },
                     {
                         name: 'password',

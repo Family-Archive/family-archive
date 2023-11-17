@@ -15,11 +15,13 @@ const createPerson = () => {
                     name: 'email',
                     label: 'Email',
                     type: 'email',
+                    required: true,
                 },
                 {
                     name: 'name',
                     label: 'Name',
                     type: 'text',
+                    required: true,
                 },
                 {
                     name: 'password',

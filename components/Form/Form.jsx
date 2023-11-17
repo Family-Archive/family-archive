@@ -73,6 +73,9 @@ export default function Form({
     // excluding files input.
     const [masterFields, setMasterFields] = useState(fields)
 
+    // Dictionary containing potential field validation errors, where the key is the name of the field and the value is the error message
+    const [errors, seterrors] = useState({})
+
     // Track whether a file has been uploaded. This value only changes
     // when a file is initially uploaded - if it is later removed, this
     // value will not change again. This variable is used to know when
@@ -274,11 +277,23 @@ export default function Form({
         event.preventDefault()
 
         const formData = new FormData()
+        let tempErrors = {}
+        seterrors(tempErrors)
 
         // Add all the non-file fields to the form submission.
         masterFields.forEach((field) => {
+            if (field.required === true && field.value == "") {
+                tempErrors[field.name] = `${field.label} is a required field!`
+            }
+
             formData.append(field.name, field.value)
         })
+
+        // If we found any errors, set them and don't process the rest of the form.
+        if (Object.keys(tempErrors).length > 0) {
+            seterrors(tempErrors)
+            return
+        }
 
         if (editMode) {
             files.forEach((file) => {
@@ -383,6 +398,7 @@ export default function Form({
                 <div className={styles.formArea}>
                     {masterFields.map((field, index) => {
                         let Element = getElement(field)
+                        console.log(errors[field.name])
 
                         return (
                             <formitem key={index}>
@@ -396,6 +412,7 @@ export default function Form({
                                     data-index={index}
                                     onChange={changeHandler}
                                 >{field.content}</Element>
+                                {errors[field.name] ? <span className={styles.fieldError}>{errors[field.name]}</span> : ""}
                             </formitem>
                         )
                     })}
