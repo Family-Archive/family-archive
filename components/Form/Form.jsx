@@ -20,7 +20,9 @@ export default function Form({
     editMode,
     fileIds,
     loadFilesFromUrl,
-    allowFileUpload = true
+    redirectLocation,
+    allowFileUpload = true,
+    redirect = false
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
@@ -326,7 +328,14 @@ export default function Form({
 
         const json = await response.json()
 
-        push('/records/all')
+        if (!redirectLocation) {
+            redirectLocation = '/records/all'
+        }
+        if (redirect) {
+            window.location.href = redirectLocation
+        } else {
+            push(redirectLocation)
+        }
     }
 
     const getElement = (field) => {
@@ -398,7 +407,6 @@ export default function Form({
                 <div className={styles.formArea}>
                     {masterFields.map((field, index) => {
                         let Element = getElement(field)
-                        console.log(errors[field.name])
 
                         return (
                             <formitem key={index}>

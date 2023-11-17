@@ -1,0 +1,23 @@
+.ToastContainer {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    .toasts {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 1rem;
+        margin-bottom: 1rem;
+
+        .toast {
+            padding: 1rem;
+            background: #ffa0a0;
+            border-radius: 1rem;
+            color: black;
+        }
+    }
+}

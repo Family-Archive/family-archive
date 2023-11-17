@@ -57,6 +57,8 @@ const editUser = async ({ params }) => {
                     },
                 ]}
                 allowFileUpload={false}
+                redirectLocation={`/users/${user.id}`}
+                redirect={true}
             />
         </div>
     )
