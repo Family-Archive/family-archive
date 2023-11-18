@@ -6,6 +6,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    pointer-events: none;
+    z-index: 10;
 
     .toasts {
         display: flex;

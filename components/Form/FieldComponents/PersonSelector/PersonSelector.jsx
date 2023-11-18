@@ -3,10 +3,12 @@ import styles from './PersonSelector.module.scss'
 
 import { useEffect, useState, useContext, useRef } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
-import AddPersonForm from '@/components/AddPersonForm/AddPersonForm'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
+import PronounSelector from '../PronounSelector/PronounSelector'
 
 const PersonSelector = ({ value, onChange, index }) => {
     const modalFunctions = useContext(ModalContext)
+    const toastFunctions = useContext(ToastContext)
 
     // Handle clicks outside of component
     const myRef = useRef();
@@ -181,10 +183,57 @@ const PersonSelector = ({ value, onChange, index }) => {
                     <button
                         onClick={() => modalFunctions.addModal(
                             'Add a new person',
-                            <AddPersonForm
-                                name={document.querySelector('#peopleSearch').value}
-                                afterSubmission={(newPersonId) => { addSelectedPerson(newPersonId); modalFunctions.clearModalStack() }}
-                            />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <formitem>
+                                    <label htmlFor='fullName'>Full name</label>
+                                    <input
+                                        type='text'
+                                        id='fullName'
+                                        name='fullName'
+                                        defaultValue={document.querySelector('#peopleSearch').value}
+                                    />
+                                </formitem>
+                                <formitem>
+                                    <label htmlFor='firstName'>First name</label>
+                                    <input
+                                        type='text'
+                                        id='firstName'
+                                        name='firstName'
+                                        defaultValue={document.querySelector('#peopleSearch').value.split(' ')[0]}
+                                    />
+                                </formitem>
+                                <formitem>
+                                    <label>Pronouns</label>
+                                    <PronounSelector />
+                                </formitem>
+
+                                <button
+                                    onClick={() => {
+                                        const formData = new FormData()
+                                        const fullName = document.querySelector('#fullName').value
+                                        const firstName = document.querySelector('#firstName').value
+                                        const pronouns = document.querySelector('#pronounsField').value
+                                        formData.append('fullName', fullName)
+                                        formData.append('shortName', firstName)
+                                        formData.append('pronouns', pronouns)
+                                        fetch(`/api/people`, {
+                                            method: "POST",
+                                            body: formData
+                                        })
+                                            .then(response => response.json())
+                                            .catch(error => toastFunctions.createToast("Internal server error"))
+                                            .then(data => {
+                                                if (data.status === 'success') {
+                                                    addSelectedPerson(data.data.people[0].id)
+                                                    modalFunctions.clearModalStack()
+                                                } else {
+                                                    toastFunctions.createToast(data.message)
+                                                }
+                                            })
+                                    }}
+                                >Add person</button>
+
+                            </div>
                         )} className={`${styles.person} ${activePersonIndex > activePeople.length - 1 ? 'hovered' : ""}`}
                         type='button'
                     >

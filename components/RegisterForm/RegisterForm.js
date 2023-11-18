@@ -1,6 +1,8 @@
 "use client"
 import styles from './RegisterForm.module.scss'
 import { signIn } from "next-auth/react"
+import { ToastContext } from '@/app/(contexts)/ToastContext'
+import { useContext } from 'react'
 
 /**
  * Register form component
@@ -8,6 +10,8 @@ import { signIn } from "next-auth/react"
  */
 
 const RegisterForm = ({ providers }) => {
+    const toastFunctions = useContext(ToastContext)
+
     return <section className={styles.container}>
         <img src='/logo.svg' />
 
@@ -39,11 +43,22 @@ const RegisterForm = ({ providers }) => {
                     <label htmlFor='password'>Password</label>
                     <input type='password' name='password' id='password' />
                 </formitem>
-                <button onClick={() => signIn('signup', {
-                    email: document.querySelector('#email').value,
-                    name: document.querySelector('#name').value,
-                    password: document.querySelector('#password').value,
-                })}>Register</button>
+                <button onClick={async () => {
+                    const result = await signIn('signup', {
+                        redirect: false,
+                        email: document.querySelector('#email').value,
+                        name: document.querySelector('#name').value,
+                        password: document.querySelector('#password').value,
+                    })
+                    if (result.error) {
+                        toastFunctions.createToast(result.error)
+                    } else {
+                        window.location.href = '/'
+                    }
+                }}
+                >
+                    Register
+                </button>
             </div>
         </section>
     </section>

@@ -90,6 +90,8 @@ export async function PUT(request, { params }) {
 
     let data = {}
     if (Object.keys(formData).includes('parentId')) {
+        // TODO: Write a function for checking validity to prevent self-references or other loops and verify here
+
         if (formData['parentId'] === "null") {
             data = { parent: { disconnect: true } }
         } else {
@@ -98,6 +100,15 @@ export async function PUT(request, { params }) {
     }
 
     if (Object.keys(formData).includes('name')) {
+        if (!formData['name']) {
+            return Response.json({
+                'status': 'error',
+                'message': 'Name cannot be empty'
+            }, {
+                status: 400
+            })
+        }
+
         data = { name: formData['name'] }
     }
 

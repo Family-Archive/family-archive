@@ -49,9 +49,6 @@ export async function GET(request) {
 
 // Add a new collection
 export async function POST(request) {
-    const headersList = headers()
-    const referer = headersList.get('referer')
-
     const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({
@@ -65,6 +62,24 @@ export async function POST(request) {
     let requestData = await request.formData()
     requestData = Object.fromEntries(requestData)
     const currFamily = request.cookies.get('familyId').value
+
+    if (!requestData.collectionName) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Collection name cannot be empty'
+        }, {
+            status: 400
+        })
+    }
+
+    if (!currFamily) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Current family not specified'
+        }, {
+            status: 400
+        })
+    }
 
     let creationObj = {
         data: {
@@ -85,5 +100,6 @@ export async function POST(request) {
     }
 
     const collection = await prisma.collection.create(creationObj)
-    return Response.redirect(new URL(referer))
+
+    return Response.json({ status: "success", data: { collection: collection } })
 }

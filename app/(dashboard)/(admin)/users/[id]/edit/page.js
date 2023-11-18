@@ -46,7 +46,7 @@ const editUser = async ({ params }) => {
                     },
                     {
                         name: 'password',
-                        label: 'Password',
+                        label: 'Password (leave blank to prevent manual login)',
                         type: 'password'
                     },
                     {

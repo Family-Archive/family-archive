@@ -52,9 +52,51 @@ export async function POST(request, session) {
     const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
     const shouldGeneratePassword = parseInt(data.get('emailpassword')) === 1 ? true : false
 
+    if (!data.get('name')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Name is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!data.get('email')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Email is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!familiesData.defaultFamily) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Default family is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!familiesIdList) {
+        return NextResponse.json({
+            status: 'error',
+            message: "The user must belong to at least one family"
+        }, {
+            status: 400
+        })
+    }
+
     let password = data.get('password')
     if (shouldGeneratePassword) {
-        password = crypto.randomBytes(64).toString('hex')
+        password = crypto.randomBytes(8).toString('hex')
+    } else {
+        if (password && password.length < 8) {
+            return Response.json({
+                status: "error",
+                message: "Password must be at least eight characters long"
+            }, {
+                status: 400
+            })
+        }
     }
 
     const newUser = await prisma.User.create({

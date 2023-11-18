@@ -10,7 +10,6 @@
             transform: translateY(0rem);
             pointer-events: all;
             opacity: 1;
-            z-index: 2;
         }
     }
 
@@ -24,12 +23,17 @@
         }
     }
 
+    &:not(.icon) span {
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
     .title {
         background: white;
         border: 2px solid $accent-secondary-color;
     }
 
     .options {
+        z-index: 3;
         pointer-events: none;
         opacity: 0;
         background: white;

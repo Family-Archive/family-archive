@@ -29,9 +29,6 @@ export async function GET(request) {
 
 // Create a new family
 export async function POST(request) {
-    const headersList = headers()
-    const referer = headersList.get('referer')
-
     const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({
@@ -45,7 +42,16 @@ export async function POST(request) {
     let requestData = await request.formData()
     requestData = Object.fromEntries(requestData)
 
-    const prismaRequest = await prisma.family.create({
+    if (!requestData.name) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Family Name cannot be empty'
+        }, {
+            status: 400
+        })
+    }
+
+    const family = await prisma.family.create({
         data: {
             name: requestData.name,
             users: {
@@ -56,7 +62,5 @@ export async function POST(request) {
         }
     })
 
-    // TODO: add error handling here
-
-    return Response.redirect(new URL(referer))
+    return Response.json({ status: "success", data: { family: family } })
 }

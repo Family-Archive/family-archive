@@ -2,6 +2,7 @@
 
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
 
 /**
  * This is a helper button component for renaming a collection
@@ -10,12 +11,13 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 
 const RenameButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
+    const toastFunctions = useContext(ToastContext)
 
     return (
         <button
             onClick={() => modalFunctions.addModal(
                 "Rename collection",
-                <>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <formitem>
                         <label for='name'>Name</label>
                         <input type="text" name='name' id='name' />
@@ -31,14 +33,21 @@ const RenameButton = ({ id }) => {
                                     body: formData
                                 })
                                     .then(response => response.json())
-                                    .then(data => { window.location = `/collection/${id}` })
+                                    .catch(error => toastFunctions.createToast("Internal server error"))
+                                    .then(data => {
+                                        if (data.status === 'success') {
+                                            window.location = `/collection/${id}`
+                                        } else {
+                                            toastFunctions.createToast(data.message)
+                                        }
+                                    })
                             }}
                         >
                             Ok
                         </button>
                         <button className="tertiary" onClick={modalFunctions.popModal}>Cancel</button>
                     </div>
-                </>
+                </div>
             )}
         >
             Rename collection...

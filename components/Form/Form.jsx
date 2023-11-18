@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styles from './Form.module.scss'
 import FileUploader from '../FileUploader/FileUploader'
 import fieldComponents from './FieldComponentsGenerated'
 import { useRouter } from 'next/navigation'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
 import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
 export default function Form({
@@ -27,6 +28,8 @@ export default function Form({
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
     fileUploadedCallback = fileUploadedCallback || false
+
+    const toastFunctions = useContext(ToastContext)
 
     // All of the files that will be submitted with the form.
     const [files, setFiles] = useState([])
@@ -321,8 +324,14 @@ export default function Form({
         })
 
         if (response.status < 200 || response.status >= 300) {
-            const error = await response.error()
-            console.log(error)
+            try {
+                const json = await response.json()
+                toastFunctions.createToast(json.message)
+            } catch (e) {
+                const error = await response.error()
+                console.log(error)
+            }
+
             return
         }
 

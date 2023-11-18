@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { FamilyContext } from '@/app/(contexts)/FamilyContext'
 import { DraftContext } from '@/app/(contexts)/DraftContext'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
 import RecordSelector from '../RecordSelector/RecordSelector'
 import SelectorInput from '../SelectorInput/SelectorInput'
 import Dropdown from '../Dropdown/Dropdown'
@@ -22,6 +23,7 @@ const NavBar = () => {
     const modalFunctions = useContext(ModalContext)
     const familyContext = useContext(FamilyContext)
     const draftContext = useContext(DraftContext)
+    const toastFunctions = useContext(ToastContext)
 
     // Build set of options that will be passed to family selector
     let familySelectOptions
@@ -81,13 +83,31 @@ const NavBar = () => {
                         if (valueToSet === "addFamily") {
                             modalFunctions.addModal(
                                 "Add new family",
-                                <form action='/api/family' method='POST'>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     <div>
-                                        <label htmlFor="name">Family Name</label>
-                                        <input type='text' id='name' name='name' />
+                                        <label htmlFor="familyName">Family Name</label>
+                                        <input type='text' id='familyName' name='familyName' />
                                     </div>
-                                    <input type='submit' value="Add family" className="button primary" />
-                                </form>
+                                    <button
+                                        onClick={() => {
+                                            const formData = new FormData()
+                                            const familyName = document.querySelector('#familyName').value
+                                            formData.append('name', familyName)
+                                            fetch(`/api/family`, {
+                                                method: "POST",
+                                                body: formData
+                                            })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    if (data.status === 'success') {
+                                                        window.location.href = '/'
+                                                    } else {
+                                                        toastFunctions.createToast(data.message)
+                                                    }
+                                                })
+                                        }}
+                                    >Add family</button>
+                                </div>
                             )
                             return
                         }

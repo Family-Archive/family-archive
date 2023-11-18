@@ -132,10 +132,28 @@ export async function PUT(request, { params }) {
         profileImage = files[0]
     }
 
+    if (!formData.get('fullName')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Full name is a required field"
+        }, {
+            status: 400
+        })
+    }
+
+    if (!formData.get('pronouns')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Pronouns is a required field"
+        }, {
+            status: 400
+        })
+    }
+
     const person = await prisma.Person.update({
         data: {
             fullName: formData.get('fullName'),
-            shortName: formData.get('shortName'),
+            shortName: formData.get('shortName') || "",
             pronounsId: formData.get('pronouns'),
             born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
             died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,

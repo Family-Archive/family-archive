@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import styles from './LoginForm.module.scss'
 import { signIn } from "next-auth/react"
+import { ToastContext } from '@/app/(contexts)/ToastContext'
+import { useContext } from 'react'
 
 /**
  * Login form component
@@ -10,6 +12,8 @@ import { signIn } from "next-auth/react"
  */
 
 const LoginForm = ({ providers, allowSelfRegistration }) => {
+    const toastFunctions = useContext(ToastContext)
+
     return (
         <section className={styles.container}>
             <img src='/logo.svg' />
@@ -24,10 +28,21 @@ const LoginForm = ({ providers, allowSelfRegistration }) => {
                         <label htmlFor='password'>Password</label>
                         <input type='password' name='password' id='password' />
                     </formitem>
-                    <button onClick={() => signIn('login', {
-                        email: document.querySelector('#email').value,
-                        password: document.querySelector('#password').value,
-                    })}>Sign in with email and password</button>
+                    <button onClick={async () => {
+                        const result = await signIn('login', {
+                            redirect: false,
+                            email: document.querySelector('#email').value,
+                            password: document.querySelector('#password').value,
+                        })
+                        if (result.error) {
+                            toastFunctions.createToast(result.error)
+                        } else {
+                            window.location.href = '/'
+                        }
+                    }}
+                    >
+                        Sign in with email and password
+                    </button>
                 </div>
 
                 <hr />

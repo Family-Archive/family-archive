@@ -50,16 +50,13 @@ export async function GET(request, { params }) {
 
 export async function DELETE(request, { params }) {
     // !!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!
-    // TODO: THIS JUST DELTES THE PERSON FROM THE DB!
-    // We'll need to decide what to do with records connected to people,
-    // ESPECIALLY because the connection is stored in JSON in the RecordField table, not via an actual relation
-    // What do we do if a record is connected to a nonexistant user? Should we clear that out here?
-
-    // For now, we just handle nonexistant person IDs in the PersonSelector component itself.
-    // If an ID in the field doesn't match anybody in the site, we just display "Deleted user" and can remove said missing user manually
+    // This route exists but isn't exposed in the front end yet because we have to figure out what should happen when a user is deleted.
+    // Prisma won't even allow it if there are records attached to the user. The question is, do we update all existing resources
+    // attached to a user and associate them with someone else? Or do we delete all related resources? Or do we just mark a user "deleted"
+    // in the DB so that data integrity stays intact and just display all references to the user as "deleted user" on the front end?
 
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user.isAdmin) {
         return Response.json({
             'status': 'error',
             'message': 'Not authorized'
@@ -68,16 +65,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
-        return Response.json({
-            status: "error",
-            message: "User does not have permission to access this resource"
-        }, {
-            status: 403
-        })
-    }
-
-    const person = await prisma.Person.delete({
+    const user = await prisma.User.delete({
         where: {
             id: params.id
         }
@@ -86,7 +74,7 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({
         status: 'success',
         data: {
-            message: "Person deleted successfully"
+            message: "User deleted successfully"
         }
     }, {
         status: 200
@@ -109,6 +97,39 @@ export async function PUT(request, { params }) {
     const familiesData = JSON.parse(formData.get('families'))
     const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
 
+    if (!data.get('name')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Name is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!data.get('email')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Email is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!familiesData.defaultFamily) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Default family is a required field"
+        }, {
+            status: 400
+        })
+    }
+    if (!familiesIdList) {
+        return NextResponse.json({
+            status: 'error',
+            message: "The user must belong to at least one family"
+        }, {
+            status: 400
+        })
+    }
+
     let data = {
         name: formData.get('name'),
         email: formData.get('email'),
@@ -122,6 +143,14 @@ export async function PUT(request, { params }) {
         }
     }
     if (formData.get('password')) {
+        if (formData.get('password').length < 8) {
+            return Response.json({
+                status: "error",
+                message: "Password must be at least eight characters long"
+            }, {
+                status: 400
+            })
+        }
         data['password'] = bcrypt.hashSync(formData.get('password'), 10)
     }
 

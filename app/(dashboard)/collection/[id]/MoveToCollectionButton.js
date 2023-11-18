@@ -35,6 +35,7 @@ const MoveToCollectionButton = ({ id }) => {
                                     body: formData
                                 })
                                     .then(response => response.json())
+                                    .catch(error => toastFunctions.createToast("Internal server error"))
                                     .then(data => { window.location = `/collection/${collectionId || ""}` })
                             }}
                         >
