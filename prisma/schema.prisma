@@ -87,7 +87,7 @@ model File {
   recordId  String?
   Person    Person[]
   caption   String?  @db.Text
-  family    Family   @relation(fields: [familyId], references: [id])
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId  String
 }
 
@@ -102,7 +102,7 @@ model Record {
   updatedAt     DateTime      @updatedAt
   RecordField   RecordField[]
   files         File[]
-  family        Family        @relation(fields: [familyId], references: [id])
+  family        Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId      String
   collections   Collection[]
   completed     Boolean       @default(false)
@@ -130,7 +130,7 @@ model Person {
   parents               Person[]               @relation("ChildParents")
   children              Person[]               @relation("ChildParents")
   indirectRelationships IndirectRelationship[]
-  family                Family                 @relation(fields: [familyId], references: [id])
+  family                Family                 @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId              String
   profileImage          File?                  @relation(fields: [profileImageId], references: [id])
   profileImageId        String?
@@ -142,7 +142,7 @@ model PronounSet {
   subject    String
   object     String
   possessive String
-  family     Family   @relation(fields: [familyId], references: [id])
+  family     Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId   String
 }
 
@@ -151,7 +151,7 @@ model IndirectRelationship {
   relationshipType   RelationshipType @relation(fields: [relationshipTypeId], references: [id])
   relationshipTypeId String
   people             Person[]
-  family             Family           @relation(fields: [familyId], references: [id])
+  family             Family           @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId           String
 }
 
@@ -159,14 +159,14 @@ model RelationshipType {
   id                    String                 @id @default(cuid())
   name                  String
   indirectRelationships IndirectRelationship[]
-  family                Family                 @relation(fields: [familyId], references: [id])
+  family                Family                 @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId              String
 }
 
 model Collection {
   id       String       @id @default(cuid())
   name     String
-  family   Family       @relation(fields: [familyId], references: [id])
+  family   Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId String
   children Collection[] @relation("collectionHierarchy")
   parent   Collection?  @relation("collectionHierarchy", fields: [parentId], references: [id])

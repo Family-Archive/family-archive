@@ -1,0 +1,19 @@
+.families {
+    a:not(:last-child) {
+        border-bottom: 1px solid $accent-border-color;
+        display: block;
+    }
+
+    .family {
+        &:hover {
+            background-color: $accent-border-color;
+        }
+
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}

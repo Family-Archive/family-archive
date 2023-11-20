@@ -18,7 +18,7 @@ const AdminLayout = async ({ children, params }) => {
 
             {isAdmin ?
                 <div className={styles.adminBar}>
-                    {['users', 'authentication', 'mail'].map(label => {
+                    {['users', 'families', 'authentication', 'mail'].map(label => {
                         return <a className={label === subpage ? styles.active : ""} href={`/${label}`}>{label}</a>
                     })}
                 </div> : ""

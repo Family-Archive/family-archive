@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 // Fetch all families
 export async function GET(request) {
     const session = await getServerSession(authOptions);
-    if (!session) {
+    if (!session || !session.user.isAdmin) {
         return Response.json({
             'status': 'error',
             'message': 'Not authorized'

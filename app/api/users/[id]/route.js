@@ -97,7 +97,7 @@ export async function PUT(request, { params }) {
     const familiesData = JSON.parse(formData.get('families'))
     const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
 
-    if (!data.get('name')) {
+    if (!formData.get('name')) {
         return NextResponse.json({
             status: 'error',
             message: "Name is a required field"
@@ -105,7 +105,7 @@ export async function PUT(request, { params }) {
             status: 400
         })
     }
-    if (!data.get('email')) {
+    if (!formData.get('email')) {
         return NextResponse.json({
             status: 'error',
             message: "Email is a required field"
