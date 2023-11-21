@@ -11,7 +11,11 @@ export const BreadcrumbContext = createContext()
 
 export const BreadcrumbProvider = ({ children }) => {
     const pathname = usePathname()
-    const [trail, settrail] = useState([{ name: 'Home', path: '/' }])
+    const [trail, settrail] = useState(
+        localStorage.getItem('breadcrumbTrail')
+            ? JSON.parse(localStorage.getItem('breadcrumbTrail'))
+            : [{ name: 'Home', path: '/' }]
+    )
 
     // This isn't a normal breadcrumb trail: firstly, many breadcrumb trails are implemented by simply splitting the URL because the route directly relates to the page title --
     // this is not the case here. But furthermore, even if this is not the case, leaf nodes can usually only be reached through a single path; for example, in Moodle,
@@ -24,11 +28,15 @@ export const BreadcrumbProvider = ({ children }) => {
     // Secondly, if that doesn't apply, we check if any of the existing nodes contain the current path. If so, we split the breadcrumb trail there -- we went backwards.
     // Finally, if these conditions don't apply, we just append a new node to the end of the trail.
 
+    // Also, we store the breadcrumb trail in local storage and try to load it when the component mounts so we don't lose it when the page reloads.
+
     // List of paths that should reset the trail
     const resetPaths = [
         '/records/all',
         '/collection',
-        '/people'
+        '/people',
+        '/records/timeline',
+        '/records/map'
     ]
 
     /**
@@ -46,7 +54,9 @@ export const BreadcrumbProvider = ({ children }) => {
 
         // Reset path if needed
         if (resetPaths.includes(pathname)) {
-            settrail([{ name: "Home", path: "/" }, { name: name, path: pathname }])
+            const trail = [{ name: "Home", path: "/" }, { name: name, path: pathname }]
+            localStorage.setItem("breadcrumbTrail", JSON.stringify(trail))
+            settrail(trail)
             return
         }
 
@@ -55,6 +65,7 @@ export const BreadcrumbProvider = ({ children }) => {
             if (node.path === pathname) {
                 let tempTrail = trail
                 tempTrail = tempTrail.slice(0, index + 1)
+                localStorage.setItem("breadcrumbTrail", JSON.stringify(tempTrail))
                 settrail(tempTrail)
                 return
             }
@@ -63,6 +74,7 @@ export const BreadcrumbProvider = ({ children }) => {
         // Otherwise, push to trail
         let tempTrail = trail
         tempTrail.push({ name: name, path: pathname })
+        localStorage.setItem("breadcrumbTrail", JSON.stringify(trail))
         settrail(trail)
     }
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Timeline.module.scss'
+import clientLib from '@/lib/client/lib'
 
 /**
  * A component displaying records on a timeline
@@ -87,7 +88,7 @@ const Timeline = (props) => {
      * @param {String: in|out} direction: The direction we should zoom
      */
     const changeZoomLevel = (direction) => {
-        setzooming(true)
+        // setzooming(true)
         const timeline = document.querySelector('#timeline')
 
         const oldFontSize = fontSize
@@ -123,20 +124,22 @@ const Timeline = (props) => {
         // and I've tried like four different things. So what we do is animate the fontSize and "left" at the same time to make it look like
         // everything is staying in place, disable the zoom buttons while this is happening, and then as SOON as the animation is done,
         // snap the scrollbar to our new calculated position based on the multiple.
+
         const pctChange = newFontSize / oldFontSize
         const newLeft = timeline.scrollLeft - (timeline.scrollLeft * pctChange)
-        document.querySelector('#timelineContainer').style.left = newLeft + 'px'
+        // document.querySelector('#timelineContainer').style.left = newLeft + 'px'
         setfontSize(newFontSize)
+        timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
 
-        window.setTimeout(() => {
-            document.querySelector('#timelineContainer').classList.add(styles.noAnim)
-            timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
-            document.querySelector('#timelineContainer').style.left = '0px'
-            window.setTimeout(() => {
-                document.querySelector('#timelineContainer').classList.remove(styles.noAnim)
-                setzooming(false)
-            }, 50)
-        }, 100)
+        // window.setTimeout(() => {
+        //     document.querySelector('#timelineContainer').classList.add(styles.noAnim)
+        //     timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
+        //     document.querySelector('#timelineContainer').style.left = '0px'
+        //     window.setTimeout(() => {
+        //         document.querySelector('#timelineContainer').classList.remove(styles.noAnim)
+        //         setzooming(false)
+        //     }, 50)
+        // }, 100)
     }
 
     /**
@@ -231,19 +234,19 @@ const Timeline = (props) => {
                     {date ?
                         // Here we have some magic numbers to get the exact date where the timeline labels are pointing
                         // These numbers are due to the offset we're dealing with on each label
-                        new Date(date.getTime() + ((63 / fontSize) * 172800000)).toLocaleDateString()
+                        new Date(date.getTime() + ((35 / fontSize) * 172800000)).toLocaleDateString()
                         : ""
                     }
                 </div>
                 <div className={`${styles.date} ${styles.center}`}>
                     {date ?
-                        new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 147) / 2) / fontSize) * 172800000).toLocaleDateString()
+                        new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 230) / 2) / fontSize) * 172800000).toLocaleDateString()
                         : ""
                     }
                 </div>
                 <div className={`${styles.date} ${styles.right}`}>
                     {date ?
-                        new Date(date.getTime() + ((document.querySelector('#timeline').clientWidth - 50) / fontSize) * 172800000).toLocaleDateString()
+                        new Date(date.getTime() + ((document.querySelector('#timeline').clientWidth - 90) / fontSize) * 172800000).toLocaleDateString()
                         : ""
                     }
                 </div>
@@ -282,7 +285,10 @@ const Timeline = (props) => {
                                             filter: `hue-rotate(${(datum.date.startdate * 0.000001 % 9) * 45}deg)`
                                         }}
                                     >
-                                        <span>{datum.name}</span>
+                                        <span>
+                                            {datum.name}
+                                            <span className={styles.date}>{clientLib.renderDate(datum.date.startdate, datum.date.enddate, datum.date.unit)}</span>
+                                        </span>
                                     </div>
                                 </Link>
                             })}
