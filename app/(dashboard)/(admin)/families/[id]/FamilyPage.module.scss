@@ -1,13 +1,23 @@
 .FamilyPage {
-    .clickToRename {
-        display: block;
-        opacity: 0.5;
-        font-style: italic;
-        margin-top: -2rem;
-        margin-bottom: 2rem;
+    .info {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+
+        span {
+            background-color: $accent-border-color;
+            padding: 1rem;
+            border-radius: 99rem;
+        }
     }
 
     .users {
+        margin-top: 2rem;
+
+        h2 {
+            font-weight: lighter;
+        }
+
         a:not(:last-child) {
             border-bottom: 1px solid $accent-border-color;
             display: block;

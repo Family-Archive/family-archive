@@ -41,9 +41,11 @@ const RenameComponent = ({ family }) => {
                 <button id='fnSubmit' onClick={() => updateFamilyName(document.querySelector('#familyName').value)}>Save</button>
                 <button className="tertiary" onClick={() => setisEditing(false)}>Cancel</button>
             </div>
-            : <h1 style={{ marginBottom: '1rem' }} onClick={() => setisEditing(true)} className="title">{currFamily.name}</h1>
+            : <>
+                <h1 style={{ marginBottom: '1rem' }} onClick={() => setisEditing(true)} className="title">{currFamily.name}</h1>
+                <span style={{ opacity: 0.5, fontStyle: 'italic', display: 'block', marginTop: '0.5rem' }}>Click to rename</span>
+            </>
         }
-        <span style={{ opacity: 0.5, fontStyle: 'italic', display: 'block', marginTop: '0.5rem' }}>Click to rename</span>
     </div>
 }
 

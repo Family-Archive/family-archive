@@ -16,7 +16,7 @@ const DeleteButton = ({ id }) => {
                         <span style={{ background: 'red', padding: '0.5rem', color: 'white', borderRadius: "0.5rem" }}>
                             Deleting a family will delete all content belonging to that family.
                         </span><br /><br />
-                        <span>No records, people, or any other items that belong to the family will be retained. Are you sure you want to do this?</span>
+                        <span>No records, people, or any other items that belong to the family will be retained.<br />Are you sure you want to do this?</span>
                         <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
                             <button
                                 onClick={() => {

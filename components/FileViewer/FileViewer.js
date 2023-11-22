@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 import styles from './FileViewer.module.scss'
 import FileSelector from './FileSelector/FileSelector'
+import clientLib from '@/lib/client/lib'
 
 /**
  * File viewer component for browsing files attached to a record
@@ -50,7 +51,7 @@ const FileViewer = ({ initialFiles }) => {
                     <span className='material-icons'>description</span>
                     <strong>{files[activeFile].name}</strong><br />
                     {files[activeFile].mimeType}<br />
-                    {clentLib.convertBytesToUnit(files[activeFile].size)}<br />
+                    {clientLib.convertBytesToUnit(files[activeFile].size)}<br />
                     {files[activeFile].createdAt}<br />
                 </div>
         }

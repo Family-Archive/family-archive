@@ -97,6 +97,7 @@ const CollectionSelector = ({ recordId, autoselect }) => {
                             <input
                                 type='text'
                                 id='collectionSearch'
+                                autoComplete='off'
                                 className={styles.collectionSearch}
                                 placeholder='Search collections...'
                                 onChange={(e) => {
