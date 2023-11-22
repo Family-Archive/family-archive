@@ -41,7 +41,7 @@ const LocationModal = (props) => {
             map.target.setView([lat, lng], 4, { animation: true })
         }
 
-        setvalue({ 'lat': lat, 'lng': lng })
+        setvalue({ name: document.querySelector('#customName')?.value || null, 'lat': lat, 'lng': lng })
         if (document.querySelector('#lat')) {
             document.querySelector('#lat').value = lat
             document.querySelector('#lng').value = lng
