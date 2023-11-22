@@ -1,6 +1,8 @@
 import styles from './FamilyPage.module.scss'
 import { prisma } from "@/app/db/prisma"
 import Link from 'next/link'
+import RenameComponent from './RenameComponent'
+import DeleteButton from './DeleteButton'
 
 const FamilyPage = async ({ params }) => {
 
@@ -9,11 +11,9 @@ const FamilyPage = async ({ params }) => {
         include: { users: true }
     })
 
-    console.log(family)
-
     return <div className={`${styles.FamilyPage} column`}>
-        <a href='#'><h1 className='title'>{family.name} Family</h1></a>
-        <span className={styles.clickToRename}>Click to rename</span>
+        <RenameComponent family={family} />
+        <DeleteButton id={family.id} />
 
         <h2>Users</h2>
         <div className={styles.users}>
