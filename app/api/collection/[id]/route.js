@@ -1,6 +1,6 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
-import lib from '@/lib/lib';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
+import permissionLib from '@/lib/permissions/lib'
 
 // Fetch the information for a single collection
 export async function GET(request, { params }) {
@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -76,7 +76,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -142,7 +142,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"

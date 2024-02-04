@@ -180,3 +180,12 @@ model Setting {
   name    String
   value   String
 }
+
+model Permission {
+  id            String       @id @default(cuid())
+  userId        String
+  resourceId    String
+  resourceType  String
+  permission    Boolean // 0 = read, 1 = edit
+  type          Boolean // 0 = user, 1 = group
+}

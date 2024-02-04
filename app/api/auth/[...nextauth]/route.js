@@ -22,7 +22,6 @@ export const authOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-
                 const user = await prisma.User.findUnique({
                     where: { email: credentials.email },
                 })
@@ -82,7 +81,6 @@ export const authOptions = {
             allowDangerousEmailAccountLinking: true,
 
             async profile(profile) {
-
                 // If allow self reg is not enabled, check an account already exists
                 const allowSelfRegistration = (await lib.getSetting('allowselfregistration'))
                 if (allowSelfRegistration !== 'yes') {

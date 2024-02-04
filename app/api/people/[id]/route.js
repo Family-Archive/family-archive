@@ -1,7 +1,7 @@
 import { prisma } from '@/app/db/prisma'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
-import lib from '@/lib/lib';
+import permissionLib from '@/lib/permissions/lib'
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory';
 
@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -69,7 +69,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -106,7 +106,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
