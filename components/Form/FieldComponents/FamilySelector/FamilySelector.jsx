@@ -88,7 +88,7 @@ const FamilySelector = ({ value, index, onChange }) => {
             <div className={styles.options}>
               {
                 fieldValue.defaultFamily === family.id ? <span className={styles.defaultLabel}>
-                  Default <span class="material-icons">done</span>
+                  Default <span className="material-icons">done</span>
                 </span>
                   : <button onClick={() => updateValue({ ...fieldValue, defaultFamily: family.id })} className='secondary' type='button'>Make default</button>
               }

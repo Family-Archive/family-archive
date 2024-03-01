@@ -1,7 +1,8 @@
 import { cookies } from 'next/dist/client/components/headers'
 import clientLib from '../../../../lib/client/lib'
-import lib from '../../../../lib//lib'
+import lib from '../../../../lib/lib'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
@@ -61,6 +62,9 @@ const ViewRecord = async ({ params }) => {
 
     // Fetch Record data
     const recordData = await fetchRecord(params.id);
+    if (!recordData.data) {
+        redirect('/')
+    }
     const record = recordData.data.record
 
     // Instantiate RecordType object, and get the icon from this
@@ -116,7 +120,9 @@ const ViewRecord = async ({ params }) => {
                             if (field.value) {
                                 const renderFunction = fetchFieldRenderFunction(field.name)
                                 if (renderFunction) {
-                                    return renderFunction.render(field.value)
+                                    return <div key={field.id}>
+                                        {renderFunction.render(field.value)}
+                                    </div>
                                 } else {
                                     return <div key={field.id}>
                                         <strong>{field.name}</strong>
@@ -142,7 +148,7 @@ const ViewRecord = async ({ params }) => {
                         {collections.length > 0 ? <>
                             <strong>Collections</strong>
                             <p>{collections.map(collection => {
-                                return <a id={collection.id} href={`/collection/${collection.id}`}>{collection.name}, </a>
+                                return <a id={collection.id} key={collection.id} href={`/collection/${collection.id}`}>{collection.name}, </a>
                             })}</p>
                         </> : ""}
                     </div>

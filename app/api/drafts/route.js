@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    let where = lib.limitQueryByFamily({ completed: false }, request.cookies, session)
+    let where = lib.limitQueryByFamily({ completed: false, userCreatedId: session.user.id }, request.cookies, session)
     const drafts = await prisma.record.findMany({
         where: where
     })

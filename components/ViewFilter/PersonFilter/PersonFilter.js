@@ -94,7 +94,7 @@ const PersonFilter = (props) => {
                             className={styles.removePerson}
                             onClick={() => removePerson(person)}
                         >
-                            <span class="material-icons">close</span>
+                            <span className="material-icons">close</span>
                         </button>
                     </div>
                 })}

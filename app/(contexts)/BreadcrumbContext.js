@@ -11,11 +11,12 @@ export const BreadcrumbContext = createContext()
 
 export const BreadcrumbProvider = ({ children }) => {
     const pathname = usePathname()
-    const [trail, settrail] = useState(
-        localStorage.getItem('breadcrumbTrail')
-            ? JSON.parse(localStorage.getItem('breadcrumbTrail'))
-            : [{ name: 'Home', path: '/' }]
-    )
+    const [trail, settrail] = useState(() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('breadcrumbTrail')) {
+            return JSON.parse(localStorage.getItem('breadcrumbTrail'))
+        }
+        return [{ name: 'Home', path: '/' }]
+    })
 
     // This isn't a normal breadcrumb trail: firstly, many breadcrumb trails are implemented by simply splitting the URL because the route directly relates to the page title --
     // this is not the case here. But furthermore, even if this is not the case, leaf nodes can usually only be reached through a single path; for example, in Moodle,

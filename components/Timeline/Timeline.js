@@ -258,14 +258,14 @@ const Timeline = (props) => {
                     style={{ borderRadius: '99rem 0 0 99rem', borderRight: '1px solid grey' }}
                     onClick={() => changeZoomLevel('out')}
                 >
-                    <span class="material-icons">zoom_in</span>
+                    <span className="material-icons">zoom_in</span>
                 </button>
                 <button
                     className='tertiary'
                     style={{ borderRadius: '0 99rem 99rem 0' }}
                     onClick={() => changeZoomLevel('in')}
                 >
-                    <span class="material-icons">zoom_out</span>
+                    <span className="material-icons">zoom_out</span>
                 </button>
             </div>
             <div id='timelineContainer' className={styles.container} style={{ width: `${numDays / 2}em` }} >

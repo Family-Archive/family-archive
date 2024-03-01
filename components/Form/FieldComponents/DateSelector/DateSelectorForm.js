@@ -34,11 +34,11 @@ const DateSelector = (props) => {
             return <div className={styles.rangeChooser}>
                 <span>Did this record occur on a specific date or time, or did it span a range of time?</span>
                 <button type="button" className="tertiary" onClick={() => setisRange(false)}>
-                    <span class="material-icons">event</span>
+                    <span className="material-icons">event</span>
                     Specific date or time
                 </button>
                 <button type="button" className="tertiary" onClick={() => setisRange(true)}>
-                    <span class="material-icons">toll</span>
+                    <span className="material-icons">toll</span>
                     Range of time
                 </button>
             </div>

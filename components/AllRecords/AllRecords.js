@@ -84,6 +84,9 @@ const AllRecords = async ({ records, params, showOptions }) => {
                 {recordList.map(async record => {
                     // Get all files for this record and then search the list for a photo
                     const recordData = await fetchExtraRecordData(record.id)
+                    if (!recordData) {
+                        return
+                    }
                     const photo = findFirstPhoto(recordData.files)
 
                     const recordIcon = clientLib.renderIconFromData(recordData.icon)

@@ -34,7 +34,8 @@ export async function GET(request) {
 }
 
 // Create a new person
-export async function POST(request, session) {
+export async function POST(request) {
+    const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({
             'status': 'error',
@@ -79,6 +80,11 @@ export async function POST(request, session) {
             shortName: data.get('shortName') || "",
             pronouns: {
                 connect: { id: data.get('pronouns') }
+            },
+            userCreated: {
+                connect: {
+                    id: session.user.id
+                }
             },
             family: {
                 connect: {

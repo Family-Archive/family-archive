@@ -84,6 +84,11 @@ export async function POST(request) {
     let creationObj = {
         data: {
             name: requestData.collectionName,
+            userCreated: {
+                connect: {
+                    id: session.user.id
+                }
+            },
             family: {
                 connect: {
                     id: currFamily

@@ -54,7 +54,7 @@ const RecordMap = ({ data, params }) => {
                 </MapContainer>
             </div>
 
-            <div class={styles.sidebar}>
+            <div className={styles.sidebar}>
                 <ViewFilter params={params} sortOptions={false} />
                 <div className={styles.recordList}>
                     {data.length ?

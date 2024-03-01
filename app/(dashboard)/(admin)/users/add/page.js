@@ -47,6 +47,7 @@ const createPerson = () => {
                 },
             ]}
             allowFileUpload={false}
+            redirectLocation="/users"
         />
     </div>
 }

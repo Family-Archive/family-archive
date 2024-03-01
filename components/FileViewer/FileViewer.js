@@ -114,13 +114,13 @@ const FileViewer = ({ initialFiles }) => {
                         className={`tertiary ${styles.galleryNav}`}
                         onClick={() => scrollSelector(parseInt(activeFile) - 1)}
                     >
-                        <span class="material-icons">arrow_back</span>
+                        <span className="material-icons">arrow_back</span>
                     </button>
                     <button
                         className={`tertiary ${styles.galleryNav}`}
                         onClick={() => scrollSelector(parseInt(activeFile) + 1)}
                     >
-                        <span class="material-icons">arrow_forward</span>
+                        <span className="material-icons">arrow_forward</span>
                     </button>
 
                 </div>

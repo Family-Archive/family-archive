@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'read')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -76,7 +76,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -142,7 +142,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"

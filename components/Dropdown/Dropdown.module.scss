@@ -2,6 +2,8 @@
     position: relative;
 
     &.active {
+        z-index: 10;
+
         &:not(.icon) span {
             transform: rotate(180deg);
         }
@@ -38,7 +40,7 @@
         opacity: 0;
         background: white;
         position: absolute;
-        border: 2px solid darkgreen;
+        border: 2px solid $accent-secondary-color;
         min-width: 100%;
         width: max-content;
         right: 0;
