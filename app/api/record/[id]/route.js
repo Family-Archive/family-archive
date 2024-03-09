@@ -1,6 +1,6 @@
 import { prisma } from "../../../db/prisma"
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
 import lib from '../../../../lib/lib'
 import permissionLib from '@/lib/permissions/lib'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory'
@@ -98,7 +98,7 @@ export async function PUT(request, { params }) {
     for (const file of files) {
         // The file's value will either be a file object or a string
         // containing the file's id.
-        if (file instanceof File) {
+        if (typeof file === 'object') {
             // Store the file and connect it to the record.
             const fileSystem = FileStorageFactory.instance()
             const newFile = await fileSystem.store(file, currFamily, params.id)

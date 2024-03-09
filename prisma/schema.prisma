@@ -61,6 +61,7 @@ model User {
   isAdmin         Boolean      @default(false)
   Person          Person[]
   Collection      Collection[]
+  Permission      Permission[]
 }
 
 model Family {
@@ -189,6 +190,7 @@ model Setting {
 
 model Permission {
   id           String @id @default(cuid())
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
   resourceId   String
   resourceType String

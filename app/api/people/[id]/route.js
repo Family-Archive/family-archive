@@ -120,7 +120,7 @@ export async function PUT(request, { params }) {
 
     let profileImage
     const files = formData.getAll('files')
-    if (files[0] instanceof File) {
+    if (typeof files[0] === 'object') {
         // Store the file and connect it to the person.
         const fileSystem = FileStorageFactory.instance()
         const newFile = await fileSystem.store(files[0], currFamily, params.id, 'person')

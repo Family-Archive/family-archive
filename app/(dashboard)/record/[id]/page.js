@@ -11,6 +11,7 @@ import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
+import EditPermissionsButton from './EditPermissionsButton'
 
 /**
  * This page displays a record's information
@@ -87,6 +88,7 @@ const ViewRecord = async ({ params }) => {
                     <Dropdown
                         title="Options"
                         options={[
+                            <EditPermissionsButton id={record.id} />,
                             <MoveToCollectionButton id={record.id} />,
                             collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
                             <DeleteRecordButton id={record.id} />
