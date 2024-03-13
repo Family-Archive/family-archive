@@ -1,0 +1,22 @@
+.nodeChildren {
+  display: flex;
+  flex-direction: row;
+  column-gap: 2em;
+  padding: 3em 2em;
+  position: relative;
+
+  .horizontalBar {
+    position: absolute;
+    top: -0.5em;
+    height: 0.2vw;
+    background-color: black;
+  }
+
+  .verticalBar {
+    width: 0.2vw;
+    height: 48px;
+    top: -0.5rem;
+    background-color: black;
+    position: absolute;
+  }
+}

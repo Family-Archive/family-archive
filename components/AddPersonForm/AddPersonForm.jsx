@@ -7,7 +7,6 @@ export default function AddPersonForm({ name, afterSubmission }) {
     const [fields, setFields] = useState({
         fullName: name,
         shortName: name.split(' ')[0],
-        pronouns: { id: null },
         error: ''
     })
 
@@ -20,16 +19,6 @@ export default function AddPersonForm({ name, afterSubmission }) {
 
     useEffect(() => {
         document.querySelector('#fullName').focus()
-        const getPronounSets = async () => {
-            const response = await fetch('/api/pronounset')
-            const pronounSets = await response.json()
-            setPronounSets(pronounSets.data.pronounSets)
-            setFields({
-                ...fields,
-                pronouns: pronounSets.data.pronounSets[0].id
-            })
-        }
-        getPronounSets()
     }, [])
 
     const inputChange = async (event) => {
@@ -59,7 +48,6 @@ export default function AddPersonForm({ name, afterSubmission }) {
         const formData = new FormData()
         formData.append('fullName', fields.fullName)
         formData.append('shortName', fields.shortName)
-        formData.append('pronouns', fields.pronouns)
 
         const response = await fetch('/api/people', {
             method: 'POST',
@@ -100,15 +88,6 @@ export default function AddPersonForm({ name, afterSubmission }) {
                 <label htmlFor="shortName">First Name</label>
                 <input type="text" id="shortName" name="shortName" onChange={inputChange} value={fields.shortName}></input>
                 {errors.shortName ? <div className={styles.error}>{errors.shortName}</div> : ''}
-            </formitem>
-
-            <formitem>
-                <label htmlFor="pronouns">Pronouns</label>
-                <select id="pronouns" name="pronouns" value={fields.pronouns.id} onChange={inputChange}>
-                    {pronounSets.map(pronounSet => {
-                        return <option value={pronounSet.id} key={pronounSet.id}>{`${pronounSet.subject}/${pronounSet.object}/${pronounSet.possessive}`}</option>
-                    })}
-                </select>
             </formitem>
 
             {fields.error ? <div className={styles.error}>{fields.error}</div> : ''}

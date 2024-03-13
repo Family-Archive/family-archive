@@ -123,8 +123,6 @@ model Person {
   otherNames            Json?
   born                  DateTime?
   died                  DateTime?
-  pronouns              PronounSet             @relation(fields: [pronounsId], references: [id])
-  pronounsId            String
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   parents               Person[]               @relation("ChildParents")
@@ -138,7 +136,6 @@ model Person {
 
 model PronounSet {
   id         String   @id @default(cuid())
-  people     Person[]
   subject    String
   object     String
   possessive String

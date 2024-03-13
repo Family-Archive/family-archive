@@ -43,12 +43,6 @@ const editPerson = async ({ params }) => {
                         value: person.shortName
                     },
                     {
-                        name: 'pronouns',
-                        label: 'Pronouns',
-                        type: 'PronounSelector',
-                        value: person.pronouns.id
-                    },
-                    {
                         name: 'birthdate',
                         label: 'Date of birth',
                         type: 'date',

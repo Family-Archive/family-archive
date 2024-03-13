@@ -22,11 +22,6 @@ const createPerson = () => {
                     type: 'text',
                 },
                 {
-                    name: 'pronouns',
-                    label: 'Pronouns',
-                    type: 'PronounSelector',
-                },
-                {
                     name: 'birthdate',
                     label: 'Date of birth',
                     type: 'date',
