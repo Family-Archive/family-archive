@@ -60,7 +60,6 @@ const personView = async ({ params }) => {
                         <div className={styles.info}>
                             <span><b>Full name</b>{person.fullName}</span>
                             <span><b>Short name</b>{person.shortName}</span>
-                            <span><b>Pronouns</b>{person.pronouns.subject} / {person.pronouns.object} / {person.pronouns.possessive}</span>
                             {person.born ? <span><b>Birth date</b>{clientLib.renderSingleDate(person.born)}</span> : ""}
                             {person.died ? <span><b>Death date</b>{clientLib.renderSingleDate(person.died)}</span> : ""}
                         </div>

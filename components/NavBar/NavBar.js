@@ -64,7 +64,7 @@ const NavBar = () => {
                     <Link className={styles.button} href='/collection'><span className="material-icons">collections_bookmark</span>Collections</Link>
                     <Link className={styles.button} href='/records/timeline'><span className="material-icons">watch_later</span>Timeline</Link>
                     <Link className={styles.button} href='/records/map'><span className="material-icons">public</span>Map</Link>
-                    <button><span className="material-icons">account_tree</span>Family tree</button>
+                    <Link className={styles.button} href='/records/familytree'><span className="material-icons">account_tree</span>Family tree</Link>
                     <Link className={styles.button} href='/people'><span className="material-icons">people</span>People</Link>
                 </section>
             </section>

@@ -32,13 +32,6 @@ export async function GET(request, { params }) {
         }
     })
 
-    const pronouns = await prisma.PronounSet.findUnique({
-        where: {
-            id: person.pronounsId
-        }
-    })
-    person.pronouns = pronouns
-
     return NextResponse.json({
         status: 'success',
         data: {
@@ -136,7 +129,6 @@ export async function PUT(request, { params }) {
         data: {
             fullName: formData.get('fullName'),
             shortName: formData.get('shortName'),
-            pronounsId: formData.get('pronouns'),
             born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
             died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
             profileImageId: profileImage
