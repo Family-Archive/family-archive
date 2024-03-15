@@ -14,6 +14,7 @@ const EditPermissions = ({ resourceId, resourceType }) => {
     const [activeUsersRead, setactiveUsersRead] = useState([])
     const [activeUsersEdit, setactiveUsersEdit] = useState([])
     const [userResults, setuserResults] = useState([])
+    const [loading, setloading] = useState(false)
 
     const { data: session, status } = useSession()
 
@@ -22,22 +23,35 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         getPermissions('edit')
     }, [])
 
-    const getPermissions = async (type) => {
-        let permissions = await fetch(`/api/permissions?resourceType=${resourceType}&resourceId=${resourceId}&permission=${type}&userId=${session.user.id}`)
+    /**
+     * Get a list of current permissions for a resource
+     * @param {string} permission: read|edit
+     */
+    const getPermissions = async (permission) => {
+        setloading(true)
+        let permissions = await fetch(`/api/permissions?resourceType=${resourceType}&resourceId=${resourceId}&permission=${permission}&userId=${session.user.id}`)
         permissions = await permissions.json()
 
+        // The permission API returns the joined User object for each row;
+        // we're mostly concerned with users in this component so we pull that information out
         let users = []
         for (let permission of permissions.data.permissions) {
             users.push(permission.user)
         }
 
-        if (type === 'read') {
+        if (permission === 'read') {
             setactiveUsersRead(users)
         } else {
             setactiveUsersEdit(users)
         }
+
+        setloading(false)
     }
 
+    /**
+     * Search all users for matching names
+     * @param {string} query: The name to search
+     */
     const searchUsers = async query => {
         let users = []
         if (query) {
@@ -49,15 +63,21 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         setuserResults(users)
     }
 
-    const updateActiveUsers = (user, type, action) => {
+    /**
+     * Add or remove a user to the current permission sets tracked by this component
+     * @param {object} user: The User object from Prisma
+     * @param {string} permission: read|edit
+     * @param {string} action add|remove
+     */
+    const updateActiveUsers = (user, permission, action) => {
         if (action === 'add') {
-            if (type === 'read') {
+            if (permission === 'read') {
                 setactiveUsersRead([...activeUsersRead, user])
             } else {
                 setactiveUsersEdit([...activeUsersEdit, user])
             }
         } else {
-            if (type === 'read') {
+            if (permission === 'read') {
                 setactiveUsersRead(activeUsersRead.filter(item => item !== user))
             } else {
                 setactiveUsersEdit(activeUsersEdit.filter(item => item !== user))
@@ -65,6 +85,11 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         }
     }
 
+    /**
+     * Commit the current proposed permissions to the database
+     * @param {string} permission read|edit
+     * @param {boolean} redirect: If the page should refresh after the function returns
+     */
     const savePermissions = async (permission, redirect = false) => {
         const formData = new FormData()
         formData.append('resourceId', resourceId)
@@ -105,19 +130,22 @@ const EditPermissions = ({ resourceId, resourceType }) => {
                     updateActiveUsers={updateActiveUsers}
                 />
                 <div className={styles.activeUsers}>
-                    {activeUsersRead.length ? activeUsersRead.map(user => {
-                        return <div key={user.id} className={styles.user}>
-                            <span>{user.name}</span>
-                            <button
-                                onClick={() => updateActiveUsers(user, 'read', 'remove')}
-                            >
-                                del
-                            </button>
-                        </div>
-                    }) : <span>
-                        No permissions specified!<br />
-                        Anyone can view this item.
-                    </span>}
+                    {loading ?
+                        <span>Loading...</span>
+                        : activeUsersRead.length ? activeUsersRead.map(user => {
+                            return <div key={user.id} className={styles.user}>
+                                <span>{user.name}</span>
+                                <button
+                                    onClick={() => updateActiveUsers(user, 'read', 'remove')}
+                                >
+                                    <span className="material-icons">remove_circle</span>
+                                </button>
+                            </div>
+                        }) : <span>
+                            No permissions specified!<br />
+                            Anyone can view this item.
+                        </span>
+                    }
                 </div>
             </div>
 
@@ -130,19 +158,22 @@ const EditPermissions = ({ resourceId, resourceType }) => {
                     updateActiveUsers={updateActiveUsers}
                 />
                 <div className={styles.activeUsers}>
-                    {activeUsersEdit.length ? activeUsersEdit.map(user => {
-                        return <div key={user.id} className={styles.user}>
-                            <span>{user.name}</span>
-                            <button
-                                onClick={() => updateActiveUsers(user, 'edit', 'remove')}
-                            >
-                                del
-                            </button>
-                        </div>
-                    }) : <span>
-                        No permissions specified!<br />
-                        Only the creator can edit this item.
-                    </span>}
+                    {loading ?
+                        <span>Loading...</span>
+                        : activeUsersEdit.length ? activeUsersEdit.map(user => {
+                            return <div key={user.id} className={styles.user}>
+                                <span>{user.name}</span>
+                                <button
+                                    onClick={() => updateActiveUsers(user, 'edit', 'remove')}
+                                >
+                                    <span className="material-icons">remove_circle</span>
+                                </button>
+                            </div>
+                        }) : <span>
+                            No permissions specified!<br />
+                            Only the creator can edit this item.
+                        </span>
+                    }
                 </div>
             </div>
         </div>

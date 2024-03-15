@@ -18,11 +18,10 @@ export const ToastContext = createContext()
 
 // So instead, we track toasts in a non-state variable that doesn't have these problems, and then use state in order to pass the value to the prop
 // (trying to pass a non-state variable doesn't work because it doesn't re-render)
+// I initialize this variable outside of the component here because initalizing it inside causes the same problems as we have with state
+// -- it doesn't ever get changed from the initial value.
 
 // And then lastly, we have to call the forceUpdate() function when clearing out toasts to make sure the child has the updated state
-
-// Oh and also, I initialize this variable outside of the component here because initalizing it inside causes the same problems as we have with state
-// -- it doesn't ever get changed from the initial value.
 let toasts
 
 export const ToastProvider = ({ children }) => {

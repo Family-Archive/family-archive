@@ -1,5 +1,10 @@
 import lib from '@/lib/lib'
+import permissionLib from '@/lib/permissions/lib'
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
 import { cookies } from 'next/dist/client/components/headers'
+import { redirect } from 'next/navigation'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import Collections from '../../../../components/Collections/Collections'
 import AllRecords from '@/components/AllRecords/AllRecords'
@@ -7,6 +12,7 @@ import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import DeleteButton from './DeleteCollectionButton'
 import RenameButton from './RenameButton'
+import EditPermissionsButton from './EditPermissionsButton'
 
 /**
  * This page displays the children of a given collection
@@ -21,22 +27,33 @@ const collection = async ({ params, searchParams }) => {
     })
     data = await data.json()
 
+    if (!data.data) {
+        redirect('/')
+    }
+
     const thisCollection = data.data.collection
     const children = thisCollection.children || []
     const records = data.data.records
+
+    // Determine if this user can edit this collection
+    const session = await getServerSession(authOptions);
+    const hasEditAccess = await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')
 
     return (
         <>
             <div className='topBar' style={{ paddingRight: '1rem' }}>
                 <h1 className='title'>{thisCollection.name}</h1>
-                <Dropdown
-                    title="Options"
-                    options={[
-                        <RenameButton id={params.id} />,
-                        <MoveToCollectionButton id={params.id} />,
-                        <DeleteButton id={params.id} />,
-                    ]}
-                />
+                {hasEditAccess ?
+                    <Dropdown
+                        title="Options"
+                        options={[
+                            <EditPermissionsButton id={params.id} />,
+                            <RenameButton id={params.id} />,
+                            <MoveToCollectionButton id={params.id} />,
+                            <DeleteButton id={params.id} />,
+                        ]}
+                    />
+                    : ""}
             </div>
             <BreadcrumbTrail /><br />
             <Collections collections={children} />

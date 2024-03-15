@@ -1,6 +1,6 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
-import { headers } from 'next/headers';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
+import permissionLib from '@/lib/permissions/lib'
 import lib from '@/lib/lib'
 
 export async function GET(request) {
@@ -44,7 +44,15 @@ export async function GET(request) {
         where: where
     })
 
-    return Response.json({ status: "success", data: { collections: collections } })
+    // Only show collections the user should see
+    let viewableCollections = []
+    for (let collection of collections) {
+        if (await permissionLib.checkPermissions(session.user.id, 'Collection', collection.id, 'read')) {
+            viewableCollections.push(collection)
+        }
+    }
+
+    return Response.json({ status: "success", data: { collections: viewableCollections } })
 }
 
 // Add a new collection
@@ -96,7 +104,17 @@ export async function POST(request) {
             },
         }
     }
+
     if (requestData.collectionParentId) {
+        // If a parent was passed, ensure user has edit access to it
+        if (! await permissionLib.checkPermissions(session.user.id, 'Collection', requestData.collectionParentId, 'edit')) {
+            return Response.json({
+                status: "error",
+                message: "User does not have edit permission on parent family"
+            }, {
+                status: 403
+            })
+        }
         creationObj['data']['parent'] = {
             connect: {
                 id: requestData.collectionParentId

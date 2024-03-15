@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
     if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'read')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have read permission on this collection"
         }, {
             status: 403
         })
@@ -59,7 +59,15 @@ export async function GET(request, { params }) {
         }
     }
 
-    collection['children'] = childCollections
+    // Only show collections the user should see
+    let viewableCollections = []
+    for (let collection of childCollections) {
+        if (await permissionLib.checkPermissions(session.user.id, 'Collection', collection.id, 'read')) {
+            viewableCollections.push(collection)
+        }
+    }
+
+    collection['children'] = viewableCollections
     return Response.json({ status: "success", data: { collection: collection, records: records } })
 }
 
@@ -79,7 +87,7 @@ export async function PUT(request, { params }) {
     if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have edit permission on this collection"
         }, {
             status: 403
         })
@@ -145,7 +153,7 @@ export async function DELETE(request, { params }) {
     if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have edit permission on this collection"
         }, {
             status: 403
         })

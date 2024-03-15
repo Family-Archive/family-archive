@@ -16,10 +16,14 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        z-index: 1;
 
-        span {
+        .user {
             padding: 1rem;
             display: block;
+            background-color: transparent;
+            color: black;
+            text-align: left;
         }
     }
 }

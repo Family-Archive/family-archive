@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 import { NextResponse } from 'next/server'
+import permissionLib from '@/lib/permissions/lib';
 
 // Fetch people
 export async function GET(request) {
@@ -23,10 +24,18 @@ export async function GET(request) {
         where: where
     })
 
+    // Only return people this user can view
+    let readablePeople = []
+    for (let person of people) {
+        if (await permissionLib.checkPermissions(session.user.id, 'Person', person.id, 'read')) {
+            readablePeople.push(person)
+        }
+    }
+
     return NextResponse.json({
         status: 'success',
         data: {
-            people: people
+            people: readablePeople
         }
     }, {
         status: 200

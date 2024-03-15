@@ -50,7 +50,7 @@ const usersPage = () => {
                         return
                     }
 
-                    return <Link href={`/users/${user.id}`}>
+                    return <Link href={`/users/${user.id}`} id={user.id}>
                         <div className={styles.user}>
                             {user.name} / {user.email}
                         </div>

@@ -3,6 +3,9 @@ import clientLib from '../../../../lib/client/lib'
 import lib from '../../../../lib/lib'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import permissionLib from '@/lib/permissions/lib'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
@@ -77,24 +80,30 @@ const ViewRecord = async ({ params }) => {
     const collectionsData = await fetchCollections(params.id)
     const collections = collectionsData.data.collections
 
+    // Determine if this user can edit this record
+    const session = await getServerSession(authOptions);
+    const hasEditAccess = await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit')
+
     return (
         <div className={styles.ViewRecord}>
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
-                <div className='pageOptions'>
-                    <Link href={`/record/${params.id}/edit`}>
-                        <button><span className="material-icons">edit</span>Edit record</button>
-                    </Link>
-                    <Dropdown
-                        title="Options"
-                        options={[
-                            <EditPermissionsButton id={record.id} />,
-                            <MoveToCollectionButton id={record.id} />,
-                            collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
-                            <DeleteRecordButton id={record.id} />
-                        ]}
-                    />
-                </div>
+                {hasEditAccess ?
+                    <div className='pageOptions'>
+                        <Link href={`/record/${params.id}/edit`}>
+                            <button><span className="material-icons">edit</span>Edit record</button>
+                        </Link>
+                        <Dropdown
+                            title="Options"
+                            options={[
+                                <EditPermissionsButton id={record.id} />,
+                                <MoveToCollectionButton id={record.id} />,
+                                collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
+                                <DeleteRecordButton id={record.id} />
+                            ]}
+                        />
+                    </div>
+                    : ""}
             </div>
 
             <div className={styles.infoBar}>

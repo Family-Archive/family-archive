@@ -14,12 +14,13 @@ const UserSearch = ({ searchUsers, users, type, updateActiveUsers }) => {
         {users.length && document.activeElement.id === type ?
             <div className={styles.dropdown}>
                 {users.map(user => {
-                    return <span
+                    return <button
+                        className={styles.user}
                         key={user.id}
                         onClick={() => updateActiveUsers(user, type, 'add')}
                     >
                         {user.name}
-                    </span>
+                    </button>
                 })}
             </div>
             : ""}
