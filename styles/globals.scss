@@ -175,6 +175,33 @@ label.toggle {
     }
 }
 
+.loading::before {
+    position: absolute;
+    content: "pending";
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+    z-index: 10;
+    color: $accent-secondary-color;
+    left: 50%;
+    top: 50%;
+    animation: spin 0.4s linear infinite;
+}
+
+.loading>* {
+    opacity: 0.25;
+}
+
 
 label {
     display: block;
@@ -234,5 +261,15 @@ label {
         transform: translateY(1rem);
         opacity: 0;
         margin-top: -4rem;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg)
+    }
+
+    to {
+        transform: rotate(360deg)
     }
 }

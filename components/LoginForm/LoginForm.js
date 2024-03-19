@@ -28,7 +28,7 @@ const LoginForm = ({ providers, allowSelfRegistration }) => {
                         <label htmlFor='password'>Password</label>
                         <input type='password' name='password' id='password' />
                     </formitem>
-                    <button onClick={async () => {
+                    <button onClick={async e => {
                         const result = await signIn('login', {
                             redirect: false,
                             email: document.querySelector('#email').value,

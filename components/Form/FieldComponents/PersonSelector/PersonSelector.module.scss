@@ -8,6 +8,11 @@
         flex-wrap: wrap;
 
         .selectedPerson {
+            &.unavailable {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
             img {
                 width: 2rem;
                 height: 2rem;

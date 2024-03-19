@@ -104,6 +104,10 @@ const ViewFilter = (props) => {
             URLString += `&${param}=${extraParams[param]}`
         }
 
+        if (queryStringNoPage === URLString) {
+            return
+        }
+
         router.replace(URLString);
         router.refresh()
     }, [sortSettings, filters, extraParams])

@@ -124,10 +124,9 @@ const PersonSelector = ({ value, onChange, index }) => {
                     {fieldValue.map(personId => {
                         // If user doesn't seem to exist, they may have been deleted
                         if (!people[personId]) {
-                            return <div className={styles.selectedPerson} key={personId}>
-                                <button type='button' onClick={() => removeSelectedPerson(personId)}>
-                                    Deleted user
-                                    <span className="material-icons">close</span>
+                            return <div className={`${styles.selectedPerson} ${styles.unavailable}`} key={personId}>
+                                <button type='button'>
+                                    User unavailable
                                 </button>
                             </div>
                         }

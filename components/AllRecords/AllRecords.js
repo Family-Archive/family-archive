@@ -34,7 +34,11 @@ const fetchRecords = async (params) => {
     }
 
     records = await records.json()
-    return records.data.records
+    return {
+        records: records.data.records,
+        numPages: records.data.numPages
+    }
+
 }
 
 /**
@@ -72,15 +76,18 @@ const AllRecords = async ({ records, params, showOptions }) => {
 
     // If no record list was passed, use the fetchRecords method
     let recordList
+    let numPages
     if (!records) {
-        recordList = await fetchRecords(params)
+        let recordData = await fetchRecords(params)
+        recordList = recordData.records
+        numPages = recordData.numPages
     } else {
         recordList = records
     }
 
     return (
         <div className={styles.AllRecords}>
-            <section className={styles.recordsGrid}>
+            <section className={`${styles.recordsGrid} recordGrid`}>
                 {recordList.map(async record => {
                     // Get all files for this record and then search the list for a photo
                     const recordData = await fetchExtraRecordData(record.id)
@@ -113,9 +120,10 @@ const AllRecords = async ({ records, params, showOptions }) => {
             {showOptions ?
                 <section className={styles.viewOptions}>
                     <ViewFilter params={params} sortOptions={true} />
-                    <PageSelector page={params.page} />
+                    <PageSelector page={params.page} numPages={numPages} />
                 </section>
-                : ""}
+                : ""
+            }
         </div>
     )
 }

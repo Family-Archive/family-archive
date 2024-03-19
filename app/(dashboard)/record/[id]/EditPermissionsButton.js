@@ -20,7 +20,7 @@ const EditPermissionsButton = ({ id }) => {
                 <EditPermissions resourceId={id} resourceType='Record' />
             )}
         >
-            Edit permissions
+            Edit permissions...
         </button>
     )
 }
