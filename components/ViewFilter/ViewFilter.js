@@ -21,20 +21,24 @@ const ViewFilter = (props) => {
     const filterJSON = props.params.filters ? JSON.parse(props.params.filters) : {}
 
     // If this stuff is set in the URL, set the state to those values. Otherwise leave it blank.
-    const [sortSettings, setsortSettings] = useState({
+    const initialSortSettings = {
         option: props.params.sort || "",
         direction: props.params.dir || ""
-    })
-    const [filters, setfilters] = useState({
+    }
+    const [sortSettings, setsortSettings] = useState(initialSortSettings)
+
+    const initialFilters = {
         "name": filterJSON.name || [],
         "type": filterJSON.age || [],
-    })
-    const [extraParams, setextraParams] = useState({
+    }
+    const [filters, setfilters] = useState(initialFilters)
+
+    const initialExtraParams = {
         "startdate": props.params.startdate || "",
         "enddate": props.params.enddate || "",
-        "people": props.params.people || ""
-    })
-    const [hasLoaded, sethasLoaded] = useState(false)
+        "people": props.params.people || []
+    }
+    const [extraParams, setextraParams] = useState(initialExtraParams)
 
     /**
      * Update the sort settings state
@@ -93,19 +97,20 @@ const ViewFilter = (props) => {
     // Then call router.refresh, which re-fetches the data using the new URL string
     // We overwrite the page parameter here because changing these options should reset back to page 1
     useEffect(() => {
-        if (!hasLoaded) {
-            sethasLoaded(true)
+
+        // Make sure that the filter settings actually haven't changed
+        if (
+            JSON.stringify(extraParams) == JSON.stringify(initialExtraParams) &&
+            JSON.stringify(initialFilters) == JSON.stringify(filters) &&
+            JSON.stringify(initialSortSettings) == JSON.stringify(sortSettings)
+        ) {
             return
         }
 
         const filterString = JSON.stringify(filters)
-        let URLString = `${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}`
+        let URLString = `${pathname}?sort=${sortSettings.option}&dir=${sortSettings.direction}&filters=${filterString}&page=1`
         for (let param of Object.keys(extraParams)) {
             URLString += `&${param}=${extraParams[param]}`
-        }
-
-        if (queryStringNoPage === URLString) {
-            return
         }
 
         router.replace(URLString);
