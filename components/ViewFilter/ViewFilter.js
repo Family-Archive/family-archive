@@ -14,7 +14,7 @@ const ViewFilter = (props) => {
     // it appends the relevant query string to the URL and calls router.refresh(). This causes Next.js to re-fetch the data using the updated query parameters.
     // So in other words, what gets displayed on the front end is ACTUALLY controlled by the URL parameters,not the state, although the state changes are what updates the URL.
 
-    const router = useRouter();
+    const router = useRouter()
     const pathname = usePathname()
 
     // Grab the filter options as JSON, if possible

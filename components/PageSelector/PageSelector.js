@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import styles from './PageSelector.module.scss'
 
 /**
@@ -10,21 +10,23 @@ import styles from './PageSelector.module.scss'
  */
 
 const PageSelector = ({ page, numPages }) => {
-    const router = useRouter();
+    const router = useRouter()
     const pathname = usePathname()
+    const searchParams = useSearchParams()
 
     const [currentPage, setcurrentPage] = useState(page || 1)
     const [hasLoaded, sethasLoaded] = useState(false)
 
-    // useEffect(() => {
-    //     const urlParams = new URLSearchParams(window.location.search)
-    //     for (let [key, value] of urlParams) {
-    //         if (key == "page") {
-    //             return
-    //         }
-    //     }
-    //     setcurrentPage(1)
-    // }, [router.pathname])
+    // If the query params are updated, check if the page number in the URL differs from the current state
+    // if so, update the page in the component
+    useEffect(() => {
+        for (let [key, value] of searchParams) {
+            if (key == "page" && value != currentPage) {
+                setcurrentPage(value)
+                return
+            }
+        }
+    }, [searchParams])
 
     useEffect(() => {
         if (!hasLoaded || isNaN(currentPage)) {
@@ -76,7 +78,8 @@ const PageSelector = ({ page, numPages }) => {
                 type="number"
                 value={currentPage}
                 id='pageNum'
-                onChange={(e) => setcurrentPage(parseInt(e.target.value))}
+                onClick={e => e.target.select()}
+                onChange={e => setcurrentPage(parseInt(e.target.value))}
             />
 
             <button

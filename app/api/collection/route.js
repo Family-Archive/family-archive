@@ -110,7 +110,7 @@ export async function POST(request) {
         if (! await permissionLib.checkPermissions(session.user.id, 'Collection', requestData.collectionParentId, 'edit')) {
             return Response.json({
                 status: "error",
-                message: "User does not have edit permission on parent family"
+                message: "User does not have edit permission on parent collection"
             }, {
                 status: 403
             })
