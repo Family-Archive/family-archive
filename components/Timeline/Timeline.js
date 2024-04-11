@@ -27,6 +27,9 @@ const Timeline = (props) => {
     const getTimelineBounds = (data) => {
         // This is written so that the array doesn't need to be sorted
         // because I wrote it before deciding to sort the array by startdate first
+
+        console.log(data)
+
         let startdate = data[0].date.startdate
         let enddate = data[0].date.enddate
         for (let timedata of data) {
@@ -185,6 +188,7 @@ const Timeline = (props) => {
 
     // Get our units in order to render the timeline markers (notches)
     const bounds = getTimelineBounds(data)
+
     const numDays = (bounds[1] - bounds[0]) / 86400000
     const numMonths = (bounds[1] - bounds[0]) / 2629800000 // approximation since not all months are the same length
     const numYears = (bounds[1] - bounds[0]) / 31556952000
@@ -272,10 +276,10 @@ const Timeline = (props) => {
                 <div className={styles.tlObject} />
                 {markerElement}
                 <div className={styles.entries}>
-                    {visualData.map(section => {
-                        return <div className={styles.section}>
+                    {visualData.map((section, index) => {
+                        return <div className={styles.section} key={index}>
                             {section.map(datum => {
-                                return <Link href={`/record/${datum.id}`}>
+                                return <Link href={`/record/${datum.id}`} key={datum.id}>
                                     <div
                                         className={styles.entry}
                                         key={datum.date.startdate + datum.date.enddate}

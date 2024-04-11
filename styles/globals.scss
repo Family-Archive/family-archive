@@ -65,12 +65,15 @@ button.tertiary,
     color: black;
 }
 
+button:focus,
+.button:focus,
 button:hover,
 .button:hover,
 button.hovered,
 .button.hovered {
     cursor: pointer;
     filter: brightness(0.85);
+    outline: none;
 }
 
 button:active,
@@ -135,6 +138,12 @@ textarea {
     font-family: Inter;
 }
 
+input:focus,
+textarea:focus {
+    border: 0.15rem solid $accent-color;
+    outline: none;
+}
+
 /* <input type="checkbox" class='toggle' /><label class='toggle'>Toggle</label> */
 input[type=checkbox].toggle {
     height: 0;
@@ -150,6 +159,10 @@ input[type=checkbox].toggle {
         left: calc(100% - 5px);
         transform: translateX(-100%);
     }
+}
+
+.formitem {
+    margin-top: 1rem;
 }
 
 label.toggle {

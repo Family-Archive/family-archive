@@ -1,136 +1,119 @@
 "use client"
 import styles from './FamilySelector.module.scss'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
+import TextSearchInput from '@/components/TextSearchInput/TextSearchInput'
 
 const FamilySelector = ({ value, index, onChange }) => {
-  const [families, setfamilies] = useState([])
-  const [matchingFamilies, setmatchingFamilies] = useState([])
-  const [fieldValue, setfieldValue] = useState(value ? JSON.parse(value) : { families: [], defaultFamily: null })
-  const [showMenu, setshowMenu] = useState(false)
+    const [textSearchValue, settextSearchValue] = useState([])
+    const [defaultFamily, setdefaultFamily] = useState(JSON.parse(value).defaultFamily)
 
-  const updateValue = (value) => {
-    setfieldValue(value)
-    onChange({
-      target: {
-        value: JSON.stringify(value),
-        dataset: {
-          index: index
+    /**
+   * This function is passed to the input to run on state update
+   * @param {Array} value: The search input state, which gets passed to the form
+   */
+    const valueHasChanged = value => {
+        settextSearchValue(value)
+        let formValue = {
+            families: value,
+            defaultFamily: defaultFamily
         }
-      }
-    })
-  }
-
-  const addFamily = (family) => {
-    if (fieldValue.families.length == 0) {
-      updateValue({ families: [family], defaultFamily: family.id })
-      return
-    }
-
-    for (let activeFamily of fieldValue.families) {
-      if (activeFamily.id == family.id) {
-        return
-      }
-    }
-    updateValue({ ...fieldValue, families: [...fieldValue.families, family] })
-  }
-
-  const removeFamily = (family) => {
-    let tempFamilies = []
-    for (let activeFamily of fieldValue.families) {
-      if (activeFamily.id != family.id) {
-        tempFamilies.push(activeFamily)
-      }
-    }
-
-    let defaultFamily = fieldValue.defaultFamily
-    if (family.id == fieldValue.defaultFamily) {
-      defaultFamily = tempFamilies[0].id
-    }
-
-    updateValue({ families: tempFamilies, defaultFamily: defaultFamily })
-  }
-
-  useEffect(() => {
-    const fetchfamilies = async () => {
-      let families = await fetch('/api/family')
-      families = await families.json()
-      setfamilies(families.data.families)
-      if (fieldValue.families.length === 0) {
-        updateValue({ families: [families.data.families[0]], defaultFamily: families.data.families[0].id })
-      }
-    }
-    fetchfamilies()
-  }, [])
-
-  // Handle clicks outside the component
-  const myRef = useRef();
-  const handleClickOutside = e => {
-    if (!myRef.current.contains(e.target)) {
-      setshowMenu(false)
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  });
-
-  return (
-    <div className={styles.FamilySelector} ref={myRef}>
-      <div className={styles.activeFamilies}>
-        {fieldValue.families.map(family => {
-          return <div
-            className={`${styles.family} ${fieldValue.defaultFamily === family.id ? styles.default : ""}`}
-            key={family.id}
-          >
-            {family.name}
-            <div className={styles.options}>
-              {
-                fieldValue.defaultFamily === family.id ? <span className={styles.defaultLabel}>
-                  Default <span className="material-icons">done</span>
-                </span>
-                  : <button onClick={() => updateValue({ ...fieldValue, defaultFamily: family.id })} className='secondary' type='button'>Make default</button>
-              }
-              {fieldValue.families.length > 1 ?
-                <a href="#"><span onClick={() => removeFamily(family)} className="material-icons">cancel</span></a>
-                : ""
-              }
-            </div>
-          </div>
-        })}
-      </div>
-      <input
-        type='text'
-        id='familySearch'
-        name='familySearch'
-        autoComplete='off'
-        placeholder='Search for families...'
-        onFocus={() => setshowMenu(true)}
-        onKeyUp={e => setmatchingFamilies(families.filter(family => family.name.toLowerCase().includes(e.target.value.toLowerCase())))}
-      />
-      {showMenu && matchingFamilies.length > 0 ?
-        <div className={styles.dropdown}>
-          {matchingFamilies.map(family => {
-            for (let fam of fieldValue.families) {
-              if (fam.id == family.id) {
-                return
-              }
+        onChange({
+            target: {
+                value: JSON.stringify(formValue),
+                dataset: {
+                    index: index
+                }
             }
+        })
+    }
 
-            return <button
-              key={family.id}
-              type="button"
-              onClick={() => addFamily(family)}
-            >
-              {family.name}
-            </button>
-          })}
+    /**
+     * Remove a given family from the textSearchValue
+     * @param {string} familyToRemove: The id of the family to remove
+     */
+    const removeFamily = familyToRemove => {
+        let _families = []
+        for (let family of textSearchValue) {
+            if (familyToRemove.data.id != family.data.id) {
+                _families.push(family)
+            }
+        }
+
+        if (_families.length === 1) {
+            setdefaultFamily(_families[0].data.id)
+        }
+
+        settextSearchValue(_families)
+    }
+
+    /**
+     * The family search function passed to the text input
+     * @param {string} query: The query to search for
+     * @returns {Array}: The list of TextSearchInput-formatted family data
+     */
+    const fetchfamilies = async query => {
+        let _families = []
+        let families = await fetch(`/api/family?search=${query}`)
+        families = await families.json()
+        for (let family of families.data.families) {
+            _families.push({ name: family.name, data: family })
+        }
+        return _families
+    }
+
+    // If either of these values get updated, we want to call valueHasChanged so that it propagates up to the parent Form component
+    useEffect(() => {
+        valueHasChanged(textSearchValue)
+    }, [defaultFamily, textSearchValue])
+
+    // When the component loads, take the initial field data provided by the form and format it so that 
+    // we can pass it to the TextSearchInput
+    useEffect(() => {
+        let _families = []
+        for (let family of JSON.parse(value).families) {
+            _families.push({
+                name: family.name,
+                data: family.data
+            })
+        }
+        settextSearchValue(_families)
+    }, [])
+
+    return (
+        <div className={styles.FamilySelector}>
+            <div className={styles.activeFamilies}>
+                {textSearchValue.map(family => {
+                    return <div
+                        className={`${styles.family} ${defaultFamily === family.id ? styles.default : ""}`}
+                        key={family.data.id}
+                    >
+                        {family.name}
+                        <div className={styles.options}>
+                            {
+                                defaultFamily === family.data.id ? <span className={styles.defaultLabel}>
+                                    Default <span className="material-icons">done</span>
+                                </span>
+                                    : <button onClick={() => setdefaultFamily(family.data.id)} className='secondary' type='button'>Make default</button>
+                            }
+                            {textSearchValue.length > 1 ?
+                                <a href="#"><span onClick={() => removeFamily(family)} className="material-icons">cancel</span></a>
+                                : ""
+                            }
+                        </div>
+                    </div>
+                })}
+            </div>
+            <TextSearchInput
+                searchFunction={fetchfamilies}
+                runOnUpdate={valueHasChanged}
+                canonicalData={textSearchValue}
+                label=''
+                placeholder='Start typing to search families...'
+                showChips={false}
+            />
         </div>
-        : ""
-      }
-    </div>
-  )
+    )
 }
 
 export default FamilySelector

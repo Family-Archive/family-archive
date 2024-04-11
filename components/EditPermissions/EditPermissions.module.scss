@@ -1,4 +1,6 @@
 .EditPermissions {
+    width: 50rem;
+
     .selector {
         display: flex;
         flex-direction: column;
@@ -28,32 +30,33 @@
         border-radius: 1rem;
         width: 100%;
 
-        .activeUsers {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        input {
+            margin-top: 0.5rem;
+            background-color: $accent-border-color;
+            border: none;
+        }
 
-            >span {
-                opacity: 0.5;
-                text-align: center;
+        div:last-child button[type="button"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            border-radius: 0.5rem;
+            background-color: white;
+            border: $accent-border;
+
+            span {
+                opacity: 0;
             }
 
-            .user {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+            &:hover {
+                filter: none;
 
-                &:hover button {
+                span {
                     opacity: 1;
-                }
-
-                button {
-                    opacity: 0;
-                    padding: 0;
-                    background-color: transparent;
-                    color: $accent-secondary-color;
                 }
             }
         }
+
     }
 }

@@ -31,18 +31,18 @@ const RegisterForm = ({ providers }) => {
             <br /><hr />
 
             <div className={styles.manualLogin}>
-                <formitem>
+                <div className='formitem'>
                     <label htmlFor='email'>Email</label>
                     <input type='text' name='email' id='email' />
-                </formitem>
-                <formitem>
+                </div>
+                <div className='formitem'>
                     <label htmlFor='name'>Name</label>
                     <input type='text' name='name' id='name' />
-                </formitem>
-                <formitem>
+                </div>
+                <div className='formitem'>
                     <label htmlFor='password'>Password</label>
                     <input type='password' name='password' id='password' />
-                </formitem>
+                </div>
                 <button onClick={async () => {
                     const result = await signIn('signup', {
                         redirect: false,

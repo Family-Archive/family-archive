@@ -42,7 +42,7 @@ const NavBar = () => {
                             icon="account_circle"
                             title=""
                             options={[
-                                <Link href={`/users/${session.user.id}`}><button>My account</button></Link>,
+                                <Link className='button' href={`/users/${session.user.id}`}>My account</Link>,
                                 <button onClick={signOut}>Log Out</button>,
                             ]}
                         />

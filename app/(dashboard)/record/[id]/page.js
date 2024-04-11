@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import permissionLib from '@/lib/permissions/lib'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
+import dynamic from 'next/dynamic'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
@@ -174,4 +175,7 @@ const ViewRecord = async ({ params }) => {
     )
 }
 
-export default ViewRecord
+// We need to disable SSR for this page because of the dynamic field render functions
+export default dynamic(() => Promise.resolve(ViewRecord), {
+    ssr: false
+})

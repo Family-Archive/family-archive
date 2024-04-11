@@ -95,7 +95,7 @@ export async function PUT(request, { params }) {
 
     let formData = await request.formData()
     const familiesData = JSON.parse(formData.get('families'))
-    const familiesIdList = familiesData.families.map(family => { return { id: family.id } })
+    const familiesIdList = familiesData.families.map(family => { return { id: family.data.id } })
 
     if (!formData.get('name')) {
         return NextResponse.json({

@@ -97,23 +97,23 @@ const LocationModal = (props) => {
             <div style={{ display: 'flex', gap: '1rem' }}>
                 {!isSearchMode ?
                     <>
-                        <formitem>
+                        <div className='formitem'>
                             <label htmlFor='lat'>Latitude</label>
                             <input name='lat' id='lat' type='text' onChange={updatePos} />
-                        </formitem>
-                        <formitem>
+                        </div>
+                        <div className='formitem'>
                             <label htmlFor='lng'>Longitude</label>
                             <input name='lng' id='lng' type='text' onChange={updatePos} />
-                        </formitem>
+                        </div>
                     </>
                     : <>
-                        <formitem>
+                        <div className='formitem'>
                             <label htmlFor='search'>Search for a location</label>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <input name='search' id='search' type='text' onKeyDown={e => { if (e.key === 'Enter') { getCoordsFromSearch() } }} />
                                 <button type='button' onClick={getCoordsFromSearch}>Search</button>
                             </div>
-                        </formitem>
+                        </div>
                     </>
                 }
             </div>
@@ -130,7 +130,7 @@ const LocationModal = (props) => {
             </div>
 
             {hasName ?
-                <formitem>
+                <div className='formitem'>
                     <label htmlFor='customName'>Name</label>
                     <input
                         defaultValue={value.name || ""}
@@ -140,7 +140,7 @@ const LocationModal = (props) => {
                         name='customName'
                     />
                     <br /><br />
-                </formitem>
+                </div>
                 : ""
             }
 

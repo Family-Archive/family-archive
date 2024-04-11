@@ -418,7 +418,7 @@ export default function Form({
                         let Element = getElement(field)
 
                         return (
-                            <formitem key={index}>
+                            <div className="formitem" key={index}>
                                 {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.label}</label>}
                                 <Element
                                     id={field.name}
@@ -430,7 +430,7 @@ export default function Form({
                                     onChange={changeHandler}
                                 >{field.content}</Element>
                                 {errors[field.name] ? <span className={styles.fieldError}>{errors[field.name]}</span> : ""}
-                            </formitem>
+                            </div>
                         )
                     })}
                     <input type="submit" className="button" value={submitMessage || 'Submit'} />

@@ -20,7 +20,7 @@ import { cookies } from 'next/dist/client/components/headers'
  * @returns The JSON response containing the records
  */
 const fetchRecords = async (params) => {
-    let queryString = lib.buildQueryString(params)
+    let queryString = lib.buildQueryString(params) + '&paginate=true'
     let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records${queryString}`,
         {
             next: { tags: ['records'] },

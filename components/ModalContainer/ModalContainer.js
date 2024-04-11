@@ -1,6 +1,6 @@
 import styles from './ModalContainer.module.scss'
 
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 
 /**
@@ -11,6 +11,14 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 const ModalContainer = ({ modals }) => {
     const _modals = modals
     const modalFunctions = useContext(ModalContext)
+
+    useEffect(() => {
+        if (!modals.length) {
+            document.querySelector('main').removeAttribute('inert')
+        } else {
+            document.querySelector('main').setAttribute('inert', '')
+        }
+    }, [modals])
 
     return (
         <div

@@ -5,9 +5,28 @@ import { useRouter, usePathname } from 'next/navigation'
 import styles from './ViewFilter.module.scss'
 import SortToggle from './SortToggle/SortToggle/SortToggle'
 import FilterSetting from './FilterSetting/FilterSetting'
-import PersonFilter from './PersonFilter/PersonFilter'
+import TextSearchInput from '../TextSearchInput/TextSearchInput'
 
-const ViewFilter = (props) => {
+/**
+ * Given a list of people IDs separated by commas, fetch an array of data that can be passed to the TextSearchInput function
+ * @param {string} peopleString: The comma-separated list of person IDs
+ * @returns {Array}: A list of objects that can be passed to the TextSearchInput
+ */
+const fetchInitialPeopleObjects = async peopleString => {
+    const ids = peopleString.split(',')
+    let people = []
+    for (let id of ids) {
+        let personData = await fetch(`/api/people/${id}`)
+        personData = await personData.json()
+        people.push({
+            name: personData.data.person.fullName,
+            data: personData.data.person
+        })
+    }
+    return people
+}
+
+const ViewFilter = props => {
     // This component manages state for sorting and filtering options. While it can be used on any page,
     // the page itself must pass the query params down to this component.
     // The way it works is that it has a useEffect hook that watches the sort and filter settings for changes; when a change occurs,
@@ -36,7 +55,7 @@ const ViewFilter = (props) => {
     const initialExtraParams = {
         "startdate": props.params.startdate || "",
         "enddate": props.params.enddate || "",
-        "people": props.params.people || []
+        "people": props.params.people ? fetchInitialPeopleObjects(props.params.people) : []
     }
     const [extraParams, setextraParams] = useState(initialExtraParams)
 
@@ -93,6 +112,27 @@ const ViewFilter = (props) => {
         setfilters({ ...filters, [name]: currFilterEntries })
     }
 
+    /**
+     * Make an API call to search for people, given a search term
+     * This is used for the TextSearchInput field in this component
+     * @param {string} query: The name to search for
+     * @return {Array}: A list of people data prepared for the input field
+    */
+    const searchPeople = async (query) => {
+        let people = await fetch(`/api/people?search=${query}`)
+        people = await people.json()
+        people = people.data.people.slice(0, 10)
+
+        let finalArray = []
+        for (let person of people) {
+            finalArray.push({
+                name: person.fullName,
+                data: person
+            })
+        }
+        return finalArray
+    }
+
     // Watch the sort, filter, and extra param settings for changes; when a change occurs, convert this into a query string and add it to the URL
     // Then call router.refresh, which re-fetches the data using the new URL string
     // We overwrite the page parameter here because changing these options should reset back to page 1
@@ -138,6 +178,7 @@ const ViewFilter = (props) => {
                         removeFilter={removeFilter}
                     />
                 })}
+
                 <div className={styles.dates}>
                     <div>
                         <label htmlFor='startdate'>Start date</label>
@@ -165,7 +206,12 @@ const ViewFilter = (props) => {
                     </div>
                 </div>
 
-                <PersonFilter setParam={setParam} removeParam={removeParam} people={extraParams.people} />
+                <TextSearchInput
+                    runOnUpdate={allItems => setParam('people', allItems.map(item => item.data.id).join(','))}
+                    canonicalData={extraParams['people']}
+                    label="Person"
+                    searchFunction={searchPeople}
+                />
 
             </section>
         </div>

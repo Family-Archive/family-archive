@@ -18,10 +18,10 @@ const RenameButton = ({ id }) => {
             onClick={() => modalFunctions.addModal(
                 "Rename collection",
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <formitem>
+                    <div className='formitem'>
                         <label for='name'>Name</label>
                         <input type="text" name='name' id='name' />
-                    </formitem>
+                    </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {

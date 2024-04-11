@@ -15,7 +15,11 @@ export async function GET(request) {
         })
     }
 
-    const families = await prisma.Family.findMany()
+    const params = request.nextUrl.searchParams
+    let where = params.get('search') ? { name: { contains: params.get('search') } } : {}
+    const families = await prisma.Family.findMany({
+        where: where
+    })
 
     return NextResponse.json({
         status: 'success',

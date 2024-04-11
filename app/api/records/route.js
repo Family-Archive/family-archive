@@ -53,25 +53,20 @@ export async function GET(request) {
         where: where
     })
 
-
     // TODO: ughhh.... we need an efficient way to select only the records we need.
     // ideally we could do this in the select query, to just get the right records from the database,
     // but because of how complex the filters can be, plus the need to check the read permission on each record,
     // I don't see any other way to do it except to select all records, and then iterate through each to determine
     // if it should be shown -- but this is really inefficient.
 
-    // I tried to optimize a little bit by only going through until we've reached the maximum possible number of records
-    // for the amount of pages we're on (see line 126), but the problem with this is that we then can't accurately determine
-    // the exact number of pages. For instance, if there are 41 records and one of them is hidden to a user, an admin would get 3 pages
-    // (2 with 20 records each and a 3rd with one record) and the other user should get 2 pages (since one record is hidden)
-    // But right now, we get the page number before doing the permission check, so the other user gets 3 pages, with the last one
-    // containing no records on it.
-
-    // Something to think about. How do we do this efficiently?
-
     // Reformat and filter final results
     let finalArray = []
     for (let result of results) {
+        if (!await permissionLib.checkPermissions(session.user.id, 'Record', result.id, 'read')) {
+            // Don't add records to the final array that the user can't read
+            continue
+        }
+
         // Add icon information
         const RecordType = require(`/recordtypes/${result.type}/record.js`)
         const recordType = new RecordType()
@@ -122,19 +117,12 @@ export async function GET(request) {
         }
     }
 
+    // get the number of pages and slice the array if paginating
+    // we could make this arbitrary 20 a variable in the future to allow different page sizes
     const numPages = Math.ceil(finalArray.length / 20)
-
-    // slice array into blocks of 20
-    let filteredArray = []
-    for (let record of finalArray) {
-        if (await permissionLib.checkPermissions(session.user.id, 'Record', record.id, 'read')) {
-            filteredArray.push(record)
-        }
-        if (filteredArray.length === page * 20) {
-            break
-        }
+    if (params.get('paginate')) {
+        finalArray = finalArray.slice((page - 1) * 20, ((page - 1) * 20) + 20)
     }
-    finalArray = filteredArray.slice((page - 1) * 20)
 
     return Response.json({
         status: 'success',

@@ -20,14 +20,14 @@ const LoginForm = ({ providers, allowSelfRegistration }) => {
             <section className={styles.providers}>
 
                 <div className={styles.manualLogin}>
-                    <formitem>
+                    <div className='formitem'>
                         <label htmlFor='email'>Email</label>
                         <input type='text' name='email' id='email' />
-                    </formitem>
-                    <formitem>
+                    </div>
+                    <div className='formitem'>
                         <label htmlFor='password'>Password</label>
                         <input type='password' name='password' id='password' />
-                    </formitem>
+                    </div>
                     <button onClick={async e => {
                         const result = await signIn('login', {
                             redirect: false,

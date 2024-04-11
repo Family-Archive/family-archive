@@ -53,7 +53,10 @@ const editUser = async ({ params }) => {
                         name: 'families',
                         label: 'Add user to families',
                         type: 'FamilySelector',
-                        value: JSON.stringify({ families: user.families, defaultFamily: user.defaultFamilyId })
+                        value: JSON.stringify({
+                            families: user.families.map(family => { return { name: family.name, data: family } }),
+                            defaultFamily: user.defaultFamilyId
+                        })
                     },
                 ]}
                 allowFileUpload={false}

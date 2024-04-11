@@ -7,18 +7,23 @@ import { cookies } from 'next/dist/client/components/headers'
 import { redirect } from 'next/navigation'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import Collections from '../../../../components/Collections/Collections'
-import AllRecords from '@/components/AllRecords/AllRecords'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import DeleteButton from './DeleteCollectionButton'
 import RenameButton from './RenameButton'
 import EditPermissionsButton from './EditPermissionsButton'
+import CreateCollectionButton from '../CreateCollectionButton'
+import dynamic from 'next/dynamic'
 
 /**
  * This page displays the children of a given collection
  */
 
 const collection = async ({ params, searchParams }) => {
+    const AllRecords = dynamic(() => import("@/components/AllRecords/AllRecords"), {
+        ssr: false,
+    })
+
     // Fetch the child data of this collection
     let data = await fetch(`${process.env.NEXTAUTH_URL}/api/collection/${params.id}`, {
         headers: {
@@ -44,16 +49,19 @@ const collection = async ({ params, searchParams }) => {
             <div className='topBar' style={{ paddingRight: '1rem' }}>
                 <h1 className='title'>{thisCollection.name}</h1>
                 {hasEditAccess ?
-                    <Dropdown
-                        title="Options"
-                        options={[
-                            <EditPermissionsButton id={params.id} />,
-                            <RenameButton id={params.id} />,
-                            <MoveToCollectionButton id={params.id} />,
-                            <DeleteButton id={params.id} />,
-                        ]}
-                    />
-                    : ""}
+                    <div className='pageOptions'>
+                        <Dropdown
+                            title="Options"
+                            options={[
+                                <EditPermissionsButton id={params.id} />,
+                                <RenameButton id={params.id} />,
+                                <MoveToCollectionButton id={params.id} />,
+                                <DeleteButton id={params.id} />,
+                            ]}
+                        />
+                        <CreateCollectionButton />
+                    </div> : ""
+                }
             </div>
             <BreadcrumbTrail /><br />
             <Collections collections={children} />

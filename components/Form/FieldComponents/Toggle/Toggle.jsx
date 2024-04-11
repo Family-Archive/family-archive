@@ -22,7 +22,7 @@ export default function Toggle({ value, onChange, index }) {
     }
 
     return (
-        <formitem>
+        <div className='formitem'>
             <div
                 onClick={clickHandler}
                 className={`${styles.toggleContainer} ${value ? styles.toggleTrue : ''}`}
@@ -31,6 +31,6 @@ export default function Toggle({ value, onChange, index }) {
                 {value ? <div className={styles.onMessage}>Yes</div> : ''}
                 {!value ? <div className={styles.offMessage}>No</div> : ''}
             </div>
-        </formitem>
+        </div>
     )
 }

@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from 'react'
 import { useSession } from "next-auth/react"
 import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { ToastContext } from '@/app/(contexts)/ToastContext'
-import UserSearch from './UserSearch/UserSearch'
+import TextSearchInput from '../TextSearchInput/TextSearchInput'
 
 const EditPermissions = ({ resourceId, resourceType }) => {
     const modalFunctions = useContext(ModalContext)
@@ -13,6 +13,7 @@ const EditPermissions = ({ resourceId, resourceType }) => {
 
     const [activeUsersRead, setactiveUsersRead] = useState([])
     const [activeUsersEdit, setactiveUsersEdit] = useState([])
+
     const [userResults, setuserResults] = useState([])
     const [loading, setloading] = useState(false)
 
@@ -36,7 +37,7 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         // we're mostly concerned with users in this component so we pull that information out
         let users = []
         for (let permission of permissions.data.permissions) {
-            users.push(permission.user)
+            users.push({ name: permission.user.name, data: permission.user })
         }
 
         if (permission === 'read') {
@@ -53,6 +54,7 @@ const EditPermissions = ({ resourceId, resourceType }) => {
      * @param {string} query: The name to search
      */
     const searchUsers = async query => {
+        let userArray = []
         let users = []
         if (query) {
             users = await fetch(`/api/users?search=${query}`)
@@ -60,7 +62,14 @@ const EditPermissions = ({ resourceId, resourceType }) => {
             users = users.data.users
         }
 
-        setuserResults(users)
+        for (let user of users) {
+            userArray.push({
+                name: user.name,
+                data: user
+            })
+        }
+
+        return userArray
     }
 
     /**
@@ -69,19 +78,11 @@ const EditPermissions = ({ resourceId, resourceType }) => {
      * @param {string} permission: read|edit
      * @param {string} action add|remove
      */
-    const updateActiveUsers = (user, permission, action) => {
-        if (action === 'add') {
-            if (permission === 'read') {
-                setactiveUsersRead([...activeUsersRead, user])
-            } else {
-                setactiveUsersEdit([...activeUsersEdit, user])
-            }
+    const updateActiveUsers = (users, permission) => {
+        if (permission === 'read') {
+            setactiveUsersRead(users)
         } else {
-            if (permission === 'read') {
-                setactiveUsersRead(activeUsersRead.filter(item => item !== user))
-            } else {
-                setactiveUsersEdit(activeUsersEdit.filter(item => item !== user))
-            }
+            setactiveUsersEdit(users)
         }
     }
 
@@ -97,9 +98,9 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         formData.append('permission', permission)
 
         if (permission === 'read') {
-            formData.append('users', JSON.stringify(activeUsersRead.map(user => { return { id: user.id, type: 'user' } })))
+            formData.append('users', JSON.stringify(activeUsersRead.map(user => { return { id: user.data.id, type: 'user' } })))
         } else {
-            formData.append('users', JSON.stringify(activeUsersEdit.map(user => { return { id: user.id, type: 'user' } })))
+            formData.append('users', JSON.stringify(activeUsersEdit.map(user => { return { id: user.data.id, type: 'user' } })))
         }
 
         await fetch(`/api/permissions/`, {
@@ -123,58 +124,52 @@ const EditPermissions = ({ resourceId, resourceType }) => {
         <div style={{ display: 'flex', gap: '1rem' }}>
             <div className={styles.permissions}>
                 <span>Limit read access to...</span>
-                <UserSearch
-                    type='read'
-                    searchUsers={searchUsers}
-                    users={userResults}
-                    updateActiveUsers={updateActiveUsers}
+                <TextSearchInput
+                    searchFunction={searchUsers}
+                    runOnUpdate={users => updateActiveUsers(users, 'read')}
+                    canonicalData={activeUsersRead}
+                    label=""
+                    placeholder='Search users'
                 />
-                <div className={styles.activeUsers}>
-                    {loading ?
-                        <span>Loading...</span>
-                        : activeUsersRead.length ? activeUsersRead.map(user => {
-                            return <div key={user.id} className={styles.user}>
-                                <span>{user.name}</span>
-                                <button
-                                    onClick={() => updateActiveUsers(user, 'read', 'remove')}
-                                >
-                                    <span className="material-icons">remove_circle</span>
-                                </button>
-                            </div>
-                        }) : <span>
-                            No permissions specified!<br />
-                            Anyone can view this item.
-                        </span>
-                    }
-                </div>
+
+                {loading ? "Loading..." : activeUsersRead.length === 0 ?
+                    <span style={{
+                        textAlign: 'center',
+                        width: '100%',
+                        display: 'inline-block',
+                        marginTop: '0.5rem',
+                        opacity: 0.5
+                    }}>
+                        No permissions specified!<br />
+                        Anyone can view this item.
+                    </span>
+                    : ""
+                }
             </div>
 
             <div className={styles.permissions}>
                 <span>Allow edit access to...</span>
-                <UserSearch
-                    type='edit'
-                    searchUsers={searchUsers}
-                    users={userResults}
-                    updateActiveUsers={updateActiveUsers}
+                <TextSearchInput
+                    searchFunction={searchUsers}
+                    runOnUpdate={users => updateActiveUsers(users, 'edit')}
+                    canonicalData={activeUsersEdit}
+                    label=""
+                    placeholder='Search users'
                 />
-                <div className={styles.activeUsers}>
-                    {loading ?
-                        <span>Loading...</span>
-                        : activeUsersEdit.length ? activeUsersEdit.map(user => {
-                            return <div key={user.id} className={styles.user}>
-                                <span>{user.name}</span>
-                                <button
-                                    onClick={() => updateActiveUsers(user, 'edit', 'remove')}
-                                >
-                                    <span className="material-icons">remove_circle</span>
-                                </button>
-                            </div>
-                        }) : <span>
-                            No permissions specified!<br />
-                            Only the creator can edit this item.
-                        </span>
-                    }
-                </div>
+
+                {loading ? "Loading..." : activeUsersEdit.length === 0 ?
+                    <span style={{
+                        textAlign: 'center',
+                        width: '100%',
+                        display: 'inline-block',
+                        marginTop: '0.5rem',
+                        opacity: 0.5
+                    }}>
+                        No permissions specified!<br />
+                        Only the creator can edit this item.
+                    </span>
+                    : ""
+                }
             </div>
         </div>
 

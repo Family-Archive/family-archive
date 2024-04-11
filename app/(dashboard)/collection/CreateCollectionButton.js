@@ -20,15 +20,15 @@ const CreateCollectionButton = () => {
             onClick={() => modalFunctions.addModal(
                 "Add new Collection",
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <formitem>
+                    <div className='formitem'>
                         <label htmlFor='collectionName'>Collection Name</label>
                         <input type='text' id='collectionName' name='collectionName' />
-                    </formitem>
-                    <formitem>
+                    </div>
+                    <div className='formitem'>
                         <label htmlFor='collectionParentId' name='Parent Collection'>Parent Collection</label>
                         <CollectionSelector />
-                    </formitem>
-                    <formitem style={{ display: 'flex', gap: '0.5rem' }}>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {
                                 const formData = new FormData()
@@ -52,13 +52,13 @@ const CreateCollectionButton = () => {
                             }}
                         >Add</button>
                         <button className="tertiary" onClick={modalFunctions.popModal}>Cancel</button>
-                    </formitem>
-                </div>
+                    </div>
+                </div >
             )}
         >
             <span className="material-icons">library_add</span>
             New Collection
-        </button>
+        </button >
     )
 }
 

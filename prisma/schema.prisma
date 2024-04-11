@@ -46,9 +46,9 @@ model VerificationToken {
 }
 
 model User {
-  id              String       @id @default(cuid())
+  id              String            @id @default(cuid())
   name            String?
-  email           String?      @unique
+  email           String?           @unique
   emailVerified   String? // 'yes' or 'no' or null; when waiting for verification, we store the verification token here (hence string)
   password        String?
   image           String?
@@ -56,12 +56,14 @@ model User {
   sessions        Session[]
   records         Record[]
   families        Family[]
-  defaultFamily   Family       @relation("defaultFamily", fields: [defaultFamilyId], references: [id])
+  defaultFamily   Family            @relation("defaultFamily", fields: [defaultFamilyId], references: [id])
   defaultFamilyId String
-  isAdmin         Boolean      @default(false)
+  isAdmin         Boolean           @default(false)
   Person          Person[]
   Collection      Collection[]
   Permission      Permission[]
+  Group           Group[]
+  GroupMembership GroupMembership[]
 }
 
 model Family {
@@ -196,4 +198,21 @@ model Permission {
   resourceType String
   permission   String
   type         String
+}
+
+model Group {
+  id              String            @id @default(cuid())
+  name            String
+  userCreated     User              @relation(fields: [userCreatedId], references: [id])
+  userCreatedId   String
+  GroupMembership GroupMembership[]
+}
+
+model GroupMembership {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   String
+  createdAt DateTime @default(now())
 }
