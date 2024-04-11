@@ -1,7 +1,8 @@
 import { prisma } from "../../../db/prisma"
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
 import lib from '../../../../lib/lib'
+import permissionLib from '@/lib/permissions/lib'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory'
 
 // Fetch info for a single record
@@ -16,7 +17,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'read')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -63,7 +64,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -97,7 +98,7 @@ export async function PUT(request, { params }) {
     for (const file of files) {
         // The file's value will either be a file object or a string
         // containing the file's id.
-        if (file instanceof File) {
+        if (typeof file === 'object') {
             // Store the file and connect it to the record.
             const fileSystem = FileStorageFactory.instance()
             const newFile = await fileSystem.store(file, currFamily, params.id)
@@ -212,7 +213,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Record', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"

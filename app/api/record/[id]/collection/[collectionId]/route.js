@@ -1,7 +1,7 @@
 import { prisma } from '@/app/db/prisma';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
-import lib from '@/lib/lib';
+import permissionLib from '@/lib/permissions/lib';
 
 // Add a record to a collection
 export async function POST(request, { params }) {
@@ -16,8 +16,8 @@ export async function POST(request, { params }) {
     }
 
     // Make sure user can access record AND collection
-    if (! await lib.checkPermissions(session.user.id, 'Record', params.id) ||
-        ! await lib.checkPermissions(session.user.id, 'Collection', params.collectionId)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit') ||
+        ! await permissionLib.checkPermissions(session.user.id, 'Collection', params.collectionId, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -55,8 +55,8 @@ export async function DELETE(request, { params }) {
     }
 
     // Make sure user can access record AND collection
-    if (! await lib.checkPermissions(session.user.id, 'Record', params.id) ||
-        ! await lib.checkPermissions(session.user.id, 'Collection', params.collectionId)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit') ||
+        ! await permissionLib.checkPermissions(session.user.id, 'Collection', params.collectionId, 'edit')) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"

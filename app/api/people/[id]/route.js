@@ -1,7 +1,7 @@
 import { prisma } from '@/app/db/prisma'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
-import lib from '@/lib/lib';
+import permissionLib from '@/lib/permissions/lib'
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory';
 
@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -57,7 +57,7 @@ export async function DELETE(request, { params }) {
     // What do we do if a record is connected to a nonexistant user? Should we clear that out here?
 
     // For now, we just handle nonexistant person IDs in the PersonSelector component itself.
-    // If an ID in the field doesn't match anybody in the site, we just display "Deleted user" and can remove said missing user manually
+    // If an ID in the field doesn't match anybody in the site, we just display "User unavailable" and can remove said missing user manually
 
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -69,7 +69,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -106,7 +106,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -120,7 +120,7 @@ export async function PUT(request, { params }) {
 
     let profileImage
     const files = formData.getAll('files')
-    if (files[0] instanceof File) {
+    if (typeof files[0] === 'object') {
         // Store the file and connect it to the person.
         const fileSystem = FileStorageFactory.instance()
         const newFile = await fileSystem.store(files[0], currFamily, params.id, 'person')
@@ -132,10 +132,28 @@ export async function PUT(request, { params }) {
         profileImage = files[0]
     }
 
+    if (!formData.get('fullName')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Full name is a required field"
+        }, {
+            status: 400
+        })
+    }
+
+    if (!formData.get('pronouns')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Pronouns is a required field"
+        }, {
+            status: 400
+        })
+    }
+
     const person = await prisma.Person.update({
         data: {
             fullName: formData.get('fullName'),
-            shortName: formData.get('shortName'),
+            shortName: formData.get('shortName') || "",
             pronounsId: formData.get('pronouns'),
             born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
             died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,

@@ -1,7 +1,12 @@
 import { cookies } from 'next/dist/client/components/headers'
 import clientLib from '../../../../lib/client/lib'
-import lib from '../../../../lib//lib'
+import lib from '../../../../lib/lib'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import permissionLib from '@/lib/permissions/lib'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
+import dynamic from 'next/dynamic'
 
 import styles from './ViewRecord.module.scss'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
@@ -10,6 +15,7 @@ import DeleteRecordButton from './DeleteRecordButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import MoveToCollectionButton from './MoveToCollectionButton'
 import RemoveFromCollectionButton from './RemoveFromCollection'
+import EditPermissionsButton from './EditPermissionsButton'
 
 /**
  * This page displays a record's information
@@ -61,6 +67,9 @@ const ViewRecord = async ({ params }) => {
 
     // Fetch Record data
     const recordData = await fetchRecord(params.id);
+    if (!recordData.data) {
+        redirect('/')
+    }
     const record = recordData.data.record
 
     // Instantiate RecordType object, and get the icon from this
@@ -72,23 +81,30 @@ const ViewRecord = async ({ params }) => {
     const collectionsData = await fetchCollections(params.id)
     const collections = collectionsData.data.collections
 
+    // Determine if this user can edit this record
+    const session = await getServerSession(authOptions);
+    const hasEditAccess = await permissionLib.checkPermissions(session.user.id, 'Record', params.id, 'edit')
+
     return (
         <div className={styles.ViewRecord}>
             <div className="topBar">
                 <h1 className='title'>{record.name}</h1>
-                <div className='pageOptions'>
-                    <Link href={`/record/${params.id}/edit`}>
-                        <button><span className="material-icons">edit</span>Edit record</button>
-                    </Link>
-                    <Dropdown
-                        title="Options"
-                        options={[
-                            <MoveToCollectionButton id={record.id} />,
-                            collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
-                            <DeleteRecordButton id={record.id} />
-                        ]}
-                    />
-                </div>
+                {hasEditAccess ?
+                    <div className='pageOptions'>
+                        <Link href={`/record/${params.id}/edit`}>
+                            <button><span className="material-icons">edit</span>Edit record</button>
+                        </Link>
+                        <Dropdown
+                            title="Options"
+                            options={[
+                                <EditPermissionsButton id={record.id} />,
+                                <MoveToCollectionButton id={record.id} />,
+                                collections.length > 0 ? <RemoveFromCollectionButton id={record.id} /> : "",
+                                <DeleteRecordButton id={record.id} />
+                            ]}
+                        />
+                    </div>
+                    : ""}
             </div>
 
             <div className={styles.infoBar}>
@@ -116,7 +132,9 @@ const ViewRecord = async ({ params }) => {
                             if (field.value) {
                                 const renderFunction = fetchFieldRenderFunction(field.name)
                                 if (renderFunction) {
-                                    return renderFunction.render(field.value)
+                                    return <div key={field.id}>
+                                        {renderFunction.render(field.value)}
+                                    </div>
                                 } else {
                                     return <div key={field.id}>
                                         <strong>{field.name}</strong>
@@ -142,7 +160,7 @@ const ViewRecord = async ({ params }) => {
                         {collections.length > 0 ? <>
                             <strong>Collections</strong>
                             <p>{collections.map(collection => {
-                                return <a id={collection.id} href={`/collection/${collection.id}`}>{collection.name}, </a>
+                                return <a id={collection.id} key={collection.id} href={`/collection/${collection.id}`}>{collection.name}, </a>
                             })}</p>
                         </> : ""}
                     </div>
@@ -157,4 +175,7 @@ const ViewRecord = async ({ params }) => {
     )
 }
 
-export default ViewRecord
+// We need to disable SSR for this page because of the dynamic field render functions
+export default dynamic(() => Promise.resolve(ViewRecord), {
+    ssr: false
+})

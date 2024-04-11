@@ -11,6 +11,7 @@
 
         .collectionSearch {
             border: 2px solid $accent-border-color;
+            width: 100%;
         }
     }
 
@@ -22,7 +23,7 @@
         border-radius: 0.25rem;
 
         &.active {
-            background: $accent-color;
+            background: $accent-secondary-color;
             color: white;
         }
     }

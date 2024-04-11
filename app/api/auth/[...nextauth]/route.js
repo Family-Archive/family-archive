@@ -22,23 +22,23 @@ export const authOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-
                 const user = await prisma.User.findUnique({
                     where: { email: credentials.email },
                 })
 
                 // If a user with email exists and pw matches,
                 // check that either email verification is turned off OR their email has been verified
-                // if one of these cases fail then instead of logging in the user, send the verification email
+                // if one of these cases fails then instead of logging in the user, send the verification email
                 if (user && bcrypt.compareSync(credentials.password, user.password)) {
                     if ((await lib.getSetting('requireemailverification')) === 'no' || user.emailVerified === 'yes') {
                         return user
                     } else {
                         await authLib.sendVerificationEmail(user.email)
+                        throw new Error("You need to verify your email before you can login. Please check your email for a verification link.")
                     }
                 }
 
-                return null
+                throw new Error("Incorrect username or password.")
             }
         }),
 
@@ -69,7 +69,7 @@ export const authOptions = {
                     return user
                 }
 
-                return null
+                throw new Error("Your account has been created, but you need to verify your email before logging in. Please check your email for a verification link.")
             }
         }),
 
@@ -81,7 +81,6 @@ export const authOptions = {
             allowDangerousEmailAccountLinking: true,
 
             async profile(profile) {
-
                 // If allow self reg is not enabled, check an account already exists
                 const allowSelfRegistration = (await lib.getSetting('allowselfregistration'))
                 if (allowSelfRegistration !== 'yes') {

@@ -1,11 +1,11 @@
 import styles from './AdminLayout.module.scss'
-import lib from '@/lib/lib';
+import permissionLib from '@/lib/permissions/lib';
 import { redirect } from 'next/navigation';
 
 const AdminLayout = async ({ children, params }) => {
 
     const subpage = children.props.childProp.segment
-    const isAdmin = await lib.userIsAdmin()
+    const isAdmin = await permissionLib.userIsAdmin()
 
     // We need to allow non-admins to view their own profile page,
     // but right now this allows them to manually visit the All Users page + other user's profiles as well.
@@ -18,7 +18,7 @@ const AdminLayout = async ({ children, params }) => {
 
             {isAdmin ?
                 <div className={styles.adminBar}>
-                    {['users', 'authentication', 'mail'].map(label => {
+                    {['users', 'families', 'authentication', 'mail'].map(label => {
                         return <a className={label === subpage ? styles.active : ""} href={`/${label}`}>{label}</a>
                     })}
                 </div> : ""

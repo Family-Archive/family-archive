@@ -1,0 +1,62 @@
+.EditPermissions {
+    width: 50rem;
+
+    .selector {
+        display: flex;
+        flex-direction: column;
+
+        button {
+            font-size: 1.5rem;
+            position: relative;
+            background-color: transparent;
+            color: black;
+
+            &.active::before {
+                background-color: $accent-color;
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                border-radius: 99rem;
+                content: "";
+                display: block;
+                left: -0.3rem;
+            }
+        }
+    }
+
+    .permissions {
+        padding: 1rem;
+        border: 2px solid $accent-secondary-color;
+        border-radius: 1rem;
+        width: 100%;
+
+        input {
+            margin-top: 0.5rem;
+            background-color: $accent-border-color;
+            border: none;
+        }
+
+        div:last-child button[type="button"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            border-radius: 0.5rem;
+            background-color: white;
+            border: $accent-border;
+
+            span {
+                opacity: 0;
+            }
+
+            &:hover {
+                filter: none;
+
+                span {
+                    opacity: 1;
+                }
+            }
+        }
+
+    }
+}

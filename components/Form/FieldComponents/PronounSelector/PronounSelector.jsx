@@ -9,14 +9,14 @@ const PronounSelector = ({ value, index, onChange }) => {
 
   const updateValue = (value) => {
     setfieldValue(value)
-    onChange({
+    onChange ? onChange({
       target: {
         value: value,
         dataset: {
           index: index
         }
       }
-    })
+    }) : ""
   }
 
   useEffect(() => {
@@ -32,14 +32,17 @@ const PronounSelector = ({ value, index, onChange }) => {
   return (
     <div style={{ marginBottom: '1rem' }}>
       {pronouns.length > 0 ?
-        <SelectorInput
-          options={pronouns.map(pronounSet => {
-            const pronounString = `${pronounSet.subject} / ${pronounSet.object} / ${pronounSet.possessive}`
-            return { value: pronounSet.id, name: pronounString }
-          })}
-          defaultOption={fieldValue}
-          onChange={e => updateValue(e)}
-        />
+        <>
+          <input type='hidden' id='pronounsField' value={fieldValue} />
+          <SelectorInput
+            options={pronouns.map(pronounSet => {
+              const pronounString = `${pronounSet.subject} / ${pronounSet.object} / ${pronounSet.possessive}`
+              return { value: pronounSet.id, name: pronounString }
+            })}
+            defaultOption={fieldValue}
+            onChange={e => updateValue(e)}
+          />
+        </>
         : ""
       }
     </div>

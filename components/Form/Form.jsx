@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styles from './Form.module.scss'
 import FileUploader from '../FileUploader/FileUploader'
 import fieldComponents from './FieldComponentsGenerated'
 import { useRouter } from 'next/navigation'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
 import { afterFieldChanged } from '@/recordtypes/image/lib/clientHooks'
 
 export default function Form({
@@ -20,11 +21,15 @@ export default function Form({
     editMode,
     fileIds,
     loadFilesFromUrl,
-    allowFileUpload = true
+    redirectLocation,
+    allowFileUpload = true,
+    redirect = false
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
     requireFileUploadFirst = requireFileUploadFirst || false
     fileUploadedCallback = fileUploadedCallback || false
+
+    const toastFunctions = useContext(ToastContext)
 
     // All of the files that will be submitted with the form.
     const [files, setFiles] = useState([])
@@ -72,6 +77,9 @@ export default function Form({
     // All of the form fields that will be submitted with the form,
     // excluding files input.
     const [masterFields, setMasterFields] = useState(fields)
+
+    // Dictionary containing potential field validation errors, where the key is the name of the field and the value is the error message
+    const [errors, seterrors] = useState({})
 
     // Track whether a file has been uploaded. This value only changes
     // when a file is initially uploaded - if it is later removed, this
@@ -274,11 +282,23 @@ export default function Form({
         event.preventDefault()
 
         const formData = new FormData()
+        let tempErrors = {}
+        seterrors(tempErrors)
 
         // Add all the non-file fields to the form submission.
         masterFields.forEach((field) => {
+            if (field.required === true && field.value == "") {
+                tempErrors[field.name] = `${field.label} is a required field!`
+            }
+
             formData.append(field.name, field.value)
         })
+
+        // If we found any errors, set them and don't process the rest of the form.
+        if (Object.keys(tempErrors).length > 0) {
+            seterrors(tempErrors)
+            return
+        }
 
         if (editMode) {
             files.forEach((file) => {
@@ -304,14 +324,27 @@ export default function Form({
         })
 
         if (response.status < 200 || response.status >= 300) {
-            const error = await response.error()
-            console.log(error)
+            try {
+                const json = await response.json()
+                toastFunctions.createToast(json.message)
+            } catch (e) {
+                const error = await response.error()
+                console.log(error)
+            }
+
             return
         }
 
         const json = await response.json()
 
-        push('/records/all')
+        if (!redirectLocation) {
+            redirectLocation = '/records/all'
+        }
+        if (redirect) {
+            window.location.href = redirectLocation
+        } else {
+            push(redirectLocation)
+        }
     }
 
     const getElement = (field) => {
@@ -385,7 +418,7 @@ export default function Form({
                         let Element = getElement(field)
 
                         return (
-                            <formitem key={index}>
+                            <div className="formitem" key={index}>
                                 {field.showLabel === false ? '' : <label htmlFor={field.name}>{field.label}</label>}
                                 <Element
                                     id={field.name}
@@ -396,7 +429,8 @@ export default function Form({
                                     data-index={index}
                                     onChange={changeHandler}
                                 >{field.content}</Element>
-                            </formitem>
+                                {errors[field.name] ? <span className={styles.fieldError}>{errors[field.name]}</span> : ""}
+                            </div>
                         )
                     })}
                     <input type="submit" className="button" value={submitMessage || 'Submit'} />

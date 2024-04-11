@@ -15,11 +15,13 @@ const createPerson = () => {
                     name: 'fullName',
                     label: 'Full Name',
                     type: 'text',
+                    required: true
                 },
                 {
                     name: 'shortName',
                     label: 'Short name',
                     type: 'text',
+                    required: true
                 },
                 {
                     name: 'pronouns',

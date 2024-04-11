@@ -6,6 +6,7 @@ html {
 
 * {
     box-sizing: border-box;
+    font-family: 'Inter';
 }
 
 body {
@@ -64,12 +65,15 @@ button.tertiary,
     color: black;
 }
 
+button:focus,
+.button:focus,
 button:hover,
 .button:hover,
 button.hovered,
 .button.hovered {
     cursor: pointer;
     filter: brightness(0.85);
+    outline: none;
 }
 
 button:active,
@@ -116,6 +120,7 @@ button.delete,
 .column {
     max-width: 65rem;
     margin: 0 auto;
+    position: relative;
 }
 
 form {
@@ -133,6 +138,12 @@ textarea {
     font-family: Inter;
 }
 
+input:focus,
+textarea:focus {
+    border: 0.15rem solid $accent-color;
+    outline: none;
+}
+
 /* <input type="checkbox" class='toggle' /><label class='toggle'>Toggle</label> */
 input[type=checkbox].toggle {
     height: 0;
@@ -148,6 +159,10 @@ input[type=checkbox].toggle {
         left: calc(100% - 5px);
         transform: translateX(-100%);
     }
+}
+
+.formitem {
+    margin-top: 1rem;
 }
 
 label.toggle {
@@ -171,6 +186,33 @@ label.toggle {
         border-radius: 99rem;
         transition: 0.2s;
     }
+}
+
+.loading::before {
+    position: absolute;
+    content: "pending";
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -moz-font-feature-settings: 'liga';
+    -moz-osx-font-smoothing: grayscale;
+    z-index: 10;
+    color: $accent-secondary-color;
+    left: 50%;
+    top: 50%;
+    animation: spin 0.4s linear infinite;
+}
+
+.loading>* {
+    opacity: 0.25;
 }
 
 
@@ -208,5 +250,39 @@ label {
 
     .leaflet-popup-tip-container {
         display: none;
+    }
+}
+
+@keyframes toast {
+    0% {
+        transform: translateY(1rem);
+        opacity: 0
+    }
+
+    10% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    90% {
+        transform: translateY(0);
+        opacity: 1;
+        margin-top: 0;
+    }
+
+    100% {
+        transform: translateY(1rem);
+        opacity: 0;
+        margin-top: -4rem;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg)
+    }
+
+    to {
+        transform: rotate(360deg)
     }
 }

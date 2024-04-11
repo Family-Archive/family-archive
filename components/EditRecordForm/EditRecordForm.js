@@ -56,6 +56,8 @@ const EditRecordForm = ({ recordTypeData, recordData }) => {
             allowMultipleFiles={recordTypeOptions.allowMultipleFiles}
             editMode={true}
             fileIds={fileIds}
+            redirectLocation={`/record/${recordData.data.record.id}`}
+            redirect={true}
         />
     )
 }

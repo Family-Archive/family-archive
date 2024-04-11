@@ -7,7 +7,7 @@
     padding: 0 2rem;
     user-select: none;
     cursor: grab;
-    transition: font-size 0.1s ease;
+    // transition: font-size 0.1s ease;
 
     .dateContainer {
         font-size: 1rem;
@@ -125,15 +125,31 @@
                     pointer-events: all;
                     display: flex;
                     align-items: center;
+                    white-space: nowrap;
 
                     &:hover {
                         cursor: pointer;
+                        min-width: fit-content;
+
+                        .date {
+                            transform: translateX(0.5rem);
+                            opacity: 1;
+                        }
                     }
 
                     span {
                         font-size: 1rem;
                         position: sticky;
                         left: 0rem;
+
+                        &.date {
+                            display: inline-block;
+                            opacity: 0;
+                            transform: translateX(0);
+                            left: 1rem;
+                            transition: transform 0.4s ease, opacity 0.4s ease;
+                            padding-right: 1rem;
+                        }
                     }
                 }
             }

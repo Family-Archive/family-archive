@@ -2,6 +2,7 @@ import { prisma } from "../../db/prisma"
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from "../../../lib/lib"
+import permissionLib from "@/lib/permissions/lib";
 
 // Fetch all records. Parameters can be passed to sort + filter
 export async function GET(request) {
@@ -24,8 +25,6 @@ export async function GET(request) {
     const people = params.get('people') || null
 
     const page = params.get('page') || '1'
-    const take = page * 20
-    const skip = take - 20
 
     // Build a WHERE object from the filters passed
     // Note how separate filters are conjoined, but different values of the same filter are disjoined
@@ -45,8 +44,6 @@ export async function GET(request) {
     where = lib.limitQueryByFamily(where, request.cookies, session)
 
     const results = await prisma.Record.findMany({
-        skip: skip,
-        take: take,
         orderBy: {
             [sortField]: direction
         },
@@ -56,9 +53,20 @@ export async function GET(request) {
         where: where
     })
 
+    // TODO: ughhh.... we need an efficient way to select only the records we need.
+    // ideally we could do this in the select query, to just get the right records from the database,
+    // but because of how complex the filters can be, plus the need to check the read permission on each record,
+    // I don't see any other way to do it except to select all records, and then iterate through each to determine
+    // if it should be shown -- but this is really inefficient.
+
     // Reformat and filter final results
     let finalArray = []
     for (let result of results) {
+        if (!await permissionLib.checkPermissions(session.user.id, 'Record', result.id, 'read')) {
+            // Don't add records to the final array that the user can't read
+            continue
+        }
+
         // Add icon information
         const RecordType = require(`/recordtypes/${result.type}/record.js`)
         const recordType = new RecordType()
@@ -109,10 +117,18 @@ export async function GET(request) {
         }
     }
 
+    // get the number of pages and slice the array if paginating
+    // we could make this arbitrary 20 a variable in the future to allow different page sizes
+    const numPages = Math.ceil(finalArray.length / 20)
+    if (params.get('paginate')) {
+        finalArray = finalArray.slice((page - 1) * 20, ((page - 1) * 20) + 20)
+    }
+
     return Response.json({
         status: 'success',
         data: {
-            records: finalArray
+            records: finalArray,
+            numPages: numPages
         }
     }, {
         status: 201

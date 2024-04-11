@@ -1,6 +1,6 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
-import lib from '@/lib/lib';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
+import permissionLib from '@/lib/permissions/lib'
 
 // Fetch the information for a single collection
 export async function GET(request, { params }) {
@@ -14,10 +14,10 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'read')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have read permission on this collection"
         }, {
             status: 403
         })
@@ -59,7 +59,15 @@ export async function GET(request, { params }) {
         }
     }
 
-    collection['children'] = childCollections
+    // Only show collections the user should see
+    let viewableCollections = []
+    for (let collection of childCollections) {
+        if (await permissionLib.checkPermissions(session.user.id, 'Collection', collection.id, 'read')) {
+            viewableCollections.push(collection)
+        }
+    }
+
+    collection['children'] = viewableCollections
     return Response.json({ status: "success", data: { collection: collection, records: records } })
 }
 
@@ -76,10 +84,10 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have edit permission on this collection"
         }, {
             status: 403
         })
@@ -90,6 +98,17 @@ export async function PUT(request, { params }) {
 
     let data = {}
     if (Object.keys(formData).includes('parentId')) {
+        // TODO: Write a function for checking validity to prevent self-references or other loops and verify here
+
+        if (!(await validateParent(params.id, formData['parentId']))) {
+            return Response.json({
+                status: "error",
+                message: "Invalid parent relation"
+            }, {
+                status: 400
+            })
+        }
+
         if (formData['parentId'] === "null") {
             data = { parent: { disconnect: true } }
         } else {
@@ -98,6 +117,15 @@ export async function PUT(request, { params }) {
     }
 
     if (Object.keys(formData).includes('name')) {
+        if (!formData['name']) {
+            return Response.json({
+                'status': 'error',
+                'message': 'Name cannot be empty'
+            }, {
+                status: 400
+            })
+        }
+
         data = { name: formData['name'] }
     }
 
@@ -122,10 +150,10 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Collection', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Collection', params.id, 'edit')) {
         return Response.json({
             status: "error",
-            message: "User does not have permission to access this resource"
+            message: "User does not have edit permission on this collection"
         }, {
             status: 403
         })
@@ -138,4 +166,40 @@ export async function DELETE(request, { params }) {
     })
 
     return Response.json({ status: "success", data: { message: "Collection deleted" } })
+}
+
+/**
+ * Given a collection ID and prospective parent ID, ensure that the relation makes sense
+ * Returns false if trying to make a collection a child of itself or a child of a nested collection
+ * @param {string} collectionId: The ID of the collection we are modifying
+ * @param {string} parentId: The ID of the parent to which this collection will be a child
+ * @returns {boolean}: If the modification is valid or not
+ */
+const validateParent = async (collectionId, parentId) => {
+    // If the IDs are the same, return false
+    if (collectionId == parentId) {
+        return false
+    }
+
+    let currParent = await prisma.Collection.findUnique({
+        where: { id: parentId },
+        select: { parentId: true }
+    })
+    currParent = currParent?.parentId
+
+    // Otherwise, look at the parent ID and keep iterating recursively up through its parents, checking each to see if the ID matches the current
+    // If so, the new parent ID is already a child so return false
+    while (currParent) {
+        if (currParent == collectionId) {
+            return false
+        }
+
+        currParent = await prisma.Collection.findUnique({
+            where: { id: currParent },
+            select: { parentId: true }
+        })
+        currParent = currParent.parentId
+    }
+
+    return true
 }
