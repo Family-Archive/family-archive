@@ -21,6 +21,16 @@ export async function GET(request) {
     let where = params.get('search') ? { fullName: { contains: params.get('search') } } : {}
     where = lib.limitQueryByFamily(where, request.cookies, session.familyId)
     const people = await prisma.Person.findMany({
+        include: {
+            parents: true,
+            children: true,
+            indirectRelationships: {
+                include: {
+                    relationshipType: true,
+                    people: true,
+                }
+            },
+        },
         where: where
     })
 
@@ -87,9 +97,6 @@ export async function POST(request) {
         data: {
             fullName: data.get('fullName'),
             shortName: data.get('shortName') || "",
-            pronouns: {
-                connect: { id: data.get('pronouns') }
-            },
             userCreated: {
                 connect: {
                     id: session.user.id

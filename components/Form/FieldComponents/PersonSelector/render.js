@@ -25,13 +25,13 @@ const fetchPeopleData = async () => {
     return peopleDict
 }
 
-export async function render(data) {
+export async function render(data, showPersonIcon = true) {
 
     const people = await fetchPeopleData()
     data = JSON.parse(data)
 
     return data.length > 0 ? <div className={styles.people}>
-        <span className={`${styles.icon} material-icons`}>boy</span>
+        {showPersonIcon && <span className={`${styles.icon} material-icons`}>boy</span>}
         {data.map(person => {
             if (!people[person]) {
                 return <button key={person} className={styles.person}>User unavailable</button>
