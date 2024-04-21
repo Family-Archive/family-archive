@@ -34,27 +34,34 @@ const editUser = async ({ params }) => {
                         name: 'email',
                         label: 'Email',
                         type: 'email',
-                        value: user.email
+                        value: user.email,
+                        required: true
                     },
                     {
                         name: 'name',
                         label: 'Name',
                         type: 'text',
-                        value: user.name
+                        value: user.name,
+                        required: true
                     },
                     {
                         name: 'password',
-                        label: 'Password',
+                        label: 'Password (leave blank to prevent manual login)',
                         type: 'password'
                     },
                     {
                         name: 'families',
                         label: 'Add user to families',
                         type: 'FamilySelector',
-                        value: JSON.stringify({ families: user.families, defaultFamily: user.defaultFamilyId })
+                        value: JSON.stringify({
+                            families: user.families.map(family => { return { name: family.name, data: family } }),
+                            defaultFamily: user.defaultFamilyId
+                        })
                     },
                 ]}
                 allowFileUpload={false}
+                redirectLocation={`/users/${user.id}`}
+                redirect={true}
             />
         </div>
     )

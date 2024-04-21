@@ -1,6 +1,5 @@
 .FamilySelector {
     position: relative;
-    margin-bottom: 1rem;
 
     .activeFamilies {
         margin: 1rem 0;
@@ -37,25 +36,5 @@
             }
         }
 
-    }
-
-    .dropdown {
-        border: 2px solid $accent-secondary-color;
-        background-color: white;
-        border-radius: 0 0 1rem 1rem;
-        position: absolute;
-        margin-top: -1.5rem;
-        width: 100%;
-
-        button {
-            &:last-child {
-                border-radius: 0 0 1rem 1rem;
-            }
-
-            background-color: white;
-            color: black;
-            width: 100%;
-            border-radius: 0;
-        }
     }
 }

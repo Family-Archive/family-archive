@@ -8,6 +8,7 @@ import { ModalProvider } from './(contexts)/ModalContext'
 import { FamilyProvider } from './(contexts)/FamilyContext'
 import { BreadcrumbProvider } from './(contexts)/BreadcrumbContext'
 import { DraftProvider } from './(contexts)/DraftContext'
+import { ToastProvider } from './(contexts)/ToastContext'
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
@@ -38,11 +39,13 @@ const RootLayout = async ({ children }) => {
         <AuthContext session={session}>
           <FamilyProvider>
             <DraftProvider>
-              <ModalProvider>
-                <BreadcrumbProvider>
-                  {children}
-                </BreadcrumbProvider>
-              </ModalProvider>
+              <ToastProvider>
+                <ModalProvider>
+                  <BreadcrumbProvider>
+                    {children}
+                  </BreadcrumbProvider>
+                </ModalProvider>
+              </ToastProvider>
             </DraftProvider>
           </FamilyProvider>
         </AuthContext>

@@ -1,6 +1,6 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth';
-import { headers } from 'next/headers';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth'
+import permissionLib from '@/lib/permissions/lib'
 import lib from '@/lib/lib'
 
 export async function GET(request) {
@@ -44,14 +44,19 @@ export async function GET(request) {
         where: where
     })
 
-    return Response.json({ status: "success", data: { collections: collections } })
+    // Only show collections the user should see
+    let viewableCollections = []
+    for (let collection of collections) {
+        if (await permissionLib.checkPermissions(session.user.id, 'Collection', collection.id, 'read')) {
+            viewableCollections.push(collection)
+        }
+    }
+
+    return Response.json({ status: "success", data: { collections: viewableCollections } })
 }
 
 // Add a new collection
 export async function POST(request) {
-    const headersList = headers()
-    const referer = headersList.get('referer')
-
     const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({
@@ -66,9 +71,32 @@ export async function POST(request) {
     requestData = Object.fromEntries(requestData)
     const currFamily = request.cookies.get('familyId').value
 
+    if (!requestData.collectionName) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Collection name cannot be empty'
+        }, {
+            status: 400
+        })
+    }
+
+    if (!currFamily) {
+        return Response.json({
+            'status': 'error',
+            'message': 'Current family not specified'
+        }, {
+            status: 400
+        })
+    }
+
     let creationObj = {
         data: {
             name: requestData.collectionName,
+            userCreated: {
+                connect: {
+                    id: session.user.id
+                }
+            },
             family: {
                 connect: {
                     id: currFamily
@@ -76,7 +104,17 @@ export async function POST(request) {
             },
         }
     }
+
     if (requestData.collectionParentId) {
+        // If a parent was passed, ensure user has edit access to it
+        if (! await permissionLib.checkPermissions(session.user.id, 'Collection', requestData.collectionParentId, 'edit')) {
+            return Response.json({
+                status: "error",
+                message: "User does not have edit permission on parent collection"
+            }, {
+                status: 403
+            })
+        }
         creationObj['data']['parent'] = {
             connect: {
                 id: requestData.collectionParentId
@@ -85,5 +123,6 @@ export async function POST(request) {
     }
 
     const collection = await prisma.collection.create(creationObj)
-    return Response.redirect(new URL(referer))
+
+    return Response.json({ status: "success", data: { collection: collection } })
 }

@@ -3,6 +3,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
 import * as peopleLib from '@/app/(dashboard)/people/[id]/lib'
+import permissionLib from '@/lib/permissions/lib'
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory';
 
@@ -18,7 +19,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -32,14 +33,14 @@ export async function GET(request, { params }) {
             id: params.id
         },
         include: {
-          parents: true,
-          children: true,
-          indirectRelationships: {
-            include: {
-              relationshipType: true,
-              people: true,
+            parents: true,
+            children: true,
+            indirectRelationships: {
+                include: {
+                    relationshipType: true,
+                    people: true,
+                }
             }
-          }
         },
     })
 
@@ -61,7 +62,7 @@ export async function DELETE(request, { params }) {
     // What do we do if a record is connected to a nonexistant user? Should we clear that out here?
 
     // For now, we just handle nonexistant person IDs in the PersonSelector component itself.
-    // If an ID in the field doesn't match anybody in the site, we just display "Deleted user" and can remove said missing user manually
+    // If an ID in the field doesn't match anybody in the site, we just display "User unavailable" and can remove said missing user manually
 
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -73,7 +74,7 @@ export async function DELETE(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -110,7 +111,7 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (! await lib.checkPermissions(session.user.id, 'Person', params.id)) {
+    if (! await permissionLib.checkPermissions(session.user.id, 'Person', params.id)) {
         return Response.json({
             status: "error",
             message: "User does not have permission to access this resource"
@@ -126,14 +127,14 @@ export async function PUT(request, { params }) {
             id: params.id
         },
         include: {
-          parents: true,
-          children: true,
-          indirectRelationships: {
-            include: {
-              relationshipType: true,
-              people: true,
+            parents: true,
+            children: true,
+            indirectRelationships: {
+                include: {
+                    relationshipType: true,
+                    people: true,
+                }
             }
-          }
         },
     })
 
@@ -154,15 +155,15 @@ export async function PUT(request, { params }) {
         // Add the file id to the list of connected files.
         profileImage = files[0]
     }
-    
+
     const [connectImage, disconnectImage] = lib.compareRelatedRecords([existingPerson.profileImageId], [profileImage])
 
     let profileImageQuery = {}
     if (connectImage.length > 0) {
-      profileImageQuery.connect = connectImage[0]
+        profileImageQuery.connect = connectImage[0]
     }
     if (disconnectImage.length > 0) {
-      profileImageQuery.disconnect = disconnectImage[0]
+        profileImageQuery.disconnect = disconnectImage[0]
     }
 
     // Process user relationships.
@@ -175,23 +176,41 @@ export async function PUT(request, { params }) {
     const [connectSpouse, disconnectSpouse] = lib.compareRelatedRecords([peopleLib.findSpouseId(existingPerson)], spouse)
 
     let data = {
-      fullName: formData.get('fullName'),
-      shortName: formData.get('shortName'),
-      born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
-      died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
-      parents: {
-        connect: connectParents,
-        disconnect: disconnectParents,
-      },
-      children: {
-        connect: connectChildren,
-        disconnect: disconnectChildren,
-      },
+        fullName: formData.get('fullName'),
+        shortName: formData.get('shortName'),
+        born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
+        died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
+        parents: {
+            connect: connectParents,
+            disconnect: disconnectParents,
+        },
+        children: {
+            connect: connectChildren,
+            disconnect: disconnectChildren,
+        },
     }
 
-  if (profileImageQuery.connect || profileImageQuery.disconnect) {
-    data.profileImage = profileImageQuery
-  }
+    if (profileImageQuery.connect || profileImageQuery.disconnect) {
+        data.profileImage = profileImageQuery
+    }
+
+    if (!formData.get('fullName')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Full name is a required field"
+        }, {
+            status: 400
+        })
+    }
+
+    if (!formData.get('pronouns')) {
+        return NextResponse.json({
+            status: 'error',
+            message: "Pronouns is a required field"
+        }, {
+            status: 400
+        })
+    }
 
     const person = await prisma.Person.update({
         data: data,

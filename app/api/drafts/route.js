@@ -5,6 +5,8 @@ import lib from "../../../lib/lib"
 
 // Fetch all drafts from DB
 export async function GET(request, { params }) {
+    // TODO: Show all drafts to admins, show only owned drafts to everyone else
+
     const session = await getServerSession(authOptions);
     if (!session) {
         return Response.json({
@@ -15,7 +17,7 @@ export async function GET(request, { params }) {
         })
     }
 
-    let where = lib.limitQueryByFamily({ completed: false }, request.cookies, session)
+    let where = lib.limitQueryByFamily({ completed: false, userCreatedId: session.user.id }, request.cookies, session)
     const drafts = await prisma.record.findMany({
         where: where
     })

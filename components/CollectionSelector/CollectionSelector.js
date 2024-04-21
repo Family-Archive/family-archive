@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation'
  * Optional prop: {string} recordId: If a recordId is passed, the component will disable the search bar 
  * and only show collections of which the record belongs
  */
-const CollectionSelector = ({ recordId }) => {
+const CollectionSelector = ({ recordId, autoselect }) => {
     const params = useParams()
 
     const [collections, setcollections] = useState([]) // List of collections we want to make selectable
@@ -58,7 +58,7 @@ const CollectionSelector = ({ recordId }) => {
         collectionsData = await collectionsData.json()
         setactiveCollection(null)
         setselectedCollection(null)
-        setcollections(collectionsData.data.collection)
+        setcollections(collectionsData.data.collections)
     }
 
     useEffect(() => {
@@ -68,10 +68,10 @@ const CollectionSelector = ({ recordId }) => {
         // so we also programmatically click the Back button :P
         const activateCurrentCollection = async () => {
             const route = window.location.pathname.split('/').slice(-2)[0]
-            if (params.id && route === 'collection') {
+            if (params.id && route === 'collection' && autoselect !== false) {
                 await getChildren(params.id)
                 window.setTimeout(() => {
-                    document.querySelector('#up').click()
+                    document.querySelector('#up')?.click()
                     setselectedCollection(params.id)
                 }, 200)
             } else {
@@ -97,6 +97,7 @@ const CollectionSelector = ({ recordId }) => {
                             <input
                                 type='text'
                                 id='collectionSearch'
+                                autoComplete='off'
                                 className={styles.collectionSearch}
                                 placeholder='Search collections...'
                                 onChange={(e) => {
@@ -113,7 +114,7 @@ const CollectionSelector = ({ recordId }) => {
                             <a
                                 href="#"
                                 id='up'
-                                className={`${styles.up} button`}
+                                className={`${styles.up} button secondary`}
                                 onClick={() => { getChildren(activeCollection.parentId); setactiveCollection(activeCollection.parentId) }}
                             >
                                 <span className='material-icons' style={{ transform: 'rotate(90deg)' }}>subdirectory_arrow_left</span>Back

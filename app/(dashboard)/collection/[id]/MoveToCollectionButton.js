@@ -5,6 +5,7 @@
 
 import { useContext } from 'react'
 import { ModalContext } from '@/app/(contexts)/ModalContext'
+import { ToastContext } from '@/app/(contexts)/ToastContext'
 import CollectionSelector from '@/components/CollectionSelector/CollectionSelector'
 
 /**
@@ -14,6 +15,7 @@ import CollectionSelector from '@/components/CollectionSelector/CollectionSelect
 
 const MoveToCollectionButton = ({ id }) => {
     const modalFunctions = useContext(ModalContext)
+    const toastFunctions = useContext(ToastContext)
 
     return (
         <button
@@ -22,7 +24,7 @@ const MoveToCollectionButton = ({ id }) => {
                 <>
                     {/* Only the ID of the child is passed to this component, so how do we know what the parent is? */}
                     {/* This "CollectionSelector" component contains a form that provides this value */}
-                    <CollectionSelector /><br />
+                    <CollectionSelector autoselect={false} /><br />
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                             onClick={() => {
@@ -35,7 +37,14 @@ const MoveToCollectionButton = ({ id }) => {
                                     body: formData
                                 })
                                     .then(response => response.json())
-                                    .then(data => { window.location = `/collection/${collectionId || ""}` })
+                                    .catch(error => toastFunctions.createToast("Internal server error"))
+                                    .then(data => {
+                                        if (data.status === 'success') {
+                                            window.location = `/collection/${collectionId || ""}`
+                                        } else {
+                                            toastFunctions.createToast(data.message, 10)
+                                        }
+                                    })
                             }}
                         >
                             Ok

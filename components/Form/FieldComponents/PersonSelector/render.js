@@ -34,7 +34,7 @@ export async function render(data, showPersonIcon = true) {
         {showPersonIcon && <span className={`${styles.icon} material-icons`}>boy</span>}
         {data.map(person => {
             if (!people[person]) {
-                return <button key={person} className={styles.person}>Deleted user</button>
+                return <button key={person} className={styles.person}>User unavailable</button>
             }
 
             return <Link href={`/people/${person}`} key={person}>

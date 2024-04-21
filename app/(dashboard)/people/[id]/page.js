@@ -1,6 +1,10 @@
 import styles from './personView.module.scss'
 
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth'
 import { cookies } from 'next/dist/client/components/headers'
+import { redirect } from 'next/navigation'
+import permissionLib from '@/lib/permissions/lib'
 import lib from '@/lib/lib'
 import clientLib from '@/lib/client/lib'
 import Link from 'next/link'
@@ -9,6 +13,7 @@ import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import DeleteUserButton from './DeleteUserButton'
 import { render as renderPeople } from '@/components/Form/FieldComponents/PersonSelector/render'
 import * as personLib from './lib'
+import EditPermissionsButton from './EditPermissionsButton'
 
 /**
  * This page displays information relating to a person
@@ -25,28 +30,41 @@ const personView = async ({ params }) => {
             }
         )
         person = await person.json()
+        if (!person.data) {
+            redirect('/')
+        }
         return person.data.person
     }
 
     const person = await getPerson()
     const spouseId = personLib.findSpouseId(person)
 
+    // Determine if this user can edit this person
+    const session = await getServerSession(authOptions);
+    const hasEditAccess = await permissionLib.checkPermissions(session.user.id, 'Person', params.id, 'edit')
+
     return (
         <div className={`${styles.personView} column`}>
             <div className="topBar">
                 <h1 className='title'>{person.fullName}</h1>
-                <div className='pageOptions'>
-                    <Link href={`/people/${params.id}/edit`}>
-                        <button><span className="material-icons">edit</span>Edit person</button>
-                    </Link>
-                    <Dropdown
-                        title="Options"
-                        options={[
-                            <DeleteUserButton id={person.id} />
-                        ]}
-                    />
-                </div>
-            </div>
+                {hasEditAccess ?
+                    <div className='pageOptions'>
+                        <Link href={`/people/${params.id}/edit`}>
+                            <button><span className="material-icons">edit</span>Edit person</button>
+                        </Link>
+                        {hasEditAccess ?
+                            <Dropdown
+                                title="Options"
+                                options={[
+                                    <EditPermissionsButton id={person.id} />,
+                                    <DeleteUserButton id={person.id} />
+                                ]}
+                            />
+                            : ""
+                        }
+                    </div>
+                    : ""}
+            </div >
 
             <BreadcrumbTrail name={person.fullName} />
 
@@ -82,29 +100,29 @@ const personView = async ({ params }) => {
                 </div>
             </div>
             <div>
-              <div className={styles.relationships}>
-                {spouseId !== undefined &&
-                  <span>
-                    <b>Spouse</b>
-                    {renderPeople(JSON.stringify([spouseId]), false)}
-                  </span>
-                }
-                {person.parents.length > 0 &&
-                  <span>
-                    <b>Parents</b>
-                    {renderPeople(JSON.stringify(person.parents.map(parent => parent.id)), false)}
-                  </span>
-                }
-                {person.children.length > 0 &&
-                  <span>
-                    <b>Children</b>
-                    {renderPeople(JSON.stringify(person.children.map(parent => parent.id)), false)}
-                  </span>
-                }
-              </div>
+                <div className={styles.relationships}>
+                    {spouseId !== undefined &&
+                        <span>
+                            <b>Spouse</b>
+                            {renderPeople(JSON.stringify([spouseId]), false)}
+                        </span>
+                    }
+                    {person.parents.length > 0 &&
+                        <span>
+                            <b>Parents</b>
+                            {renderPeople(JSON.stringify(person.parents.map(parent => parent.id)), false)}
+                        </span>
+                    }
+                    {person.children.length > 0 &&
+                        <span>
+                            <b>Children</b>
+                            {renderPeople(JSON.stringify(person.children.map(parent => parent.id)), false)}
+                        </span>
+                    }
+                </div>
             </div>
 
-        </div>
+        </div >
     )
 }
 

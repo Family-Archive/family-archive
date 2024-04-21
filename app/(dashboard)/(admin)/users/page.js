@@ -1,6 +1,5 @@
 "use client"
 import styles from './usersPage.module.scss'
-import Form from '@/components/Form/Form'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -51,7 +50,7 @@ const usersPage = () => {
                         return
                     }
 
-                    return <Link href={`/users/${user.id}`}>
+                    return <Link href={`/users/${user.id}`} id={user.id}>
                         <div className={styles.user}>
                             {user.name} / {user.email}
                         </div>

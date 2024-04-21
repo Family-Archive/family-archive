@@ -11,7 +11,8 @@ class Website extends Record {
             {
                 'label': 'URL',
                 'name': 'url',
-                'type': 'url'
+                'type': 'url',
+                'required': true
             }
         ])
     }

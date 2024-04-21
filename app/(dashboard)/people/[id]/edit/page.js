@@ -36,13 +36,15 @@ const editPerson = async ({ params }) => {
                         name: 'fullName',
                         label: 'Full Name',
                         type: 'text',
-                        value: person.fullName
+                        value: person.fullName,
+                        required: true,
                     },
                     {
                         name: 'shortName',
                         label: 'Short name',
                         type: 'text',
-                        value: person.shortName
+                        value: person.shortName,
+                        required: true,
                     },
                     {
                         name: 'birthdate',

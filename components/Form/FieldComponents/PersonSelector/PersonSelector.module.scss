@@ -1,48 +1,24 @@
 .PersonSelector {
     position: relative;
     margin-top: 0.5rem;
+    margin-bottom: 16px;
 
-    .selectedPeople {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-
-        .selectedPerson {
-            img {
-                width: 2rem;
-                height: 2rem;
-                border-radius: 99rem;
-                object-fit: cover;
-            }
-
-            button {
-                background-color: $accent-border-color;
-                border-radius: 99rem;
-                color: black;
-            }
-        }
+    input {
+        margin-bottom: 0 !important;
     }
 
-    .dropdown {
-        border: 2px solid $accent-secondary-color;
-        border-radius: 0 0 1rem 1rem;
-        position: absolute;
-        top: 100%;
-        margin-top: -1.5rem;
-        width: 100%;
-        background: white;
-
-        .person {
-            &:not(:last-child) {
-                border-bottom: 2px solid $accent-secondary-color;
-                border-radius: 0;
-            }
-
+    .inputContainer {
+        >* {
             width: 100%;
-            background-color: white;
-            color: black;
-            border-radius: 0 0 1rem 1rem;
-            transform: none;
         }
+
+        button {
+            width: min-content;
+            white-space: nowrap;
+        }
+
+        display: flex;
+        gap: 1rem;
+        align-items: last baseline;
     }
 }

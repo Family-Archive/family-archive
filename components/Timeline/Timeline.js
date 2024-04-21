@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Timeline.module.scss'
+import clientLib from '@/lib/client/lib'
 
 /**
  * A component displaying records on a timeline
@@ -26,6 +27,9 @@ const Timeline = (props) => {
     const getTimelineBounds = (data) => {
         // This is written so that the array doesn't need to be sorted
         // because I wrote it before deciding to sort the array by startdate first
+
+        console.log(data)
+
         let startdate = data[0].date.startdate
         let enddate = data[0].date.enddate
         for (let timedata of data) {
@@ -87,7 +91,7 @@ const Timeline = (props) => {
      * @param {String: in|out} direction: The direction we should zoom
      */
     const changeZoomLevel = (direction) => {
-        setzooming(true)
+        // setzooming(true)
         const timeline = document.querySelector('#timeline')
 
         const oldFontSize = fontSize
@@ -123,20 +127,22 @@ const Timeline = (props) => {
         // and I've tried like four different things. So what we do is animate the fontSize and "left" at the same time to make it look like
         // everything is staying in place, disable the zoom buttons while this is happening, and then as SOON as the animation is done,
         // snap the scrollbar to our new calculated position based on the multiple.
+
         const pctChange = newFontSize / oldFontSize
         const newLeft = timeline.scrollLeft - (timeline.scrollLeft * pctChange)
-        document.querySelector('#timelineContainer').style.left = newLeft + 'px'
+        // document.querySelector('#timelineContainer').style.left = newLeft + 'px'
         setfontSize(newFontSize)
+        timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
 
-        window.setTimeout(() => {
-            document.querySelector('#timelineContainer').classList.add(styles.noAnim)
-            timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
-            document.querySelector('#timelineContainer').style.left = '0px'
-            window.setTimeout(() => {
-                document.querySelector('#timelineContainer').classList.remove(styles.noAnim)
-                setzooming(false)
-            }, 50)
-        }, 100)
+        // window.setTimeout(() => {
+        //     document.querySelector('#timelineContainer').classList.add(styles.noAnim)
+        //     timeline.scrollTo((timeline.scrollLeft * pctChange), timeline.scrollTop)
+        //     document.querySelector('#timelineContainer').style.left = '0px'
+        //     window.setTimeout(() => {
+        //         document.querySelector('#timelineContainer').classList.remove(styles.noAnim)
+        //         setzooming(false)
+        //     }, 50)
+        // }, 100)
     }
 
     /**
@@ -182,6 +188,7 @@ const Timeline = (props) => {
 
     // Get our units in order to render the timeline markers (notches)
     const bounds = getTimelineBounds(data)
+
     const numDays = (bounds[1] - bounds[0]) / 86400000
     const numMonths = (bounds[1] - bounds[0]) / 2629800000 // approximation since not all months are the same length
     const numYears = (bounds[1] - bounds[0]) / 31556952000
@@ -231,19 +238,19 @@ const Timeline = (props) => {
                     {date ?
                         // Here we have some magic numbers to get the exact date where the timeline labels are pointing
                         // These numbers are due to the offset we're dealing with on each label
-                        new Date(date.getTime() + ((63 / fontSize) * 172800000)).toLocaleDateString()
+                        new Date(date.getTime() + ((35 / fontSize) * 172800000)).toLocaleDateString()
                         : ""
                     }
                 </div>
                 <div className={`${styles.date} ${styles.center}`}>
                     {date ?
-                        new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 147) / 2) / fontSize) * 172800000).toLocaleDateString()
+                        new Date(date.getTime() + (((document.querySelector('#timeline').clientWidth - 230) / 2) / fontSize) * 172800000).toLocaleDateString()
                         : ""
                     }
                 </div>
                 <div className={`${styles.date} ${styles.right}`}>
                     {date ?
-                        new Date(date.getTime() + ((document.querySelector('#timeline').clientWidth - 50) / fontSize) * 172800000).toLocaleDateString()
+                        new Date(date.getTime() + ((document.querySelector('#timeline').clientWidth - 90) / fontSize) * 172800000).toLocaleDateString()
                         : ""
                     }
                 </div>
@@ -255,24 +262,24 @@ const Timeline = (props) => {
                     style={{ borderRadius: '99rem 0 0 99rem', borderRight: '1px solid grey' }}
                     onClick={() => changeZoomLevel('out')}
                 >
-                    <span class="material-icons">zoom_in</span>
+                    <span className="material-icons">zoom_in</span>
                 </button>
                 <button
                     className='tertiary'
                     style={{ borderRadius: '0 99rem 99rem 0' }}
                     onClick={() => changeZoomLevel('in')}
                 >
-                    <span class="material-icons">zoom_out</span>
+                    <span className="material-icons">zoom_out</span>
                 </button>
             </div>
             <div id='timelineContainer' className={styles.container} style={{ width: `${numDays / 2}em` }} >
                 <div className={styles.tlObject} />
                 {markerElement}
                 <div className={styles.entries}>
-                    {visualData.map(section => {
-                        return <div className={styles.section}>
+                    {visualData.map((section, index) => {
+                        return <div className={styles.section} key={index}>
                             {section.map(datum => {
-                                return <Link href={`/record/${datum.id}`}>
+                                return <Link href={`/record/${datum.id}`} key={datum.id}>
                                     <div
                                         className={styles.entry}
                                         key={datum.date.startdate + datum.date.enddate}
@@ -282,7 +289,10 @@ const Timeline = (props) => {
                                             filter: `hue-rotate(${(datum.date.startdate * 0.000001 % 9) * 45}deg)`
                                         }}
                                     >
-                                        <span>{datum.name}</span>
+                                        <span>
+                                            {datum.name}
+                                            <span className={styles.date}>{clientLib.renderDate(datum.date.startdate, datum.date.enddate, datum.date.unit)}</span>
+                                        </span>
                                     </div>
                                 </Link>
                             })}

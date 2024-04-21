@@ -54,12 +54,12 @@ const RecordMap = ({ data, params }) => {
                 </MapContainer>
             </div>
 
-            <div class={styles.sidebar}>
+            <div className={styles.sidebar}>
                 <ViewFilter params={params} sortOptions={false} />
                 <div className={styles.recordList}>
                     {data.length ?
                         data.map((record, index) => {
-                            return <div className={styles.listRecordContainer}>
+                            return <div className={styles.listRecordContainer} key={index}>
                                 <button
                                     className={`${styles.record} tertiary`}
                                     onClick={() => {

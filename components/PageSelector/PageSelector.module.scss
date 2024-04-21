@@ -4,6 +4,9 @@
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
+    position: sticky;
+    top: 33rem;
+    z-index: 0;
 
     input {
         text-align: center;

@@ -20,7 +20,7 @@ import { cookies } from 'next/dist/client/components/headers'
  * @returns The JSON response containing the records
  */
 const fetchRecords = async (params) => {
-    let queryString = lib.buildQueryString(params)
+    let queryString = lib.buildQueryString(params) + '&paginate=true'
     let records = await fetch(`${process.env.NEXTAUTH_URL}/api/records${queryString}`,
         {
             next: { tags: ['records'] },
@@ -34,7 +34,11 @@ const fetchRecords = async (params) => {
     }
 
     records = await records.json()
-    return records.data.records
+    return {
+        records: records.data.records,
+        numPages: records.data.numPages
+    }
+
 }
 
 /**
@@ -72,18 +76,24 @@ const AllRecords = async ({ records, params, showOptions }) => {
 
     // If no record list was passed, use the fetchRecords method
     let recordList
+    let numPages
     if (!records) {
-        recordList = await fetchRecords(params)
+        let recordData = await fetchRecords(params)
+        recordList = recordData.records
+        numPages = recordData.numPages
     } else {
         recordList = records
     }
 
     return (
         <div className={styles.AllRecords}>
-            <section className={styles.recordsGrid}>
+            <section className={`${styles.recordsGrid} recordGrid`}>
                 {recordList.map(async record => {
                     // Get all files for this record and then search the list for a photo
                     const recordData = await fetchExtraRecordData(record.id)
+                    if (!recordData) {
+                        return
+                    }
                     const photo = findFirstPhoto(recordData.files)
 
                     const recordIcon = clientLib.renderIconFromData(recordData.icon)
@@ -110,9 +120,10 @@ const AllRecords = async ({ records, params, showOptions }) => {
             {showOptions ?
                 <section className={styles.viewOptions}>
                     <ViewFilter params={params} sortOptions={true} />
-                    <PageSelector page={params.page} />
+                    <PageSelector page={params.page} numPages={numPages} />
                 </section>
-                : ""}
+                : ""
+            }
         </div>
     )
 }
