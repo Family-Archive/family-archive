@@ -7,6 +7,8 @@ import Link from 'next/link'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import BreadcrumbTrail from '@/components/BreadcrumbTrail/BreadcrumbTrail'
 import DeleteUserButton from './DeleteUserButton'
+import { render as renderPeople } from '@/components/Form/FieldComponents/PersonSelector/render'
+import * as personLib from './lib'
 
 /**
  * This page displays information relating to a person
@@ -27,13 +29,14 @@ const personView = async ({ params }) => {
     }
 
     const person = await getPerson()
+    const spouseId = personLib.findSpouseId(person)
 
     return (
         <div className={`${styles.personView} column`}>
             <div className="topBar">
                 <h1 className='title'>{person.fullName}</h1>
                 <div className='pageOptions'>
-                    <Link href={`/people/${params.id}/edit${person.profileImageId ? `?files=${person.profileImageId}` : ""}`}>
+                    <Link href={`/people/${params.id}/edit`}>
                         <button><span className="material-icons">edit</span>Edit person</button>
                     </Link>
                     <Dropdown
@@ -50,8 +53,9 @@ const personView = async ({ params }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3rem', gap: '3rem' }}>
                 <div style={{ display: 'flex', gap: '3rem' }}>
                     <div className={styles.profileImage}>
-                        <img src={person.profileImageId ? `/api/file/${person.profileImageId}` : '/icons/no-user.png'} />
+                        <img src={person.profileImageId ? `/api/file/${person?.profileImageId}` : '/icons/no-user.png'} />
                         <h2 className={styles.dates}>
+                            {person.born && !person.died ? "b. " : ""}
                             {person.born ? clientLib.renderSingleDate(person.born) : ""}
                             {person.died ? `–${clientLib.renderSingleDate(person.died)}` : ""}
                         </h2>
@@ -64,7 +68,6 @@ const personView = async ({ params }) => {
                             {person.died ? <span><b>Death date</b>{clientLib.renderSingleDate(person.died)}</span> : ""}
                         </div>
                     </div>
-
                 </div>
                 <div className={styles.extraInfo}>
                     <h2>More details</h2>
@@ -77,6 +80,28 @@ const personView = async ({ params }) => {
                         <button className='secondary'>See records connected to this person <span className="material-icons">arrow_right_alt</span></button>
                     </Link>
                 </div>
+            </div>
+            <div>
+              <div className={styles.relationships}>
+                {spouseId !== undefined &&
+                  <span>
+                    <b>Spouse</b>
+                    {renderPeople(JSON.stringify([spouseId]), false)}
+                  </span>
+                }
+                {person.parents.length > 0 &&
+                  <span>
+                    <b>Parents</b>
+                    {renderPeople(JSON.stringify(person.parents.map(parent => parent.id)), false)}
+                  </span>
+                }
+                {person.children.length > 0 &&
+                  <span>
+                    <b>Children</b>
+                    {renderPeople(JSON.stringify(person.children.map(parent => parent.id)), false)}
+                  </span>
+                }
+              </div>
             </div>
 
         </div>

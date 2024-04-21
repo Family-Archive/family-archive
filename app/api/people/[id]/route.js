@@ -2,6 +2,7 @@ import { prisma } from '@/app/db/prisma'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import lib from '@/lib/lib';
+import * as peopleLib from '@/app/(dashboard)/people/[id]/lib'
 import { NextResponse } from 'next/server'
 import FileStorageFactory from '@/lib/classes/FileStorage/FileStorageFactory';
 
@@ -29,7 +30,17 @@ export async function GET(request, { params }) {
     const person = await prisma.Person.findUnique({
         where: {
             id: params.id
-        }
+        },
+        include: {
+          parents: true,
+          children: true,
+          indirectRelationships: {
+            include: {
+              relationshipType: true,
+              people: true,
+            }
+          }
+        },
     })
 
     return NextResponse.json({
@@ -108,11 +119,30 @@ export async function PUT(request, { params }) {
         })
     }
 
+    // Get the existing person so we can compare relationships
+    // to figure out what needs to be updated.
+    const existingPerson = await prisma.Person.findUnique({
+        where: {
+            id: params.id
+        },
+        include: {
+          parents: true,
+          children: true,
+          indirectRelationships: {
+            include: {
+              relationshipType: true,
+              people: true,
+            }
+          }
+        },
+    })
+
     const currFamily = request.cookies.get('familyId').value
     let formData = await request.formData()
 
     let profileImage
-    const files = formData.getAll('files')
+    let files = formData.getAll('files')
+    files = files ? files : []
     if (files[0] instanceof File) {
         // Store the file and connect it to the person.
         const fileSystem = FileStorageFactory.instance()
@@ -124,15 +154,47 @@ export async function PUT(request, { params }) {
         // Add the file id to the list of connected files.
         profileImage = files[0]
     }
+    
+    const [connectImage, disconnectImage] = lib.compareRelatedRecords([existingPerson.profileImageId], [profileImage])
+
+    let profileImageQuery = {}
+    if (connectImage.length > 0) {
+      profileImageQuery.connect = connectImage[0]
+    }
+    if (disconnectImage.length > 0) {
+      profileImageQuery.disconnect = disconnectImage[0]
+    }
+
+    // Process user relationships.
+    let parents = JSON.parse(formData.get('parents'))
+    let children = JSON.parse(formData.get('children'))
+    let spouse = JSON.parse(formData.get('spouse'))
+
+    const [connectParents, disconnectParents] = lib.compareRelatedRecords(existingPerson.parents.map(p => p.id), parents)
+    const [connectChildren, disconnectChildren] = lib.compareRelatedRecords(existingPerson.children.map(p => p.id), children)
+    const [connectSpouse, disconnectSpouse] = lib.compareRelatedRecords([peopleLib.findSpouseId(existingPerson)], spouse)
+
+    let data = {
+      fullName: formData.get('fullName'),
+      shortName: formData.get('shortName'),
+      born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
+      died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
+      parents: {
+        connect: connectParents,
+        disconnect: disconnectParents,
+      },
+      children: {
+        connect: connectChildren,
+        disconnect: disconnectChildren,
+      },
+    }
+
+  if (profileImageQuery.connect || profileImageQuery.disconnect) {
+    data.profileImage = profileImageQuery
+  }
 
     const person = await prisma.Person.update({
-        data: {
-            fullName: formData.get('fullName'),
-            shortName: formData.get('shortName'),
-            born: formData.get('birthdate') ? new Date(formData.get('birthdate')) : null,
-            died: formData.get('deathdate') ? new Date(formData.get('deathdate')) : null,
-            profileImageId: profileImage
-        },
+        data: data,
         where: {
             id: params.id
         }

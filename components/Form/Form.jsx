@@ -20,6 +20,7 @@ export default function Form({
     editMode,
     fileIds,
     loadFilesFromUrl,
+    redirectTo = '/records/all',
     allowFileUpload = true
 }) {
     acceptedFileTypes = acceptedFileTypes || ['*']
@@ -150,6 +151,12 @@ export default function Form({
         const convertedFile = new File([fileBlob], response.headers.get('X-File-Name'), { type: fileBlob.type })
 
         getFileIcon(convertedFile).then(icon => {
+            // Check if the selector already includes a file with this id.
+            const existingId = updatedFiles.find(file => file.fileId == fileId)
+            if (existingId !== undefined) {
+                return
+            }
+
             updatedFiles.push({
                 file: convertedFile,
                 icon: icon,
@@ -311,7 +318,7 @@ export default function Form({
 
         const json = await response.json()
 
-        push('/records/all')
+        push(redirectTo)
     }
 
     const getElement = (field) => {

@@ -48,4 +48,16 @@
         }
 
     }
+
+    .relationships {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      b {
+          display: block;
+          margin-bottom: 0.25rem;
+      }
+    }
 }

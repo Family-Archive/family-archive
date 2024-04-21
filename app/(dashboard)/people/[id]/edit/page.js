@@ -1,6 +1,7 @@
 import Form from "@/components/Form/Form"
 import { cookies } from 'next/dist/client/components/headers'
 import lib from '@/lib/lib'
+import * as personLib from '../lib'
 
 /**
  * This page allows the editing of a person
@@ -21,6 +22,7 @@ const editPerson = async ({ params }) => {
     }
 
     const person = await getPerson()
+    const spouseId = personLib.findSpouseId(person)
 
     return (
         <div className="column">
@@ -53,6 +55,24 @@ const editPerson = async ({ params }) => {
                         label: 'Date of death',
                         type: 'date',
                         value: person.died ? new Date(person.died).toISOString().substring(0, 10) : null
+                    },
+                    {
+                        name: 'parents',
+                        label: 'Parents',
+                        type: 'PersonSelector',
+                        value: JSON.stringify(person.parents.map(p => p.id))
+                    },
+                    {
+                        name: 'children',
+                        label: 'Children',
+                        type: 'PersonSelector',
+                        value: JSON.stringify(person.children.map(c => c.id))
+                    },
+                    {
+                        name: 'spouse',
+                        label: 'Spouse',
+                        type: 'PersonSelector',
+                        value: JSON.stringify(spouseId ? [spouseId] : [])
                     }
                 ]}
                 acceptedFileTypes={[
@@ -62,8 +82,10 @@ const editPerson = async ({ params }) => {
                 ]}
                 allowMultipleFiles={false}
                 requireFileUploadFirst={false}
-                loadFilesFromUrl={true}
-                fileIds={[person.profileImageId]}
+                loadFilesFromUrl={false}
+                fileIds={[person?.profileImageId]}
+                editMode={true}
+                redirectTo={`/people/${person.id}`}
             />
         </div>
     )
