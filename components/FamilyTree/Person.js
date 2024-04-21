@@ -8,7 +8,6 @@ const Person = ({id, fullName, born, died, image}) => {
         }
 
         return `b. ${date.toLocaleDateString()}`
-        // return `b. ${date.getMonth()} ${date.getDay()}, ${date.getFullYear()}`
     }
 
     return (
