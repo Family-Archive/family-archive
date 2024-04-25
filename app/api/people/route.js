@@ -74,14 +74,6 @@ export async function POST(request) {
             status: 400
         })
     }
-    if (!data.get('pronouns')) {
-        return NextResponse.json({
-            status: 'error',
-            message: "Pronouns is a required field"
-        }, {
-            status: 400
-        })
-    }
 
     const currFamily = request.cookies.get('familyId').value
     if (!currFamily) {
