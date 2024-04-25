@@ -203,15 +203,6 @@ export async function PUT(request, { params }) {
         })
     }
 
-    if (!formData.get('pronouns')) {
-        return NextResponse.json({
-            status: 'error',
-            message: "Pronouns is a required field"
-        }, {
-            status: 400
-        })
-    }
-
     const person = await prisma.Person.update({
         data: data,
         where: {
