@@ -33,6 +33,11 @@ export async function GET(request, { params }) {
             id: params.id
         },
         include: {
+            Nickname: {
+                where: {
+                    userId: session.user.id
+                }
+            },
             parents: true,
             children: true,
             indirectRelationships: {

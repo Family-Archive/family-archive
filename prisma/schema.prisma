@@ -64,6 +64,7 @@ model User {
   Permission      Permission[]
   Group           Group[]
   GroupMembership GroupMembership[]
+  Nickname        Nickname[]
 }
 
 model Family {
@@ -139,14 +140,15 @@ model Person {
   profileImageId        String?
   userCreated           User                   @relation(fields: [userCreatedId], references: [id])
   userCreatedId         String
+  Nickname              Nickname[]
 }
 
 model PronounSet {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   subject    String
   object     String
   possessive String
-  family     Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  family     Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId   String
 }
 
@@ -212,4 +214,15 @@ model GroupMembership {
   group     Group    @relation(fields: [groupId], references: [id])
   groupId   String
   createdAt DateTime @default(now())
+}
+
+model Nickname {
+  id       String @id @default(cuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  person   Person @relation(fields: [personId], references: [id])
+  personId String
+  name     String
+
+  @@unique([userId, personId], name: "userId_personId")
 }

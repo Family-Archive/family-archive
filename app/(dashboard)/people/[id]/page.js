@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth'
 import { cookies } from 'next/dist/client/components/headers'
 import { redirect } from 'next/navigation'
+import { prisma } from '@/app/db/prisma';
 import permissionLib from '@/lib/permissions/lib'
 import lib from '@/lib/lib'
 import clientLib from '@/lib/client/lib'
@@ -14,14 +15,18 @@ import DeleteUserButton from './DeleteUserButton'
 import { render as renderPeople } from '@/components/Form/FieldComponents/PersonSelector/render'
 import * as personLib from './lib'
 import EditPermissionsButton from './EditPermissionsButton'
+import NicknameEditor from './NicknameEditor/NicknameEditor';
 
 /**
  * This page displays information relating to a person
  */
 
 const personView = async ({ params }) => {
+
     // Get the data for the person
     const getPerson = async () => {
+        "use server"
+
         let person = await fetch(`${process.env.NEXTAUTH_URL}/api/people/${params.id}`,
             {
                 headers: {
@@ -36,17 +41,19 @@ const personView = async ({ params }) => {
         return person.data.person
     }
 
+    const session = await getServerSession(authOptions);
     const person = await getPerson()
     const spouseId = personLib.findSpouseId(person)
-
     // Determine if this user can edit this person
-    const session = await getServerSession(authOptions);
     const hasEditAccess = await permissionLib.checkPermissions(session.user.id, 'Person', params.id, 'edit')
 
     return (
         <div className={`${styles.personView} column`}>
             <div className="topBar">
-                <h1 className='title'>{person.fullName}</h1>
+                <div className={styles.nicknameTitle}>
+                    <h1 className='title'>{person.fullName}</h1>
+                    <NicknameEditor person={person} />
+                </div>
                 {hasEditAccess ?
                     <div className='pageOptions'>
                         <Link href={`/people/${params.id}/edit`}>
