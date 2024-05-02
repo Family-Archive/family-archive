@@ -1,0 +1,25 @@
+.NicknameEditor {
+    >button {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background-color: transparent;
+        color: black;
+        align-items: flex-start;
+        padding: 0;
+
+        .hint {
+            opacity: 0.75;
+        }
+
+        h1 {
+            margin: 0;
+        }
+    }
+
+    .editor {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+}

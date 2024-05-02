@@ -17,11 +17,37 @@ export async function GET(request) {
         })
     }
 
+    // Allow searching by full name OR an assigned nickname
     const params = request.nextUrl.searchParams
-    let where = params.get('search') ? { fullName: { contains: params.get('search') } } : {}
+    let where = params.get('search') ? {
+        OR: [
+            {
+                fullName: {
+                    contains: params.get('search')
+                }
+            },
+            {
+                Nickname: {
+                    some: {
+                        name: {
+                            contains: params.get('search')
+                        },
+                        // only match nicknames that belong to this user
+                        userId: session.user.id
+                    }
+                }
+            }
+        ]
+    } : {}
+
     where = lib.limitQueryByFamily(where, request.cookies, session.familyId)
     const people = await prisma.Person.findMany({
         include: {
+            Nickname: {
+                where: {
+                    userId: session.user.id
+                }
+            },
             parents: true,
             children: true,
             indirectRelationships: {
