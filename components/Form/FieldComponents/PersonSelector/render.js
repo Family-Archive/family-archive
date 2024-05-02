@@ -2,6 +2,7 @@ import styles from './render.module.scss'
 
 import { cookies } from 'next/dist/client/components/headers'
 import lib from '../../../../lib/lib'
+import clientLib from '@/lib/client/lib'
 import Link from 'next/link'
 
 /**
@@ -40,7 +41,7 @@ export async function render(data, showPersonIcon = true) {
             return <Link href={`/people/${person}`} key={person}>
                 <button className={styles.person}>
                     <img src={people[person].profileImageId ? `/api/file/${people[person].profileImageId}` : '/icons/no-user.png'} />
-                    {people[person].fullName}
+                    {clientLib.renderNickname(people[person])}
                 </button>
             </Link>
         })}

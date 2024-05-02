@@ -46,6 +46,7 @@ const peoplePage = () => {
             </div><br />
             <div className={styles.people}>
                 {people.map(person => {
+                    console.log(person)
                     if (query.toLowerCase() && !person.fullName.toLowerCase().includes(query)) {
                         return
                     }
@@ -56,7 +57,7 @@ const peoplePage = () => {
                                 className={styles.profileImage}
                                 src={person.profileImageId ? `/api/file/${person.profileImageId}` : "/icons/no-user.png"}
                             />
-                            {person.fullName} / {person.shortName}
+                            {person.fullName} {person.Nickname[0]?.name ? `(${person.Nickname[0].name})` : ""}
                         </div>
                     </Link>
                 })}

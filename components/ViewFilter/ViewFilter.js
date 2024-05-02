@@ -6,6 +6,7 @@ import styles from './ViewFilter.module.scss'
 import SortToggle from './SortToggle/SortToggle/SortToggle'
 import FilterSetting from './FilterSetting/FilterSetting'
 import TextSearchInput from '../TextSearchInput/TextSearchInput'
+import lib from '@/lib/client/lib'
 
 /**
  * Given a list of people IDs separated by commas, fetch an array of data that can be passed to the TextSearchInput function
@@ -19,7 +20,7 @@ const fetchInitialPeopleObjects = async peopleString => {
         let personData = await fetch(`/api/people/${id}`)
         personData = await personData.json()
         people.push({
-            name: personData.data.person.fullName,
+            name: lib.renderNickname(personData.data.person),
             data: personData.data.person
         })
     }
@@ -126,7 +127,7 @@ const ViewFilter = props => {
         let finalArray = []
         for (let person of people) {
             finalArray.push({
-                name: person.fullName,
+                name: lib.renderNickname(person),
                 data: person
             })
         }

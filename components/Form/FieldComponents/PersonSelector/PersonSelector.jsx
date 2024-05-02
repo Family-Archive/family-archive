@@ -6,6 +6,7 @@ import { ModalContext } from '@/app/(contexts)/ModalContext'
 import { ToastContext } from '@/app/(contexts)/ToastContext'
 import PronounSelector from '../PronounSelector/PronounSelector'
 import TextSearchInput from '@/components/TextSearchInput/TextSearchInput'
+import lib from '@/lib/client/lib'
 
 /**
  * This function is passed as the initialData to the TextSearchInput
@@ -17,7 +18,7 @@ const getInitialData = async value => {
     for (let id of JSON.parse(value)) {
         let person = await fetch(`/api/people/${id}`)
         person = await person.json()
-        people.push({ name: person.data.person.fullName, data: person.data.person })
+        people.push({ name: lib.renderNickname(person.data.person), data: person.data.person })
     }
     return people
 }
@@ -61,7 +62,7 @@ const PersonSelector = ({ value, onChange, index }) => {
         let people = await fetch(`/api/people?search=${query}`)
         people = await people.json()
         for (let person of people.data.people) {
-            _people.push({ name: person.fullName, data: person })
+            _people.push({ name: lib.renderNickname(person), data: person })
         }
         return _people
     }
